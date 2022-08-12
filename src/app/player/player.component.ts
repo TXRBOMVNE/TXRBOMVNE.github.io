@@ -9,9 +9,14 @@ export class PlayerComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void { }
 
+  isMenuActive: boolean = false
   instrument: string | undefined = "guitar"
+
+  toggleMenu(menuStatus: boolean) {
+    this.isMenuActive = menuStatus
+    console.log(this.isMenuActive, menuStatus, "player")
+  }
 
 }

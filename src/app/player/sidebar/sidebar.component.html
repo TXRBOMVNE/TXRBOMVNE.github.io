@@ -30,3 +30,39 @@
     </a>
   </div>
 </div>
+
+<div>
+  <div id="sidebar" @enterFromSide *ngIf="isMenuActive" class="d-flex flex-column">
+    <div class="py-4" id="search">
+      <div class="my-3">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+          <path id="Icon_material-search" data-name="Icon material-search"
+            d="M35.338,31.907H33.531l-.64-.617a14.888,14.888,0,1,0-1.6,1.6l.617.64v1.807L43.342,46.75l3.408-3.408Zm-13.722,0A10.292,10.292,0,1,1,31.907,21.616,10.278,10.278,0,0,1,21.616,31.907Z"
+            transform="translate(-6.75 -6.75)" />
+        </svg>
+      </div>
+    </div>
+    <div class="space-line"></div>
+    <div>
+      <a class="py-4 w-100 text-center" routerLinkActive="active-instrument">
+        <img class="my-2" src="../../../assets/images/guitar.png" alt="Electric Guitar">
+      </a>
+    </div>
+    <div>
+      <a class="py-4 w-100 text-center" routerLinkActive="active-instrument">
+        <img class="my-2" src="../../../assets/images/acoustic-guitar.png" alt="Acoustic Guitar">
+      </a>
+    </div>
+    <div>
+      <a class="py-4 w-100 text-center" routerLinkActive="active-instrument">
+        <img class="my-2" src="../../../assets/images/bass.png" alt="Bass Guitar">
+      </a>
+    </div>
+    <div>
+      <a class="py-4 w-100 text-center" routerLinkActive="active-instrument">
+        <img class="my-2" src="../../../assets/images/mic.png" alt="Microphone">
+      </a>
+    </div>
+  </div>
+  <div id="modal-background" @appear *ngIf="isMenuActive" (click)="closeMenu()"></div>
+</div>

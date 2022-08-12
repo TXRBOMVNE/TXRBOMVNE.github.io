@@ -4,6 +4,9 @@
   max-width: 100vw;
 }
 
+
+/* Burger menu */
+
 #burger-container {
   position: relative;
   display: flex;
@@ -19,6 +22,7 @@
   background-color: #BF9C6E;
   border-radius: 50px;
   border: none;
+  transition: opacity 150ms ease-in-out;
 }
 
 #burger::before {

@@ -1,8 +1,8 @@
-<app-sidebar></app-sidebar>
+<app-sidebar [menuStatus]="isMenuActive" (menuStatusOutput)="toggleMenu($event)"></app-sidebar>
 <div id="main-container">
   <div id="main" class="position-relative">
     <div>
-      <app-topbar></app-topbar>
+      <app-topbar (menuStatus)="toggleMenu($event)"></app-topbar>
     </div>
     <div id="tab-background" class="d-flex m-0 p-0 flex-column justify-content-between">
       <div id="instrument" class="ps-4 flex-grow-1 m-0 d-flex flex-column justify-content-center">
@@ -38,5 +38,4 @@
       </div>
     </div>
   </div>
-
 </div>

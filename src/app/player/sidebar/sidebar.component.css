@@ -14,6 +14,20 @@
   }
 }
 
+img {
+  width: calc(40px + 1.5vw);
+}
+
+@media (max-width:767px) {
+  #sidebar {
+    width: 100px;
+  }
+
+  img {
+    width: 70px;
+  }
+}
+
 #sidebar div {
   width: 100%;
   display: flex;
@@ -40,9 +54,6 @@ path {
   height: 2px;
 }
 
-img {
-  width: calc(40px + 1.5vw);
-}
 
 .active-instrument {
   background-color: rgba(32, 32, 32, 0.4);
@@ -71,4 +82,15 @@ a:active {
   50% {
     transform: scale(1.1);
   }
+}
+
+#modal-background {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(1px);
+  z-index: 1;
 }

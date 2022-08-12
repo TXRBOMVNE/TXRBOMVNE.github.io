@@ -1,5 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-topbar',
@@ -24,10 +24,15 @@ export class TopbarComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  @Output() menuStatus = new EventEmitter<boolean>()
+
   isPlaying: boolean = false
   isCountActive: boolean = false
   isMetronomeActive: boolean = false
 
   tempoMultiplier: number = 100
 
+  openMenu() {
+    this.menuStatus.emit(true)
+  }
 }
