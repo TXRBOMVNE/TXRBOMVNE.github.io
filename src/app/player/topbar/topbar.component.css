@@ -10,6 +10,7 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  min-width: 50px;
 }
 
 #burger {
@@ -43,13 +44,12 @@
 #song {
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 #fill-div {
   width: 80px;
 }
-
-@media (min) {}
 
 #play-pause {
   width: min-content;
