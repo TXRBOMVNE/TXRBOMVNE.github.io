@@ -1,0 +1,84 @@
+#main {
+  background-color: #202020;
+  height: 100vh;
+}
+
+@media (min-width:768px) {
+  #main-container {
+    padding-left: max(75px, 5.2vw);
+  }
+}
+
+#tab-background {
+  height: calc(100vh - 121px);
+}
+
+h2 {
+  font-size: 12vh;
+  font-family: "Barlow Condensed", sans-serif;
+  font-style: italic;
+  font-weight: 700;
+  color: #333533;
+  line-height: 100px;
+}
+
+#tab {
+  background-color: #202020;
+  background-image: url("../../assets/images/tab.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 2038px;
+  min-height: max(40vh, 360px);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+#actions button {
+  border: 1px solid;
+  background: none;
+  font-family: "Barlow Condensed", sans-serif;
+}
+
+#info-container {
+  background-color: #333533;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  text-align: center;
+  cursor: pointer;
+}
+
+#song-info {
+  cursor: initial;
+  text-align: start;
+  width: max-content;
+  position: absolute;
+  bottom: 0;
+  left: 60px;
+  background-color: rgba(8, 8, 8, 0.5);
+  backdrop-filter: blur(2px);
+  color: white;
+  transform: translateX(-400px);
+  opacity: 0;
+  transition: transform 300ms ease-in-out, opacity 150ms ease-in-out;
+}
+
+#info-container:focus #song-info {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+#song-info ul {
+  font-family: "Barlow Condensed", sans-serif;
+  color: #808080;
+}
+
+
+#comment-btn {
+  border-color: #D6D6D6;
+  color: #D6D6D6;
+}
+
+#rate-btn {
+  border-color: #BF9C6E;
+  color: #BF9C6E;
+}

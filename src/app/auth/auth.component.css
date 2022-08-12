@@ -1,0 +1,67 @@
+#background-image {
+  background-image: url("../../assets/images/preview.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: left;
+  height: 100vh;
+}
+
+#background {
+  background-color: rgba(0, 0, 0, 0.77);
+  width: 100%;
+  height: 100%;
+}
+
+#modal {
+  background-color: #202020;
+}
+
+h1 {
+  color: #BF9C6E;
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 700;
+  line-height: 65px;
+}
+
+.space-line {
+  height: 1px;
+  width: 100%;
+  background-color: #707070;
+}
+
+#spotify-btn {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background-color: #1ED760;
+}
+
+#p1 {
+  color: #808080;
+  font-weight: 300;
+}
+
+#p2 {
+  color: #D6D6D6;
+  font-weight: 400;
+}
+
+#sign-up-btn {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background-color: #D6D6D6;
+  color: rgb(102, 102, 102);
+}
+
+#p3 {
+  color: #808080;
+  font-weight: 300;
+  font-style: italic;
+}

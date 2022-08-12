@@ -1,0 +1,29 @@
+<div id="background-image">
+  <div id="background" class="d-flex justify-content-center align-items-center">
+    <div id="modal" class="rounded text-center px-4 py-5">
+      <h1 class="display-2 my-4">L2P</h1>
+      <div class="space-line"></div>
+      <div class="py-3">
+        <p id="p1" class="fs-5 mt-4 mb-2">This app uses Spotify Premium songs<br>as backing tracks</p>
+        <p id="p2" class="fs-5">Please login into your Spotify account</p>
+        <div class="d-grid mb-4">
+          <button id="spotify-btn" class="text-center mx-5 fs-5 px-5 py-2 border-0 rounded-pill"
+            (click)="requestSpotifyAuth()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-spotify"
+              viewBox="0 0 16 16">
+              <path
+                d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.669 11.538a.498.498 0 0 1-.686.165c-1.879-1.147-4.243-1.407-7.028-.77a.499.499 0 0 1-.222-.973c3.048-.696 5.662-.397 7.77.892a.5.5 0 0 1 .166.686zm.979-2.178a.624.624 0 0 1-.858.205c-2.15-1.321-5.428-1.704-7.972-.932a.625.625 0 0 1-.362-1.194c2.905-.881 6.517-.454 8.986 1.063a.624.624 0 0 1 .206.858zm.084-2.268C10.154 5.56 5.9 5.419 3.438 6.166a.748.748 0 1 1-.434-1.432c2.825-.857 7.523-.692 10.492 1.07a.747.747 0 1 1-.764 1.288z" />
+            </svg>
+            CONTINUE WITH SPOTIFY
+          </button>
+        </div>
+      </div>
+      <div class="space-line"></div>
+      <p id="p3" class="fs-5 mt-4">Don't have an account?</p>
+      <div class="d-grid mb-4">
+        <button id="sign-up-btn" class="text-center mx-5 fs-5 px-5 py-2 border-0 rounded-pill"> SIGN UP FOR SPOTIFY
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,1 +1,31 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+  font-family: "Barlow", sans-serif;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #707070;
+  border-radius: 50px;
+  cursor: pointer;
+  height: 8px;
+  width: 15rem;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: white;
+  width: .5em;
+  height: 1.6em;
+  border-radius: 50px;
+  transition: box-shadow 150ms;
+}
+
+input[type="range"]:active::-webkit-slider-thumb {
+  box-shadow: 0 0 0px 4px rgba(255, 255, 255, 0.2);
+}
+
+#sidebar {
+  z-index: 10;
+}

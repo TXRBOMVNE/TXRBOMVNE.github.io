@@ -1,0 +1,140 @@
+#container {
+  max-height: 121px;
+  min-width: 0%;
+  max-width: 100vw;
+}
+
+#burger-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+#burger {
+  width: 30px;
+  height: 3px;
+  background-color: #BF9C6E;
+  border-radius: 50px;
+  border: none;
+}
+
+#burger::before {
+  content: "";
+  position: absolute;
+  width: 30px;
+  height: 3px;
+  background-color: #BF9C6E;
+  border-radius: 50px;
+  transform: translate(-15px, calc(-1.5px + -10px));
+}
+
+#burger::after {
+  content: "";
+  position: absolute;
+  width: 30px;
+  height: 3px;
+  background-color: #BF9C6E;
+  border-radius: 50px;
+  transform: translate(-15px, calc(-1.5px + 10px));
+}
+
+#song {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#fill-div {
+  width: 80px;
+}
+
+@media (min) {}
+
+#play-pause {
+  width: min-content;
+}
+
+img {
+  max-height: 97px;
+}
+
+#song-title {
+  color: white;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#artists {
+  color: #d6d6d6;
+  line-height: 30px;
+  white-space: nowrap;
+}
+
+#play,
+#pause {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%)
+}
+
+#tools p {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 500;
+  color: #707070;
+  margin: 0;
+  transition: color 200ms;
+}
+
+#tools path {
+  fill: #707070;
+  transition: fill 200ms
+}
+
+#tools .active-tool path {
+  fill: #BF9C6E;
+}
+
+#tools .active-tool {
+  color: #BF9C6E;
+}
+
+@media (min-width:992px) {
+
+  #tools div,
+  #tempo-container {
+    min-width: 88px;
+    min-height: 68px;
+  }
+}
+
+#tools div:not(#tempo-input-container) {
+  transition: background-color 100ms;
+  max-width: 100px;
+}
+
+#tools div:hover {
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.15);
+  transition: background-color 10ms;
+}
+
+#tempo-input-container {
+  display: none;
+  background-color: rgba(16, 16, 16, 0.3);
+  backdrop-filter: blur(2px);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 50%);
+}
+
+#tempo-container:focus #tempo-input-container,
+#tempo-input-container:active {
+  display: inline-block;
+}
