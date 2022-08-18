@@ -55,6 +55,10 @@
   width: 80px;
 }
 
+#fill-div2 {
+  width: 50px;
+}
+
 #play-pause {
   width: min-content;
 }
@@ -110,7 +114,7 @@ img {
 
 @media (min-width:992px) {
 
-  #tools div,
+  #tools div:not(#fill-div2),
   #tempo-container {
     min-width: 88px;
     min-height: 68px;

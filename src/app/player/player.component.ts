@@ -1,5 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
+export interface AppStatus {
+  isMenuActive: boolean,
+  isMetronomeActive: boolean,
+  isCountdownActive: boolean,
+  tempoMultiplier: number
+}
+
 @Component({
   selector: 'app-player',
   templateUrl: './player.component.html',
@@ -11,12 +18,21 @@ export class PlayerComponent implements OnInit {
 
   ngOnInit(): void { }
 
-  isMenuActive: boolean = false
+  appStatus: AppStatus = {
+    isMenuActive: false,
+    isCountdownActive: false,
+    isMetronomeActive: false,
+    tempoMultiplier: 100
+  }
+
   instrument: string | undefined = "guitar"
 
+  updateAppStatus(appStatus: AppStatus) {
+    this.appStatus = appStatus
+  }
+
   toggleMenu(menuStatus: boolean) {
-    this.isMenuActive = menuStatus
-    console.log(this.isMenuActive, menuStatus, "player")
+    this.appStatus.isMenuActive = menuStatus
   }
 
 }
