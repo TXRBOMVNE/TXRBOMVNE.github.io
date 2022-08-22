@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Bar, exampleSong, Segment } from 'src/app/models/song.model';
+import { rests } from 'src/assets/svgs'
 
 export const tabLayout = {
   leftBarPadding: 48,
@@ -22,11 +23,24 @@ export class TabComponent implements AfterViewInit {
   song = exampleSong
 
   ngAfterViewInit(): void {
-    let canvas = this.canvas?.nativeElement!
-    let ctx: CanvasRenderingContext2D = canvas?.getContext("2d")!
+    const canvas = this.canvas!.nativeElement
+    const ctx: CanvasRenderingContext2D = canvas?.getContext("2d")!
 
-    canvas.width = this.song.bars.length * tabLayout.initialBarWidth * 1.5
-    ctx.translate(0, 20)
+    // Sets the value for the canvas context container according to each bar time signatures ratio
+    const canvasWidth = (): number => {
+      let width = 480
+      this.song.bars.forEach((bar, index) => {
+        if (index === 0 || JSON.stringify(bar.timeSignature) !== JSON.stringify(this.song.bars[index - 1].timeSignature)) {
+          width += 528 * bar.timeSignatureRatio
+        } else {
+          width += 480 * bar.timeSignatureRatio
+        }
+      })
+      return width
+    }
+
+    canvas.width = canvasWidth()
+    ctx.translate(0, 50)
     ctx.strokeStyle = "#707070"
     ctx.lineWidth = 1
     ctx.font = "500 22pt Barlow Condensed"
@@ -36,10 +50,9 @@ export class TabComponent implements AfterViewInit {
 
     ctx.save()
 
-    // Iterating over bars array to draw tab
-
+    // Iterates over bars array to draw tab
     this.song.bars.forEach((bar, i) => {
-      // Draw staff bar
+      // Draws staff bar
       this.drawBar(ctx, canvas, bar, i)
       // Restore to staff upper left corner
       ctx.restore()
@@ -59,74 +72,85 @@ export class TabComponent implements AfterViewInit {
       ctx.save()
     })
 
-    ctx.stroke()
-
     ctx.restore()
     ctx.save()
 
-    ctx.fillRect(10, 10, 10, 10)
+    ctx.fillRect(0, 0, 10, 10)
   }
 
-  // Draw staff
+  // Draws bar frame and its strings
   private drawBar(canvasContext: CanvasRenderingContext2D, canvas: HTMLCanvasElement, bar: Bar, index: number) {
+    canvasContext.font = "600 15px Barlow"
+    canvasContext.fillStyle = "#404040"
+    canvasContext.fillText((index + 1).toString(), 2, -10)
     if (index === 0 || JSON.stringify(bar.timeSignature) !== JSON.stringify(this.song.bars[index - 1].timeSignature)) {
-      canvasContext.strokeRect(0, 0, tabLayout.barExtraWidth, canvas.height - 40)
+      canvasContext.strokeRect(0, 0, tabLayout.barExtraWidth * bar.timeSignatureRatio, canvas.height - 110)
       this.drawStrings(canvasContext, bar, index)
       this.drawTimeSignature(canvasContext, bar)
-      canvasContext.translate(tabLayout.barExtraWidth, 0)
+      canvasContext.translate(tabLayout.barExtraWidth * bar.timeSignatureRatio, 0)
     } else {
-      canvasContext.strokeRect(0, 0, tabLayout.initialBarWidth, canvas.height - 40)
+      canvasContext.strokeRect(0, 0, tabLayout.initialBarWidth * bar.timeSignatureRatio, canvas.height - 110)
       this.drawStrings(canvasContext, bar, index)
-      canvasContext.translate(tabLayout.initialBarWidth, 0)
+      canvasContext.translate(tabLayout.initialBarWidth * bar.timeSignatureRatio, 0)
     }
   }
 
-  // Draw instrument strings
+  // Draws instrument strings
   private drawStrings(canvasContext: CanvasRenderingContext2D, bar: Bar, index: number) {
     for (let i = 1; i <= this.song.instrument.strings - 2; i++) {
       canvasContext.moveTo(0, 42 * i)
       if (index === 0 || JSON.stringify(bar.timeSignature) !== JSON.stringify(this.song.bars[index - 1].timeSignature)) {
-        canvasContext.lineTo(tabLayout.barExtraWidth, 42 * i)
+        canvasContext.lineTo(tabLayout.barExtraWidth * bar.timeSignatureRatio, 42 * i)
       } else {
-        canvasContext.lineTo(tabLayout.initialBarWidth, 42 * i)
+        canvasContext.lineTo(tabLayout.initialBarWidth * bar.timeSignatureRatio, 42 * i)
       }
     }
     canvasContext.stroke()
   }
 
-  // Draw segments
+  // Draws segments
   private drawSegment(segment: Segment, canvasContext: CanvasRenderingContext2D) {
     if (segment.notes && segment.notes.length > 0) {
       for (let note of segment.notes) {
+        let { fontBoundingBoxDescent, fontBoundingBoxAscent, actualBoundingBoxRight } = canvasContext.measureText(note.fretValue.toString())
+        // Draws text background according to tab background color
+        canvasContext.fillStyle = "#202020"
+        canvasContext.fillRect(-2, 42 * note.string - 15, actualBoundingBoxRight + 4, fontBoundingBoxAscent + fontBoundingBoxDescent)
+        // Draws note
+        canvasContext.fillStyle = "white"
         canvasContext.fillText(note.fretValue.toString(), 0, 42 * note.string)
       }
+    } else {
+
     }
     canvasContext.translate(segment.separationSpace, 0)
   }
 
+  // Draws time signature at the beginning of the indicated bar
   private drawTimeSignature(canvasContext: CanvasRenderingContext2D, bar: Bar) {
     canvasContext.globalCompositeOperation = "source-over"
-    canvasContext.font = "500 60px Barlow"
+    canvasContext.font = "500 60px Barlow Condensed"
     canvasContext.fillStyle = "#fff"
     canvasContext.textAlign = "center"
-    canvasContext.fillText(bar.timeSignature.numerator.toString(), tabLayout.leftBarExtraPadding / 2, 105 - 30)
-    canvasContext.fillText(bar.timeSignature.denominator.toString(), tabLayout.leftBarExtraPadding / 2, 105 + 30)
+    canvasContext.fillText(bar.timeSignature.numerator.toString(), tabLayout.leftBarExtraPadding / 2 * bar.timeSignatureRatio, 105 - 30)
+    canvasContext.fillText(bar.timeSignature.denominator.toString(), tabLayout.leftBarExtraPadding / 2 * bar.timeSignatureRatio, 105 + 30)
   }
 
+  // Adds left padding to the indicated bar
   private spaceLeft(canvasContext: CanvasRenderingContext2D, bar: Bar, index: number) {
     if (index === 0 || JSON.stringify(bar.timeSignature) !== JSON.stringify(this.song.bars[index - 1].timeSignature)) {
-      canvasContext.translate(tabLayout.leftBarExtraPadding, 0)
+      canvasContext.translate(tabLayout.leftBarExtraPadding * bar.timeSignatureRatio, 0)
     } else {
-      canvasContext.translate(tabLayout.leftBarPadding, 0)
+      canvasContext.translate(tabLayout.leftBarPadding * bar.timeSignatureRatio, 0)
     }
   }
 
+  // Remaps (0,0) to the next bar
   private translateToNextBar(canvasContext: CanvasRenderingContext2D, bar: Bar, index: number) {
     if (index === 0 || JSON.stringify(bar.timeSignature) !== JSON.stringify(this.song.bars[index - 1].timeSignature)) {
-      canvasContext.translate(tabLayout.barExtraWidth, 0)
+      canvasContext.translate(tabLayout.barExtraWidth * bar.timeSignatureRatio, 0)
     } else {
-      canvasContext.translate(tabLayout.initialBarWidth, 0)
+      canvasContext.translate(tabLayout.initialBarWidth * bar.timeSignatureRatio, 0)
     }
   }
-
 }

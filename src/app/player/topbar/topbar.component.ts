@@ -43,6 +43,5 @@ export class TopbarComponent implements OnInit {
 
   updateTempo() {
     this.appStatusOutput.emit(this.appStatus)
-    console.log(this.appStatus.tempoMultiplier)
   }
 }
