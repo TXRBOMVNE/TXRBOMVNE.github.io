@@ -110,7 +110,9 @@ export class TabComponent implements AfterViewInit {
 
   // Draws segments
   private drawSegment(segment: Segment, canvasContext: CanvasRenderingContext2D) {
-    if (segment.notes && segment.notes.length > 0) {
+    if (segment.isRest) {
+      this.drawRest(segment, canvasContext)
+    } else if (segment.notes && segment.notes.length > 0) {
       for (let note of segment.notes) {
         let { fontBoundingBoxDescent, fontBoundingBoxAscent, actualBoundingBoxRight } = canvasContext.measureText(note.fretValue.toString())
         // Draws text background according to tab background color
@@ -120,8 +122,6 @@ export class TabComponent implements AfterViewInit {
         canvasContext.fillStyle = "white"
         canvasContext.fillText(note.fretValue.toString(), 0, 42 * note.string)
       }
-    } else {
-
     }
     canvasContext.translate(segment.separationSpace, 0)
   }
@@ -152,5 +152,57 @@ export class TabComponent implements AfterViewInit {
     } else {
       canvasContext.translate(tabLayout.initialBarWidth * bar.timeSignatureRatio, 0)
     }
+  }
+
+  private drawRest(segment: Segment, canvasContext: CanvasRenderingContext2D) {
+    if (!segment.effects || !segment.effects?.isDotted)
+      switch (segment.initialDurationInverse) {
+        case 1:
+          canvasContext.fill(rests[1])
+          break;
+        case 2:
+          canvasContext.fill(rests[2])
+          break;
+        case 4:
+          canvasContext.fill(rests[4])
+          break;
+        case 8:
+          canvasContext.fill(rests[8])
+          break;
+        case 16:
+          canvasContext.fill(rests[16])
+          break;
+        case 32:
+          canvasContext.fill(rests[32])
+          break;
+        case 64:
+          canvasContext.fill(rests[64])
+          break;
+      } else if (segment.effects.isDotted) {
+        switch (segment.initialDurationInverse) {
+          case 1:
+            canvasContext.fill(rests.dotted_1)
+            break;
+          case 2:
+            canvasContext.fill(rests.dotted_2)
+            break;
+          case 4:
+            canvasContext.fill(rests.dotted_4)
+            break;
+          case 8:
+            canvasContext.fill(rests.dotted_8)
+            break;
+          case 16:
+            canvasContext.fill(rests.dotted_16)
+            break;
+          case 32:
+            canvasContext.fill(rests.dotted_32)
+            break;
+          case 64:
+            canvasContext.fill(rests.dotted_64)
+            break;
+        }
+      }
+
   }
 }

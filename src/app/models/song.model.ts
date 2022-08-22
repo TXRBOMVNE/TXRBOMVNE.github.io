@@ -27,7 +27,7 @@ export class Bar {
 export class Segment {
   constructor(
     public isRest: boolean,
-    private initialDurationInverse: number,
+    public initialDurationInverse: number,
     public effects?: {
       isDotted: boolean
     },
@@ -66,8 +66,7 @@ export let exampleSong: Tab = {
   bars: [
     new Bar(110, { numerator: 4, denominator: 4 },
       [
-        new Segment(false, 2, undefined, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 2, undefined, [{ fretValue: 0, string: 5 }]),
+        new Segment(true, 1, undefined, [{ fretValue: 0, string: 5 }]),
       ]),
     new Bar(110, { numerator: 4, denominator: 4 },
       [
