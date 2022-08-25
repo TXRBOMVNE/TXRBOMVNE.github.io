@@ -1,13 +1,12 @@
-import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { AppStatus } from '../player.component';
 
 @Component({
-  selector: 'app-topbar',
-  templateUrl: './topbar.component.html',
-  styleUrls: ['./topbar.component.css'],
+  selector: 'app-edit-topbar',
+  templateUrl: './edit-topbar.component.html',
+  styleUrls: ['./edit-topbar.component.css']
 })
-export class TopbarComponent implements OnInit {
+export class EditTopbarComponent implements OnInit {
 
   constructor() { }
 
@@ -21,9 +20,12 @@ export class TopbarComponent implements OnInit {
     tempoMultiplier: 100
   }
 
+  showSlideMenu: boolean = false
+
   ngOnInit(): void {
     this.appStatusOutput.emit(this.appStatus)
   }
+
 
   openMenu() {
     this.appStatus.isMenuActive = true

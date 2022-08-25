@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 export interface AppStatus {
+  isPlaying: boolean
   isMenuActive: boolean,
   isMetronomeActive: boolean,
   isCountdownActive: boolean,
@@ -16,9 +17,12 @@ export class PlayerComponent implements OnInit {
 
   constructor() { }
 
+  editMode: boolean = true
+
   ngOnInit(): void { }
 
   appStatus: AppStatus = {
+    isPlaying: false,
     isMenuActive: false,
     isCountdownActive: false,
     isMetronomeActive: false,

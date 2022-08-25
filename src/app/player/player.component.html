@@ -2,7 +2,8 @@
 <div id="main-container">
   <div id="main" class="d-flex flex-column position-relative">
     <div>
-      <app-topbar (appStatusOutput)="updateAppStatus($event)"></app-topbar>
+      <app-topbar (appStatusOutput)="updateAppStatus($event)" *ngIf="!editMode"></app-topbar>
+      <app-edit-topbar (appStatusOutput)="updateAppStatus($event)" *ngIf="editMode"></app-edit-topbar>
     </div>
     <div id="tab-background" class="d-flex m-0 p-0 flex-column justify-content-between flex-grow-1">
       <div class="d-flex flex-column justify-content-evenly">
@@ -56,8 +57,8 @@
             </svg>
           </div>
         </div>
-        <div class="d-flex justify-content-between align-items-center p-4">
-          <div id="info-container" tabindex="0" class="d-inline-block position-relative">
+        <div *ngIf="!editMode" class="d-flex justify-content-between align-items-center p-4">
+          <div id="info-container" tabindex="0" class="d-inline-block position-relative flex-shrink-0">
             <svg height="23" viewBox="0 0 488.9 488.9" xml:space="preserve">
               <path fill="white"
                 d="M239.15,0c31.9,0,57.7,25.8,57.7,57.7s-25.8,57.7-57.7,57.7s-57.7-25.8-57.7-57.7S207.25,0,239.15,0z M291.65,151.6h-1.5
@@ -72,9 +73,34 @@
               </ul>
             </div>
           </div>
-          <div class="float-end">
-            <button id="comment-btn" class="px-3 py-1">COMMENTS</button>
-            <button id="rate-btn" class="px-3 py-1 ms-2 ms-sm-4">RATE THIS TAB</button>
+          <div id="end-btns" class="float-end">
+            <div class="d-none d-md-flex justify-content-between">
+              <div id="edit-btn" (click)="editMode = true" *ngIf="!editMode"
+                class="px-2 rounded d-flex justify-content-center align-items-center">
+                <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M27.5 5.00001L32 0.500009C32.5 0.166675 33.8 -0.299991 35 0.500009C36.2 1.30001 38.5 3.83334 39.5 5.00001C39.8333 5.50001 40.3 6.8 39.5 8L35 12.5L27.5 5.00001ZM0 40L3.5 29L25 7.5L32.5 15L11.5 36L0 40Z"
+                    fill="#D6D6D6" />
+                </svg>
+              </div>
+              <button id="comment-btn" class="px-3 py-1">COMMENTS</button>
+              <button id="rate-btn" class="px-3 py-1">RATE THIS TAB</button>
+            </div>
+          </div>
+          <div id="mobile-end-btns" class="d-flex justify-content-evenly d-md-none float-end">
+            <div id="comment-icon" class="p-2 rounded">
+              <svg width="31" height="30" viewBox="0 0 31 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M1.00003 4V17C0.600029 20.2 3.1667 21.3333 4.50003 21.5H7.50003V30L16 21.5H27C29.4 21.5 30.6667 19.0042 31 17.7562V4C30.6 1.2 27.8334 0.166667 26.5 0H5.00003C2.20003 0.8 1.1667 3 1.00003 4Z"
+                  fill="#707070" />
+              </svg>
+            </div>
+            <div id="rate-icon" class="p-2 rounded">
+              <svg width="37" height="35" viewBox="0 0 37 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 14.5H3.5L13 21.5L9.5 32L18.5 25.5L27.5 32L24.5 21.5L33.5 14.5H22L18.5 4L15 14.5Z"
+                  stroke="#BF9C6E" stroke-width="2" />
+              </svg>
+            </div>
           </div>
         </div>
       </div>

@@ -5,13 +5,15 @@ import { PlayerComponent } from "./player.component";
 import { SidebarComponent } from "./sidebar/sidebar.component";
 import { TopbarComponent } from "./topbar/topbar.component";
 import { TabComponent } from './tab/tab.component';
+import { EditTopbarComponent } from './edit-topbar/edit-topbar.component';
 
 @NgModule({
   declarations: [
     PlayerComponent,
     SidebarComponent,
     TopbarComponent,
-    TabComponent
+    TabComponent,
+    EditTopbarComponent
   ],
   imports: [
     CommonModule,

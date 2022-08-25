@@ -1,3 +1,9 @@
 <div id="canvas-container" class="py-2">
-  <canvas height="320" #canvas></canvas>
+  <div id="tab" [ngStyle]="{'height':tabLayout.canvasHeight}">
+    <div class="border" *ngFor="let bar of song.bars" [ngStyle]="{'height':staffHeight}">
+
+    </div>
+  </div>
+
+  <canvas class="d-none" #canvas></canvas>
 </div>

@@ -63,51 +63,6 @@ h2 {
   font-family: "Barlow Condensed", sans-serif;
 }
 
-#info-container {
-  background-color: #333533;
-  border-radius: 50%;
-  width: 44px;
-  height: 44px;
-  text-align: center;
-  cursor: pointer;
-}
-
-#song-info {
-  cursor: initial;
-  text-align: start;
-  width: max-content;
-  position: absolute;
-  bottom: 0;
-  left: 60px;
-  background-color: rgba(8, 8, 8, 0.5);
-  backdrop-filter: blur(2px);
-  color: white;
-  transform: translateX(-400px);
-  opacity: 0;
-  transition: transform 300ms ease-in-out, opacity 150ms ease-in-out;
-}
-
-#info-container:focus #song-info {
-  transform: translateX(0);
-  opacity: 1;
-}
-
-#song-info ul {
-  font-family: "Barlow Condensed", sans-serif;
-  color: #808080;
-}
-
-
-#comment-btn {
-  border-color: #D6D6D6;
-  color: #D6D6D6;
-}
-
-#rate-btn {
-  border-color: #BF9C6E;
-  color: #BF9C6E;
-}
-
 #tools p {
   font-family: "Barlow Condensed", sans-serif;
   font-weight: 500;
@@ -145,4 +100,84 @@ h2 {
 
 #tempo-input-container>* {
   vertical-align: middle;
+}
+
+#end-btns {
+  min-width: 400px;
+}
+
+@media (max-width:767px) {
+  #end-btns {
+    min-width: 0;
+  }
+}
+
+#end-btns button {
+  min-width: 150px;
+}
+
+#info-container {
+  background-color: #333533;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  text-align: center;
+  cursor: pointer;
+}
+
+#song-info {
+  cursor: initial;
+  text-align: start;
+  width: max-content;
+  position: absolute;
+  bottom: 0;
+  left: 60px;
+  background-color: rgba(8, 8, 8, 0.5);
+  backdrop-filter: blur(2px);
+  color: white;
+  transform: translateX(-400px);
+  opacity: 0;
+  transition: transform 300ms ease-in-out, opacity 150ms ease-in-out;
+}
+
+#info-container:focus #song-info {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+#song-info ul {
+  font-family: "Barlow Condensed", sans-serif;
+  color: #808080;
+}
+
+#edit-btn {
+  transition: background-color 100ms;
+}
+
+#edit-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+}
+
+#edit-btn:active {
+  background-color: rgba(255, 255, 255, 0.2);
+  transition: background-color 20ms;
+}
+
+#comment-btn {
+  border-color: #D6D6D6;
+  color: #D6D6D6;
+}
+
+#rate-btn {
+  border-color: #BF9C6E;
+  color: #BF9C6E;
+}
+
+#mobile-end-btns {
+  width: 150px;
+}
+
+#mobile-end-btns>*:hover {
+  background-color: #343533;
 }

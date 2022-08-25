@@ -1,0 +1,146 @@
+<div id="container" class="row m-0 px-md-2 px-lg-4 flex-nowrap justify-content-center justify-content-md-between">
+  <div class="row justify-content-evenly justify-content-md-start p-0 m-0 col-auto flex-grow-1 flex-nowrap">
+    <div class="row m-0 p-0 col col-sm-auto flex-shrink-1 flex-nowrap overflow-hidden">
+      <div class="col-sm-auto col-2 p-0 text-center my-auto">
+        <label for="duration" class="rounded-1 p-2 h-100 d-flex align-items-center9">
+          <img class="img-fluid" src="../../../assets/images/master-of-puppets.jpg" alt="">
+        </label>
+      </div>
+      <div class="col-10 col-sm-auto p-0 my-auto">
+        <h3 id="song-title" class="m-0 ms-2 fw-bold">Master Of Puppetssssssssss</h3>
+        <h4 id="artists" class="m-0 ms-2 fw-light">Metallica</h4>
+      </div>
+    </div>
+    <div id="play-pause" class="p-0 col-auto text-white position-relative">
+      <div id="fill-div"></div>
+      <div id="pause" (click)="appStatus!.isPlaying=false" *ngIf="appStatus!.isPlaying">
+        <svg fill="currentColor" class="bi bi-pause-circle-fill" viewBox="0 0 16 16">
+          <path
+            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM6.25 5C5.56 5 5 5.56 5 6.25v3.5a1.25 1.25 0 1 0 2.5 0v-3.5C7.5 5.56 6.94 5 6.25 5zm3.5 0c-.69 0-1.25.56-1.25 1.25v3.5a1.25 1.25 0 1 0 2.5 0v-3.5C11 5.56 10.44 5 9.75 5z" />
+        </svg>
+      </div>
+      <div id="play" (click)="appStatus!.isPlaying=true" *ngIf="!appStatus!.isPlaying">
+        <svg fill="currentColor" class="bi bi-play-circle-fill" viewBox="0 0 16 16">
+          <path
+            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814l-3.5-2.5z" />
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div id="tools" class="row m-0 d-none d-md-flex col p-0 flex-grow-1 flex-lg-grow-0 flex-row-reverse flex-nowrap">
+    <div id="notation-group" class="col p-0">
+      <form class="d-flex justify-content-evenly h-100">
+        <div id="note-duration-input-group" class="col px-0 py-2 m-0 d-flex justify-content-end flex-wrap">
+          <div class="mx-xl-2 mx-0 position-relative rounded d-flex align-items-center">
+            <input type="radio" name="duration" value="1">
+            <label for="duration" class="rounded-1 p-2 px-1 h-100 d-flex align-items-center">
+              <img src="../../../assets/svgs/notes/1st_note.svg" alt="Whole note">
+            </label>
+          </div>
+          <div class="mx-xl-2 mx-1 position-relative rounded">
+            <input type="radio" name="duration" value="2">
+            <label for="duration" class="rounded-1 p-2 h-100 d-flex align-items-center9">
+              <img height="35px" src="../../../assets/svgs/notes/2nd_note.svg" alt="Half note">
+            </label>
+          </div>
+          <div class="mx-xl-2 mx-1 position-relative rounded">
+            <input type="radio" name="duration" value="4" checked>
+            <label for="duration" class="rounded-1 p-2 h-100 d-flex align-items-center9">
+              <img height="35px" src="../../../assets/svgs/notes/4th_note.svg" alt="Quarter note">
+            </label>
+          </div>
+          <div class="mx-xl-2 mx-1 position-relative rounded">
+            <input type="radio" name="duration" value="8">
+            <label for="duration" class="rounded-1 p-2 h-100 d-flex align-items-center9">
+              <img height="35px" src="../../../assets/svgs/notes/8th_note.svg" alt="Eighth note">
+            </label>
+          </div>
+          <div class="mx-xl-2 mx-1 position-relative rounded">
+            <input type="radio" name="duration" value="16">
+            <label for="duration" class="rounded-1 p-2 h-100 d-flex align-items-center9">
+              <img height="35px" src="../../../assets/svgs/notes/16th_note.svg" alt="Sixteenth note">
+            </label>
+          </div>
+          <div class="mx-xl-2 mx-1 position-relative rounded">
+            <input type="radio" name="duration" value="32">
+            <label for="duration" class="rounded-1 p-2 h-100 d-flex align-items-center9">
+              <img height="35px" src="../../../assets/svgs/notes/32nd_note.svg" alt="Thirty-second note">
+            </label>
+          </div>
+          <div class="mx-xl-2 mx-1 position-relative rounded">
+            <input type="radio" name="duration" value="64">
+            <label for="duration" class="rounded-1 p-2 h-100 d-flex align-items-center9">
+              <img height="35px" src="../../../assets/svgs/notes/64th_note.svg" alt="Whole note">
+            </label>
+          </div>
+        </div>
+        <div class="p-0 mx-2 my-2" style="height: 95%;width:1px;background-color:#333533"></div>
+        <div id="note-effects" class="col-5 d-flex justify-content-end flex-wrap">
+          <div class="mx-xl-2 mx-0 py-5 position-relative rounded d-flex align-items-center">
+            <input type="checkbox" name="effects" value="1">
+            <label for="effects" class="rounded-1 p-2 px-1 h-100 d-flex align-items-center9">
+              <img src="../../../assets/svgs/effects/dot.svg" alt="Whole note">
+            </label>
+          </div>
+          <div id="slide-menu-btn" class="btn-group py-5">
+            <button class="btn">Slide</button>
+            <button class="btn fw-normal position-relative">
+              <div style="height: 19px;width: 9px;"></div><span
+                style="position: absolute; top: 50%;left: 50%;transform: translate(-50%,-75%);">&#8964;</span>
+            </button>
+          </div>
+          <div id="slide-menu" class="d-flex justify-content-end flex-wrap" *ngIf="showSlideMenu">
+            <div class="mx-0 position-relative rounded d-flex align-items-center">
+              <input type="radio" name="slide-to-note-mode" value="1">
+              <label for="slide-to-note-mode" class="rounded-1 px-2 py-1 h-100 d-flex align-items-center9">
+                <img class="slide-figure" src="../../../assets/svgs/effects/slide&tie.svg" alt="Whole note">
+              </label>
+            </div>
+            <div class="mx-0 position-relative rounded d-flex align-items-center">
+              <input type="radio" name="slide-to-note-mode" value="1">
+              <label for="slide-to-note-mode" class="rounded-1 px-2 py-1 h-100 d-flex align-items-center9">
+                <img class="slide-figure" src="../../../assets/svgs/effects/slide-to-note.svg" alt="Whole note">
+              </label>
+            </div>
+            <div class="mx-0 position-relative rounded d-flex align-items-center">
+              <input type="radio" name="slide-to-mode" value="1">
+              <label for="slide-to-mode" class="rounded-1 px-2 py-1 h-100 d-flex align-items-center9">
+                <img class="slide-figure" src="../../../assets/svgs/effects/slide-up-to.svg" alt="Whole note">
+              </label>
+            </div>
+            <div class="mx-0 position-relative rounded d-flex align-items-center">9
+              <input type="radio" name="slide-to-mode" value="1">
+              <label for="slide-to-mode" class="rounded-1 px-2 h-100 d-flex align-items-center">
+                <img class="slide-figure" src="../../../assets/svgs/effects/slide-down-to.svg" alt="Whole note">
+              </label>
+            </div>
+            <div class="mx-0 position-relative rounded d-flex align-items-center">9
+              <input type="radio" name="slide-from-mode" value="1">
+              <label for="slide-from-mode" class="rounded-1 px-2 py-1 h-100 d-flex align-items-center">
+                <img class="slide-figure" src="../../../assets/svgs/effects/slide-up-from.svg" alt="Whole note">
+              </label>
+            </div>
+            <div class="mx-0 position-relative rounded d-flex align-items-center">9
+              <input type="radio" name="slide-from-mode" value="1">
+              <label for="slide-from-mode" class="rounded-1 px-2 py-1 h-100 d-flex align-items-center">
+                <img class="slide-figure" src="../../../assets/svgs/effects/slide-down-from.svg" alt="Whole note">
+              </label>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="p-0 mx-2 my-2" style="height: 95%;width:1px;background-color:#333533"></div>
+    <div id="tempo-container" tabindex="0"
+      class="col my-auto mx-0 py-3 px-lg-4 px-md-2 text-center rounded-1 position-relative">
+      <div id="fill-div2"></div>
+      <p id="tempo" class="fs-4 m-0" style="color: #BF9C6E;">{{appStatus!.tempoMultiplier}}%</p>
+      <div id="tempo-input-container" class="p-3 my-auto rounded">
+        <input class="mx-2" [(ngModel)]="appStatus!.tempoMultiplier" (input)="updateTempo()" type="range" step="5"
+          [defaultValue]="appStatus!.tempoMultiplier" min="50" max="200">
+        <p class="d-inline-block float-start text-white fw-light">50%</p>
+        <p class="d-inline-block float-end text-white fw-light">200% </p>
+      </div>
+    </div>
+  </div>
+</div>

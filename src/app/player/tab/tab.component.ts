@@ -8,6 +8,7 @@ export const tabLayout = {
   initialBarWidth: 480,
   initialBarInnerWidth: 432,
   barExtraWidth: 528,
+  canvasHeight: 340,
 }
 
 @Component({
@@ -20,7 +21,10 @@ export class TabComponent implements AfterViewInit {
 
   constructor() { }
 
+  tabLayout = tabLayout
+
   song = exampleSong
+  staffHeight = 42 * (this.song.instrument.strings - 1)
 
   ngAfterViewInit(): void {
     const canvas = this.canvas!.nativeElement
@@ -40,7 +44,11 @@ export class TabComponent implements AfterViewInit {
     }
 
     canvas.width = canvasWidth()
-    ctx.translate(0, 50)
+    canvas.height = tabLayout.canvasHeight
+
+    // Centers staff based on its height
+    ctx.translate(0, (tabLayout.canvasHeight - this.staffHeight) / 2)
+    // General styles
     ctx.strokeStyle = "#707070"
     ctx.lineWidth = 1
     ctx.font = "500 22pt Barlow Condensed"
@@ -83,14 +91,14 @@ export class TabComponent implements AfterViewInit {
     canvasContext.font = "600 15px Barlow"
     canvasContext.fillStyle = "#404040"
     canvasContext.fillText((index + 1).toString(), 2, -10)
+    // Add width if it's showing the first bar or if the bar has a different time signature than the previous one
+    this.drawStrings(canvasContext, bar, index)
     if (index === 0 || JSON.stringify(bar.timeSignature) !== JSON.stringify(this.song.bars[index - 1].timeSignature)) {
-      canvasContext.strokeRect(0, 0, tabLayout.barExtraWidth * bar.timeSignatureRatio, canvas.height - 110)
-      this.drawStrings(canvasContext, bar, index)
+      canvasContext.strokeRect(0, 0, tabLayout.barExtraWidth * bar.timeSignatureRatio, this.staffHeight)
       this.drawTimeSignature(canvasContext, bar)
       canvasContext.translate(tabLayout.barExtraWidth * bar.timeSignatureRatio, 0)
     } else {
-      canvasContext.strokeRect(0, 0, tabLayout.initialBarWidth * bar.timeSignatureRatio, canvas.height - 110)
-      this.drawStrings(canvasContext, bar, index)
+      canvasContext.strokeRect(0, 0, tabLayout.initialBarWidth * bar.timeSignatureRatio, this.staffHeight)
       canvasContext.translate(tabLayout.initialBarWidth * bar.timeSignatureRatio, 0)
     }
   }
