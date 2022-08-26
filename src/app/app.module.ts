@@ -7,7 +7,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
 import { AuthComponent } from './auth/auth.component';
 import { PlayerModule } from './player/player.module';
-import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [

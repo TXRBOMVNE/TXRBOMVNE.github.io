@@ -8,3 +8,55 @@
 #canvas-container::-webkit-scrollbar {
   display: none;
 }
+
+.bar {
+  border-inline: #707070 1px solid;
+  position: relative;
+}
+
+#instrument-strings-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+}
+
+.instrument-string {
+  height: 2px;
+  width: 100%;
+  background-color: #707070;
+  margin-bottom: 39.7px;
+}
+
+.segment {
+  position: relative;
+  height: 100%;
+}
+
+span:not(#time-signature) {
+  background-color: #202020;
+  font: 500 22pt "Barlow Condensed";
+  line-height: 22px;
+  padding-inline: 2.5px;
+  vertical-align: middle;
+  text-align: center;
+  position: absolute;
+  z-index: 10;
+}
+
+#time-signature-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  max-width: 100%;
+}
+
+
+#time-signature-container p {
+  font: 500 60px "Barlow Condensed";
+  margin: 0;
+  line-height: 60px;
+}

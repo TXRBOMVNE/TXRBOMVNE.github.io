@@ -1,6 +1,5 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Bar, exampleSong, Segment } from 'src/app/models/song.model';
-import { rests } from 'src/assets/svgs'
 
 export const tabLayout = {
   leftBarPadding: 48,
@@ -16,201 +15,99 @@ export const tabLayout = {
   templateUrl: './tab.component.html',
   styleUrls: ['./tab.component.css']
 })
-export class TabComponent implements AfterViewInit {
-  @ViewChild("canvas", { static: false }) canvas: ElementRef<HTMLCanvasElement> | undefined
-
+export class TabComponent implements OnInit {
   constructor() { }
 
   tabLayout = tabLayout
-
   song = exampleSong
   staffHeight = 42 * (this.song.instrument.strings - 1)
 
-  ngAfterViewInit(): void {
-    const canvas = this.canvas!.nativeElement
-    const ctx: CanvasRenderingContext2D = canvas?.getContext("2d")!
+  ngOnInit(): void { }
 
-    // Sets the value for the canvas context container according to each bar time signatures ratio
-    const canvasWidth = (): number => {
-      let width = 480
-      this.song.bars.forEach((bar, index) => {
-        if (index === 0 || JSON.stringify(bar.timeSignature) !== JSON.stringify(this.song.bars[index - 1].timeSignature)) {
-          width += 528 * bar.timeSignatureRatio
-        } else {
-          width += 480 * bar.timeSignatureRatio
-        }
-      })
-      return width
+  styleBar(bar: Bar, index: number) {
+    let style
+    if (!bar.valid) {
+      style = { 'border': 'red 1px solid' }
+      return style
     }
-
-    canvas.width = canvasWidth()
-    canvas.height = tabLayout.canvasHeight
-
-    // Centers staff based on its height
-    ctx.translate(0, (tabLayout.canvasHeight - this.staffHeight) / 2)
-    // General styles
-    ctx.strokeStyle = "#707070"
-    ctx.lineWidth = 1
-    ctx.font = "500 22pt Barlow Condensed"
-    ctx.textAlign = "start"
-    ctx.textBaseline = "middle"
-    ctx.fillStyle = "#D6D6D6"
-
-    ctx.save()
-
-    // Iterates over bars array to draw tab
-    this.song.bars.forEach((bar, i) => {
-      // Draws staff bar
-      this.drawBar(ctx, canvas, bar, i)
-      // Restore to staff upper left corner
-      ctx.restore()
-      ctx.globalCompositeOperation = "source-over"
-      ctx.save()
-      // Add left padding
-      this.spaceLeft(ctx, bar, i)
-      // Iterating over segments to draw notes
-      for (let segment of bar.segments) {
-        this.drawSegment(segment, ctx)
+    if (this.hasTimeSignatureChanged(bar, index)) {
+      style = {
+        'width.px': tabLayout.barExtraWidth * bar.timeSignatureRatio,
+        'height.px': this.staffHeight
       }
-      // Restore to staff upper left corner
-      ctx.restore()
-      ctx.globalCompositeOperation = "destination-over"
-      // Remapping to next bar
-      this.translateToNextBar(ctx, bar, i)
-      ctx.save()
-    })
-
-    ctx.restore()
-    ctx.save()
-
-    ctx.fillRect(0, 0, 10, 10)
-  }
-
-  // Draws bar frame and its strings
-  private drawBar(canvasContext: CanvasRenderingContext2D, canvas: HTMLCanvasElement, bar: Bar, index: number) {
-    canvasContext.font = "600 15px Barlow"
-    canvasContext.fillStyle = "#404040"
-    canvasContext.fillText((index + 1).toString(), 2, -10)
-    // Add width if it's showing the first bar or if the bar has a different time signature than the previous one
-    this.drawStrings(canvasContext, bar, index)
-    if (index === 0 || JSON.stringify(bar.timeSignature) !== JSON.stringify(this.song.bars[index - 1].timeSignature)) {
-      canvasContext.strokeRect(0, 0, tabLayout.barExtraWidth * bar.timeSignatureRatio, this.staffHeight)
-      this.drawTimeSignature(canvasContext, bar)
-      canvasContext.translate(tabLayout.barExtraWidth * bar.timeSignatureRatio, 0)
-    } else {
-      canvasContext.strokeRect(0, 0, tabLayout.initialBarWidth * bar.timeSignatureRatio, this.staffHeight)
-      canvasContext.translate(tabLayout.initialBarWidth * bar.timeSignatureRatio, 0)
+      return style
     }
+    style = { 'width.px': tabLayout.initialBarWidth * bar.timeSignatureRatio, 'height.px': this.staffHeight }
+    return style
   }
 
-  // Draws instrument strings
-  private drawStrings(canvasContext: CanvasRenderingContext2D, bar: Bar, index: number) {
-    for (let i = 1; i <= this.song.instrument.strings - 2; i++) {
-      canvasContext.moveTo(0, 42 * i)
-      if (index === 0 || JSON.stringify(bar.timeSignature) !== JSON.stringify(this.song.bars[index - 1].timeSignature)) {
-        canvasContext.lineTo(tabLayout.barExtraWidth * bar.timeSignatureRatio, 42 * i)
-      } else {
-        canvasContext.lineTo(tabLayout.initialBarWidth * bar.timeSignatureRatio, 42 * i)
+  styleTimeSignature(bar: Bar, index: number) {
+    let style
+    if (this.hasTimeSignatureChanged(bar, index)) {
+      style = {
+        'width.px': tabLayout.leftBarExtraPadding
       }
+      return style
     }
-    canvasContext.stroke()
+    style = { 'width.px': tabLayout.leftBarPadding }
+    return style
   }
 
-  // Draws segments
-  private drawSegment(segment: Segment, canvasContext: CanvasRenderingContext2D) {
-    if (segment.isRest) {
-      this.drawRest(segment, canvasContext)
-    } else if (segment.notes && segment.notes.length > 0) {
-      for (let note of segment.notes) {
-        let { fontBoundingBoxDescent, fontBoundingBoxAscent, actualBoundingBoxRight } = canvasContext.measureText(note.fretValue.toString())
-        // Draws text background according to tab background color
-        canvasContext.fillStyle = "#202020"
-        canvasContext.fillRect(-2, 42 * note.string - 15, actualBoundingBoxRight + 4, fontBoundingBoxAscent + fontBoundingBoxDescent)
-        // Draws note
-        canvasContext.fillStyle = "white"
-        canvasContext.fillText(note.fretValue.toString(), 0, 42 * note.string)
-      }
-    }
-    canvasContext.translate(segment.separationSpace, 0)
+  styleSegment(segment: Segment) {
+    let style
+    style = { 'width.px': segment.separationSpace }
+    return style
   }
 
-  // Draws time signature at the beginning of the indicated bar
-  private drawTimeSignature(canvasContext: CanvasRenderingContext2D, bar: Bar) {
-    canvasContext.globalCompositeOperation = "source-over"
-    canvasContext.font = "500 60px Barlow Condensed"
-    canvasContext.fillStyle = "#fff"
-    canvasContext.textAlign = "center"
-    canvasContext.fillText(bar.timeSignature.numerator.toString(), tabLayout.leftBarExtraPadding / 2 * bar.timeSignatureRatio, 105 - 30)
-    canvasContext.fillText(bar.timeSignature.denominator.toString(), tabLayout.leftBarExtraPadding / 2 * bar.timeSignatureRatio, 105 + 30)
-  }
-
-  // Adds left padding to the indicated bar
-  private spaceLeft(canvasContext: CanvasRenderingContext2D, bar: Bar, index: number) {
+  hasTimeSignatureChanged(bar: Bar, index: number) {
     if (index === 0 || JSON.stringify(bar.timeSignature) !== JSON.stringify(this.song.bars[index - 1].timeSignature)) {
-      canvasContext.translate(tabLayout.leftBarExtraPadding * bar.timeSignatureRatio, 0)
-    } else {
-      canvasContext.translate(tabLayout.leftBarPadding * bar.timeSignatureRatio, 0)
+      return true
     }
+    return false
   }
 
-  // Remaps (0,0) to the next bar
-  private translateToNextBar(canvasContext: CanvasRenderingContext2D, bar: Bar, index: number) {
-    if (index === 0 || JSON.stringify(bar.timeSignature) !== JSON.stringify(this.song.bars[index - 1].timeSignature)) {
-      canvasContext.translate(tabLayout.barExtraWidth * bar.timeSignatureRatio, 0)
-    } else {
-      canvasContext.translate(tabLayout.initialBarWidth * bar.timeSignatureRatio, 0)
-    }
-  }
-
-  private drawRest(segment: Segment, canvasContext: CanvasRenderingContext2D) {
-    if (!segment.effects || !segment.effects?.isDotted)
+  assignRestImg(segment: Segment) {
+    let restsFolder = "../../../assets/svgs/rests/"
+    if (!segment.effects || !segment.effects?.isDotted) {
       switch (segment.initialDurationInverse) {
         case 1:
-          canvasContext.fill(rests[1])
-          break;
+          return restsFolder + "1st_rest.svg"
         case 2:
-          canvasContext.fill(rests[2])
-          break;
+          return restsFolder + "2nd_rest.svg"
         case 4:
-          canvasContext.fill(rests[4])
-          break;
+          return restsFolder + "4th_rest.svg"
         case 8:
-          canvasContext.fill(rests[8])
-          break;
+          return restsFolder + "8th_rest.svg"
         case 16:
-          canvasContext.fill(rests[16])
-          break;
+          return restsFolder + "16th_rest.svg"
         case 32:
-          canvasContext.fill(rests[32])
-          break;
+          return restsFolder + "32nd_rest.svg"
         case 64:
-          canvasContext.fill(rests[64])
-          break;
-      } else if (segment.effects.isDotted) {
-        switch (segment.initialDurationInverse) {
-          case 1:
-            canvasContext.fill(rests.dotted_1)
-            break;
-          case 2:
-            canvasContext.fill(rests.dotted_2)
-            break;
-          case 4:
-            canvasContext.fill(rests.dotted_4)
-            break;
-          case 8:
-            canvasContext.fill(rests.dotted_8)
-            break;
-          case 16:
-            canvasContext.fill(rests.dotted_16)
-            break;
-          case 32:
-            canvasContext.fill(rests.dotted_32)
-            break;
-          case 64:
-            canvasContext.fill(rests.dotted_64)
-            break;
-        }
+          return restsFolder + "64th_rest.svg"
+        default:
+          return restsFolder + "4th_rest.svg"
       }
-
+    } else if (segment.effects.isDotted) {
+      switch (segment.initialDurationInverse) {
+        case 1:
+          return restsFolder + "dotted_1st_rest.svg"
+        case 2:
+          return restsFolder + "dotted_2nd_rest.svg"
+        case 4:
+          return restsFolder + "dotted_4th_rest.svg"
+        case 8:
+          return restsFolder + "dotted_8th_rest.svg"
+        case 16:
+          return restsFolder + "dotted_16th_rest.svg"
+        case 32:
+          return restsFolder + "dotted_32nd_rest.svg"
+        case 64:
+          return restsFolder + "dotted_64th_rest.svg"
+        default:
+          return restsFolder + "dotted_4th_rest.svg"
+      }
+    } else {
+      return restsFolder + "4th_rest.svg"
+    }
   }
 }

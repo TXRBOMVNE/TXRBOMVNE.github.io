@@ -19,8 +19,24 @@ export class Bar {
     public segments: Segment[],
   ) { }
 
+  // Gets ratio according to bar time signature to adjust bar width and to get how many beats should have the bar
   get timeSignatureRatio(): number {
     return this.timeSignature.numerator / this.timeSignature.denominator
+  }
+
+  // Gets if the bar is valid and completed according to segments duration
+  get valid() {
+    let count = 0
+
+    for (let segment of this.segments) {
+      count += segment.durationInverse ** -1
+    }
+
+    if (count === (this.timeSignatureRatio)) {
+      return true
+    } else {
+      return false
+    }
   }
 }
 
@@ -70,7 +86,7 @@ export let exampleSong: Tab = {
       ]),
     new Bar(110, { numerator: 4, denominator: 4 },
       [
-        new Segment(false, 8, undefined, [{ fretValue: 0, string: 5 }]),
+        new Segment(false, 8, undefined, [{ fretValue: 0, string: 5 }, { fretValue: 0, string: 0 }]),
         new Segment(false, 8, undefined, [{ fretValue: 3, string: 5 }, { fretValue: 5, string: 4 }]),
         new Segment(false, 8, undefined, [{ fretValue: 5, string: 5 }, { fretValue: 7, string: 4 }]),
         new Segment(false, 8, undefined, [{ fretValue: 0, string: 5 }]),
@@ -95,7 +111,7 @@ export let exampleSong: Tab = {
         new Segment(false, 8, undefined, [{ fretValue: 0, string: 5 }]),
         new Segment(false, 8, undefined, [{ fretValue: 3, string: 5 }, { fretValue: 5, string: 4 }]),
         new Segment(false, 8, undefined, [{ fretValue: 5, string: 5 }, { fretValue: 7, string: 4 }]),
-        new Segment(false, 8, undefined, [{ fretValue: 0, string: 5 }]),
+        new Segment(true, 8, undefined),
         new Segment(false, 8, undefined, [{ fretValue: 3, string: 5 }, { fretValue: 5, string: 4 }]),
         new Segment(false, 8, undefined, [{ fretValue: 5, string: 5 }, { fretValue: 7, string: 4 }]),
       ]),

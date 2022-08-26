@@ -136,8 +136,12 @@ img {
   display: inline-block;
 }
 
-#notation-group {
-  min-width: 350px;
+#note-duration-input-group {
+  min-width: 146px;
+}
+
+#note-dot {
+  max-height: 30px;
 }
 
 #slide-menu-btn button {

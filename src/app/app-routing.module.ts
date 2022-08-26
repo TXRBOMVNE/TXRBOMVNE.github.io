@@ -7,7 +7,7 @@ import { PlayerComponent } from "./player/player.component";
 const appRoutes: Routes = [
   { path: "", pathMatch: "full", redirectTo: "auth" },
   { path: "auth", component: AuthComponent },
-  { path: "play", component: PlayerComponent, canActivate: [AuthGuard] }
+  { path: "play", component: PlayerComponent, canActivate: [AuthGuard] },
 ]
 
 @NgModule({
