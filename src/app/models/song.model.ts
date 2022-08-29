@@ -5,7 +5,7 @@ export interface Tab {
   bars: Bar[],
   initialTempo: number,
   initialKey: number,
-  mode: number,
+  mode: boolean,
   tuning?: string
 }
 
@@ -45,14 +45,14 @@ export class Segment {
     public isRest: boolean,
     public initialDurationInverse: number,
     public effects?: {
-      isDotted: boolean
+      isDotted: boolean | null
     },
     public notes?: Note[]
   ) { }
 
   get durationInverse() {
     let actualDurationInverse = this.initialDurationInverse
-    if (this.effects && this.effects?.isDotted) {
+    if (this.effects && this.effects.isDotted) {
       actualDurationInverse = (actualDurationInverse ** -1) + ((actualDurationInverse ** -1) / 2)
       actualDurationInverse = actualDurationInverse ** -1
     }
@@ -68,15 +68,21 @@ export class Segment {
 }
 
 export interface Note {
-  fretValue: number,
+  fretValue?: number,
   string: number
-  effects?: {}
+  effects?: {
+    slides?: {
+      slideToNote: "slideAndTie" | "slideToNote"
+      slideOut: "slideUp" | "slideDown"
+      slideIn: "slideUp" | "slideDown"
+    }
+  }
 }
 
 export let exampleSong: Tab = {
   instrument: { name: "guitar", strings: 6 },
   initialKey: 4,
-  mode: 1,
+  mode: true,
   initialTempo: 110,
   tuning: "Standard",
   bars: [

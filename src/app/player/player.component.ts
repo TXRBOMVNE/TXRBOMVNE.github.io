@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Note, Segment, Bar } from '../models/song.model';
 
 export interface AppStatus {
   isPlaying: boolean
@@ -29,10 +30,16 @@ export class PlayerComponent implements OnInit {
     tempoMultiplier: 100
   }
 
+  barProperties: { segment: Segment, bar: Bar, note?: Note } | undefined
+
   instrument: string | undefined = "guitar"
 
   updateAppStatus(appStatus: AppStatus) {
     this.appStatus = appStatus
+  }
+
+  updateNoteSelection(barProperties: { segment: Segment, bar: Bar, note?: Note }) {
+    this.barProperties = barProperties
   }
 
   toggleMenu(menuStatus: boolean) {

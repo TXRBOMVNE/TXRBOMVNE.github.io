@@ -1,19 +1,22 @@
 <div id="canvas-container" class="d-flex align-items-center" [ngStyle]="{'height.px':tabLayout.canvasHeight}">
-  <div id="tab" class="d-flex text-white">
+  <div id="tab" class="d-flex text-white" #canvasContainer>
     <div class="bar d-flex" *ngFor="let bar of song.bars;let i = index" [ngStyle]="styleBar(bar,i)">
-      <div id="instrument-strings-container">
+      <div class="instrument-strings-container">
         <div class="instrument-string" *ngFor="let string of [].constructor(song.instrument.strings)"></div>
       </div>
-      <div id="time-signature-container" [ngStyle]="styleTimeSignature(bar,i)">
+      <div class="bar-number">
+        <p>{{i + 1}}</p>
+      </div>
+      <div class="time-signature-container" [ngStyle]="styleTimeSignature(bar,i)">
         <div *ngIf="hasTimeSignatureChanged(bar,i)">
           <p>{{bar.timeSignature.numerator}}</p>
           <p>{{bar.timeSignature.denominator}}</p>
         </div>
       </div>
-      <div id="segments-container" class="d-flex h-100">
+      <div class="segments-container d-flex h-100">
         <div class="segment" [ngStyle]="styleSegment(segment)" *ngFor="let segment of bar.segments">
-          <div id="notes-container" class="h-100" *ngIf="!segment.isRest">
-            <span class="music-note" [ngStyle]="{'top.px':((41+.7)*note.string)-11 }"
+          <div class="notes-container h-100" *ngIf="!segment.isRest">
+            <span class="music-note" [ngStyle]="styleNote(note)"
               *ngFor="let note of segment.notes">{{note.fretValue}}</span>
           </div>
           <div *ngIf="segment.isRest">
