@@ -20,7 +20,7 @@
               {{note.fretValue}}
               <hr class="slide-out rounded-pill"
                 *ngIf="note.effects && note.effects.slides && note.effects.slides.slideOut"
-                [ngStyle]="styleSlideOut(note,segment)">
+                [ngStyle]="styleSlideOut(note,segment,bar)">
               <hr class="slide-in rounded-pill"
                 *ngIf="note.effects && note.effects.slides && note.effects.slides.slideIn"
                 [ngStyle]="styleSlideIn(note,segment)">

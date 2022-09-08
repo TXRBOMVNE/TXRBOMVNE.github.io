@@ -64,7 +64,6 @@ export class EditTopbarComponent implements OnInit, OnChanges {
     }
     this.noteProperties.reset()
     let currentValue = changes["barPropertiesInput"].currentValue
-    console.log(currentValue)
     this.noteProperties.patchValue({
       initialDurationInverse: currentValue.segment.initialDurationInverse,
       isRest: !!currentValue.segment.isRest,

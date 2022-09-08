@@ -24,7 +24,7 @@ export class Bar {
     return this.timeSignature.numerator / this.timeSignature.denominator
   }
 
-  // Gets if the bar is valid and completed according to segments duration
+  // Gets the bar validation and completed according to segments duration
   get valid() {
     let count = 0
     for (let segment of this.segments) {

@@ -109,25 +109,29 @@ export class EditTabComponent implements AfterViewInit {
     return src
   }
 
-  styleSlideOut(note: Note, segment: Segment) {
+  styleSlideOut(note: Note, segment: Segment, bar: Bar) {
     if (!note.effects || !note.effects.slides) return {}
     let style
     if (note.effects.slides.slideOut === "slideToNote") {
+      let widthMultiplier: number
+      let extraWidth = 0
+      let extraTranslation = 0
+      if (segment === bar.segments[bar.segments.length - 1]) {
+        extraWidth = 46 / 40
+        extraTranslation = 23
+      }
       if (segment.durationInverse < 4) {
-        style = {
-          "width.px": 40,
-          "transform": `translateX(${segment.separationSpace / 2}px) scaleX(${segment.separationSpace / 40 * .95}) rotate(20deg)`,
-        }
+        widthMultiplier = .95
+      } else if (segment.durationInverse === 4) {
+        widthMultiplier = .9
       } else if (segment.durationInverse > 8) {
-        style = {
-          "width.px": 40,
-          "transform": `translateX(${segment.separationSpace / 2}px) scaleX(${segment.separationSpace / 40 * .5}) rotate(20deg)`,
-        }
+        widthMultiplier = .5
       } else {
-        style = {
-          "width.px": 40,
-          "transform": `translateX(${segment.separationSpace / 2}px) scaleX(${segment.separationSpace / 40 * .7}) rotate(20deg)`,
-        }
+        widthMultiplier = .7
+      }
+      style = {
+        "width.px": 40,
+        "transform": `translateX(${(segment.separationSpace / 2) + extraTranslation}px) scaleX(${(segment.separationSpace / 40 * widthMultiplier) + extraWidth}) rotate(20deg)`,
       }
     } else if (note.effects.slides.slideOut === "slideDown") {
       style = { "width.px": 30, "max-width.px": segment.separationSpace, "transform": "translateX(25px) rotate(20deg)" }
