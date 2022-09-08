@@ -1,5 +1,6 @@
 <div id="container" class="row m-0 px-md-2 px-lg-4 flex-nowrap justify-content-center justify-content-md-between">
-  <div class="row justify-content-evenly justify-content-md-start p-0 m-0 col-auto flex-grow-1 flex-nowrap">
+  <div preventUnfocus
+    class="row justify-content-evenly justify-content-md-start p-0 m-0 col-auto flex-grow-1 flex-nowrap">
     <div class="row m-0 p-0 col col-sm-auto flex-shrink-1 flex-nowrap overflow-hidden">
       <div class="col-sm-auto col-2 p-0 text-center my-auto">
         <span class="rounded-1 p-2 h-100 d-flex align-items-center">
@@ -30,7 +31,14 @@
   <div id="tools" class="row m-0 d-none d-md-flex col p-0 flex-grow-1 flex-lg-grow-0 flex-row-reverse flex-nowrap">
     <div id="notation-group" class="col p-0">
       <form class="d-flex justify-content-evenly col-auto h-100" [formGroup]="noteProperties">
-        <div id="note-duration-input-group" class="px-0 py-2 m-0 d-flex justify-content-end flex-wrap">
+        <div id="time-signature-input-container" class="d-flex flex-column justify-content-center">
+          <input class="form-control-plaintext m-0 border-0 p-0" autocomplete="off" type="number"
+            name="timeSignatureNumerator" min="1" step="1" max="99" formControlName="timeSignatureNumerator">
+          <input class="form-control-plaintext m-0 border-0 p-0" autocomplete="off" type="number"
+            name="timeSignatureDenominator" min="1" step="1" max="99" formControlName="timeSignatureDenominator">
+        </div>
+        <div class="p-0 mx-2 my-2" style="height: 95%;width:1px;background-color:#333533"></div>
+        <div preventUnfocus id="note-duration-input-group" class="px-0 py-2 m-0 d-flex justify-content-end flex-wrap">
           <div class="mx-0 position-relative rounded d-flex align-items-center">
             <input type="radio" name="initialDurationInverse" [value]="1" formControlName="initialDurationInverse">
             <label for="initialDurationInverse" class="rounded-1 p-2 px-1 h-100 d-flex align-items-center">
@@ -75,56 +83,68 @@
           </div>
         </div>
         <div class="p-0 mx-2 my-2" style="height: 95%;width:1px;background-color:#333533"></div>
-        <div id="note-effects" class="col-auto d-flex justify-content-end">
+        <div preventUnfocus id="note-effects" class="col-auto d-flex justify-content-end">
           <div id="note-dot" class="mx-1 my-auto position-relative rounded d-flex align-items-center">
             <input type="checkbox" name="isDotted" formControlName="isDotted">
             <label for="effects" class="rounded-1 p-2 px-1 h-100 d-flex align-items-center">
               <img src="../../../assets/svgs/effects/dot.svg" alt="Note dot">
             </label>
           </div>
-          <div id="slide-menu-btn" class="btn-group py-4">
-            <button class="btn my-3">Slide</button>
-            <button class="btn my-3 fw-normal position-relative">
-              <div style="height: 19px;width: 9px;"></div><span
-                style="position: absolute; top: 50%;left: 50%;transform: translate(-50%,-75%);">&#8964;</span>
-            </button>
-          </div>
-          <div id="slide-menu" class="d-flex justify-content-end flex-wrap" *ngIf="showSlideMenu">
-            <div class="mx-0 position-relative rounded d-flex align-items-center">
-              <input type="radio" name="slideToNoteMode" value="slide-and-tie" formControlName="slideToNoteMode">
-              <label for="slideToNoteMode" class="rounded-1 px-2 py-1 h-100 d-flex align-items-center">
-                <img class="slide-figure" src="../../../assets/svgs/effects/slide&tie.svg" alt="Whole note">
+          <div id="additional-options" class="d-flex flex-column justify-content-evenly">
+            <div id="rest-btn-container" class="position-relative">
+              <input type="checkbox" name="isRest" formControlName="isRest">
+              <label for="isRest" class="rounded-2 d-flex justify-content-center align-items-center">
+                <span class="fw-normal">Rest</span>
               </label>
             </div>
-            <div class="mx-0 position-relative rounded d-flex align-items-center">
-              <input type="radio" name="slideToNoteMode" value="slide-to-note" formControlName="slideToNoteMode">
-              <label for="slideToNoteMode" class="rounded-1 px-2 py-1 h-100 d-flex align-items-center">
-                <img class="slide-figure" src="../../../assets/svgs/effects/slide-to-note.svg" alt="Whole note">
-              </label>
-            </div>
-            <div class="mx-0 position-relative rounded d-flex align-items-center">
-              <input type="radio" name="slideOutMode" value="slide-up-out" formControlName="slideOutMode">
-              <label for="slide-to-mode" class="rounded-1 px-2 py-1 h-100 d-flex align-items-center">
-                <img class="slide-figure" src="../../../assets/svgs/effects/slide-up-to.svg" alt="Whole note">
-              </label>
-            </div>
-            <div class="mx-0 position-relative rounded d-flex align-items-center">9
-              <input type="radio" name="slideOutMode" value="slide-down-out" formControlName="slideOutMode">>
-              <label for="slide-to-mode" class="rounded-1 px-2 h-100 d-flex align-items-center">
-                <img class="slide-figure" src="../../../assets/svgs/effects/slide-down-to.svg" alt="Whole note">
-              </label>
-            </div>
-            <div class="mx-0 position-relative rounded d-flex align-items-center">9
-              <input type="radio" name="slideInMode" value="slide-up-in" formControlName="slideInMode">
-              <label for="slide-in-mode" class="rounded-1 px-2 py-1 h-100 d-flex align-items-center">
-                <img class="slide-figure" src="../../../assets/svgs/effects/slide-up-in.svg" alt="Whole note">
-              </label>
-            </div>
-            <div class="mx-0 position-relative rounded d-flex align-items-center">9
-              <input type="radio" name="slideInMode" value="slide-down-in" formControlName="slideInMode">
-              <label for="slide-in-mode" class="rounded-1 px-2 py-1 h-100 d-flex align-items-center">
-                <img class="slide-figure" src="../../../assets/svgs/effects/slide-down-from.svg" alt="Whole note">
-              </label>
+            <div class="position-relative">
+              <div id="slide-menu-btn" class="btn-group">
+                <button (click)="showSlideMenu = !showSlideMenu" [disabled]="noteProperties.controls['isRest'].value"
+                  class="btn">Slide</button>
+                <button (click)="showSlideMenu = !showSlideMenu" [disabled]="noteProperties.controls['isRest'].value"
+                  class="btn fw-normal position-relative">
+                  <div style="height: 19px;width: 9px;"></div><span
+                    style="position: absolute; top: 50%;left: 50%;transform: translate(-50%,-75%);">&#8964;</span>
+                </button>
+              </div>
+              <div id="slide-menu" @scale class="d-flex justify-content-end flex-wrap rounded p-2"
+                *ngIf="showSlideMenu">
+                <div>
+                  <div class="position-relative rounded d-flex align-items-center">
+                    <input type="radio" uncheck name="slideOutMode" value="slideToNote" formControlName="slideOutMode">
+                    <label for="slideOutMode" class="rounded-1 px-2 h-100 d-flex align-items-center">
+                      <img class="slide-figure" src="../../../assets/svgs/effects/slide-to-note.svg" alt="Whole note">
+                    </label>
+                  </div>
+                  <div class="mt-3 position-relative rounded d-flex align-items-center">
+                    <input type="radio" uncheck name="slideOutMode" value="slideUp" formControlName="slideOutMode">
+                    <label for="slideOutMode" class="rounded-1 px-2 h-100 d-flex align-items-center">
+                      <img class="slide-figure" src="../../../assets/svgs/effects/slide-out-up.svg" alt="Whole note">
+                    </label>
+                  </div>
+                  <div class="mt-3 position-relative rounded d-flex align-items-center">
+                    <input type="radio" uncheck name="slideOutMode" value="slideDown" formControlName="slideOutMode">
+                    <label for="slideOutMode" class="rounded-1 px-2 h-100 d-flex align-items-center">
+                      <img class="slide-figure" src="../../../assets/svgs/effects/slide-out-down.svg" alt="Whole note">
+                    </label>
+                  </div>
+                  <hr class="my-3 text-white-50">
+                </div>
+                <div>
+                  <div class="position-relative rounded d-flex align-items-center">
+                    <input type="radio" uncheck name="slideInMode" value="slideDown" formControlName="slideInMode">
+                    <label for="slideInMode" class="rounded-1 px-2 h-100 d-flex align-items-center">
+                      <img class="slide-figure" src="../../../assets/svgs/effects/slide-in-down.svg" alt="Whole note">
+                    </label>
+                  </div>
+                  <div class="mt-3 position-relative rounded d-flex align-items-center">
+                    <input type="radio" uncheck name="slideInMode" value="slideUp" formControlName="slideInMode">
+                    <label for="slideInMode" class="rounded-1 px-2 h-100 d-flex align-items-center">
+                      <img class="slide-figure" src="../../../assets/svgs/effects/slide-in-up.svg" alt="Whole note">
+                    </label>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

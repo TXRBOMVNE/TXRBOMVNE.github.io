@@ -6,15 +6,11 @@
       <app-edit-topbar (appStatusOutput)="updateAppStatus($event)" [barPropertiesInput]="barProperties"
         *ngIf="editMode"></app-edit-topbar>
     </div>
-    <div id="tab-background" class="d-flex m-0 p-0 flex-column justify-content-between flex-grow-1">
+    <div preventUnfocus id="tab-background" class="d-flex m-0 p-0 flex-column justify-content-between flex-grow-1">
       <div class="d-flex flex-column justify-content-evenly">
         <div id="instrument" class="ps-4 flex-grow-1 m-0 d-flex flex-column justify-content-center">
           <h2 class="m-0 p-0" *ngIf="instrument === 'bass'">BASS</h2>
           <h2 class="m-0 p-0" *ngIf="instrument === 'guitar' || instrument === 'a-guitar'">GUITAR</h2>
-        </div>
-        <div id="tab-player-container" class="p-0">
-          <app-tab *ngIf="!editMode"></app-tab>
-          <app-edit-tab (noteSelectedOutput)="updateNoteSelection($event)" *ngIf="editMode"></app-edit-tab>
         </div>
       </div>
       <div *ngIf="!editMode" id="actions" class="fs-4 p-0 flex-grow-1 d-flex flex-column justify-content-end">
@@ -106,6 +102,10 @@
           </div>
         </div>
       </div>
+    </div>
+    <div id="tab-player-container" class="p-0">
+      <app-tab *ngIf="!editMode"></app-tab>
+      <app-edit-tab (noteSelectedOutput)="updateNoteSelection($event)" *ngIf="editMode"></app-edit-tab>
     </div>
   </div>
 </div>

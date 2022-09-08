@@ -4,6 +4,16 @@
   max-width: 100vw;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 input[type="radio"],
 input[type="checkbox"] {
   position: absolute;
@@ -21,15 +31,23 @@ label {
   transition: background-color 50ms;
 }
 
-input[type="radio"]:checked+label,
-input[type="checkbox"]:checked+label {
+input:checked+label {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
 
 input[type="radio"]:hover+label,
 input[type="checkbox"]:hover+label {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+input:checked:hover+label {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+input:active+label {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  transition: background-color 10ms;
 }
 
 
@@ -60,12 +78,14 @@ img {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  cursor: default;
 }
 
 #artists {
   color: #d6d6d6;
   line-height: 30px;
   white-space: nowrap;
+  cursor: default;
 }
 
 #play,
@@ -136,6 +156,15 @@ img {
   display: inline-block;
 }
 
+#time-signature-input-container input {
+  color: white;
+  text-align: center;
+  font: 500 40px "Barlow Condensed";
+  line-height: 40px;
+  height: 40px;
+  width: 35px;
+}
+
 #note-duration-input-group {
   min-width: 146px;
 }
@@ -144,12 +173,54 @@ img {
   max-height: 30px;
 }
 
-#slide-menu-btn button {
+#additional-options button,
+#additional-options label {
   color: #d6d6d6;
   border: #333533 1px solid;
+  height: 38px;
+  width: 100%;
   font-weight: 700;
+  text-align: center;
+}
+
+#additional-options div:hover>button {
+  background-color: rgba(112, 112, 112, 0.5);
+}
+
+#slide-menu {
+  position: absolute;
+  top: 120%;
+  width: 100px;
+  background-color: #202020;
+  backdrop-filter: blur(2px);
+  z-index: 100;
+  box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.35);
+  transform-origin: top;
+}
+
+button:disabled:hover {
+  cursor: no-drop !important;
+}
+
+#slide-menu div,
+#slide-menu label {
+  width: 100%;
 }
 
 .slide-figure {
-  width: 45px;
+  width: 100%;
+  height: 45px;
+}
+
+.clear-btn {
+  transition: color 20ms !important;
+}
+
+.clear-btn:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.clear-btn:active {
+  color: #a1a1a1 !important;
 }

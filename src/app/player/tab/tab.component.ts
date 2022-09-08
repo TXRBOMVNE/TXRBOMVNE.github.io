@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Bar, exampleSong, Note, Segment } from 'src/app/models/song.model';
-import { TabService } from './tab.service';
+import { Bar, Note, Segment } from 'src/app/models/song.model';
+import { TabService } from '../edit-tab/edit-tab.service';
 
 export const tabLayout = {
   leftBarPadding: 48,
   leftBarExtraPadding: 80,
-  initialBarWidth: 480,
-  initialBarInnerWidth: 432,
-  barExtraWidth: 528,
+  initialBarWidth: 480 + 170,
+  initialBarInnerWidth: 432 + 170,
+  barExtraWidth: 528 + 170,
   canvasHeight: 340,
 }
 
@@ -27,7 +27,7 @@ export class TabComponent implements OnInit {
 
   styleBar(bar: Bar, index: number) {
     let style
-    if (!bar.valid) {
+    if (bar.totalDurationRatio > bar.timeSignatureRatio) {
       style = { 'border': 'red 1px solid' }
       return style
     }

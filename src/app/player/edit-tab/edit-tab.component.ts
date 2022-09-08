@@ -1,24 +1,20 @@
-import { Component, ElementRef, EventEmitter, HostListener, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { Bar, Note, Segment } from 'src/app/models/song.model';
-import { TabService } from '../tab/tab.service';
-
-export const tabLayout = {
-  leftBarPadding: 48,
-  leftBarExtraPadding: 80,
-  initialBarWidth: 480,
-  initialBarInnerWidth: 432,
-  barExtraWidth: 528,
-  canvasHeight: 340,
-}
+import { BarDirective } from '../directives/bar.directive';
+import { SegmentDirective } from '../directives/segment.directive';
+import { tabLayout } from '../tab/tab.component';
+import { TabService } from './edit-tab.service';
 
 @Component({
   selector: 'app-edit-tab',
   templateUrl: './edit-tab.component.html',
   styleUrls: ['./edit-tab.component.css']
 })
-export class EditTabComponent implements OnInit {
-  constructor(private tabService: TabService) { }
+export class EditTabComponent implements AfterViewInit {
+  constructor(private tabService: TabService, private el: ElementRef<Document>) { }
 
+  @ViewChildren(BarDirective) HTMLBars?: QueryList<any>
+  @ViewChildren(SegmentDirective) HTMLSegments?: QueryList<any>
   @Output() noteSelectedOutput = new EventEmitter<{ segment: Segment, bar: Bar, note?: Note }>()
 
   tabLayout = tabLayout
@@ -26,7 +22,20 @@ export class EditTabComponent implements OnInit {
   staffHeight = 42 * (this.song.instrument.strings - 1)
   selectedNote?: { segment: Segment, bar: Bar, note?: Note }
 
-  ngOnInit(): void { }
+  ngAfterViewInit(): void {
+    this.tabService.fillSegmentsNotesSpaces()
+    this.tabService.HTMLBars = this.HTMLBars
+    this.tabService.HTMLSegments = this.HTMLSegments
+    this.HTMLBars?.changes.subscribe(newBars => {
+      this.tabService.HTMLBars = newBars
+    })
+    this.HTMLSegments?.changes.subscribe(newSegments => {
+      this.tabService.HTMLSegments = newSegments
+    })
+    setTimeout(() => {
+      this.HTMLBars?.get(0).el.nativeElement.lastElementChild.children[0].lastElementChild.children[0].focus()
+    });
+  }
 
   detectNoteSelection(segment: Segment, bar: Bar, note?: Note) {
     this.noteSelectedOutput.emit({ segment, bar, note })
@@ -36,8 +45,11 @@ export class EditTabComponent implements OnInit {
 
   styleBar(bar: Bar, index: number) {
     let style
-    if (!bar.valid) {
+    if (!bar.valid && bar.totalDurationRatio > bar.timeSignatureRatio) {
       style = { 'border': 'red 1px solid', 'transform': 'translateY(-1px)' }
+      return style
+    } else if (!bar.valid && bar.totalDurationRatio < bar.timeSignatureRatio) {
+      style = { 'border': 'yellow 1px solid', 'transform': 'translateY(-1px)' }
       return style
     }
     if (this.hasTimeSignatureChanged(bar, index)) {
@@ -65,7 +77,7 @@ export class EditTabComponent implements OnInit {
 
   styleSegment(segment: Segment) {
     let style
-    if (segment.notes?.every(value => !value.fretValue && value.fretValue !== 0)) {
+    if (!segment.isRest && segment.notes?.every(value => !value.fretValue && value.fretValue !== 0)) {
       style = { 'width.px': segment.separationSpace, 'background-color': 'rgba(255, 255, 255, 0.05)' }
       return style
     }
@@ -76,10 +88,67 @@ export class EditTabComponent implements OnInit {
   styleNote(note: Note) {
     let style
     if (!note.fretValue && note.fretValue !== 0) {
-      style = { 'top.px': (41.7 * note.string) - 11, 'background-color': 'transparent', 'transform': 'translateX(1px)' }
+      style = { 'top.px': (41.7 * note.string) - 11, 'background-color': 'transparent' }
       return style
     }
     style = { 'top.px': (41.7 * note.string) - 11 }
+    return style
+  }
+
+  assignSlide(note: Note) {
+    let src = "../../../assets/svgs/effects/to-apply/"
+    if (note.effects && note.effects.slides && (note.effects.slides.slideOut === "slideUp" || note.effects.slides.slideIn === "slideUp")) {
+      src += "slide-up.svg"
+    }
+    if (note.effects && note.effects.slides && (note.effects.slides.slideOut === "slideDown" || note.effects.slides.slideIn === "slideDown")) {
+      src += "slide-down.svg"
+    }
+    if (note.effects && note.effects.slides && note.effects.slides.slideOut === "slideToNote") {
+      src += "slide-down.svg"
+    }
+    return src
+  }
+
+  styleSlideOut(note: Note, segment: Segment) {
+    if (!note.effects || !note.effects.slides) return {}
+    let style
+    if (note.effects.slides.slideOut === "slideToNote") {
+      if (segment.durationInverse < 4) {
+        style = {
+          "width.px": 40,
+          "transform": `translateX(${segment.separationSpace / 2}px) scaleX(${segment.separationSpace / 40 * .95}) rotate(20deg)`,
+        }
+      } else if (segment.durationInverse > 8) {
+        style = {
+          "width.px": 40,
+          "transform": `translateX(${segment.separationSpace / 2}px) scaleX(${segment.separationSpace / 40 * .5}) rotate(20deg)`,
+        }
+      } else {
+        style = {
+          "width.px": 40,
+          "transform": `translateX(${segment.separationSpace / 2}px) scaleX(${segment.separationSpace / 40 * .7}) rotate(20deg)`,
+        }
+      }
+    } else if (note.effects.slides.slideOut === "slideDown") {
+      style = { "width.px": 30, "max-width.px": segment.separationSpace, "transform": "translateX(25px) rotate(20deg)" }
+    } else if (note.effects.slides.slideOut === "slideUp") {
+      style = { "width.px": 30, "max-width.px": segment.separationSpace, "transform": "translateX(25px) rotate(-20deg)" }
+    } else {
+      style = { "display": "none" }
+    }
+    return style
+  }
+
+  styleSlideIn(note: Note, segment: Segment) {
+    if (!note.effects || !note.effects.slides) return {}
+    let style
+    if (note.effects.slides.slideIn === "slideDown") {
+      style = { "width.px": 30, "max-width.px": segment.separationSpace, "transform": "translateX(-25px) rotate(20deg)" }
+    } else if (note.effects.slides.slideIn === "slideUp") {
+      style = { "width.px": 30, "max-width.px": segment.separationSpace, "transform": "translateX(-25px) rotate(-20deg)" }
+    } else {
+      style = { "display": "none" }
+    }
     return style
   }
 
@@ -156,7 +225,6 @@ export class EditTabComponent implements OnInit {
     if (this.selectedNote) {
       this.tabService.changeFretValue(newFretValue)
     }
-
     setTimeout(() => {
       this.keyInput = []
     }, 500)
@@ -169,5 +237,13 @@ export class EditTabComponent implements OnInit {
     if (!this.canvasContainer) return
     if (event.deltaY > 0) this.canvasContainer.nativeElement.scrollLeft += 100;
     else this.canvasContainer.nativeElement.scrollLeft -= 100;
+  }
+
+  // Prevents scrolling with horizontal arrow keys
+  @HostListener("document:keydown", ["$event"])
+  preventDefault(event: KeyboardEvent) {
+    if (event.code === "ArrowRight" || event.code === "ArrowLeft") {
+      event.preventDefault()
+    }
   }
 }

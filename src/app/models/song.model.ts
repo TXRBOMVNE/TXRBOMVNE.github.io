@@ -27,16 +27,23 @@ export class Bar {
   // Gets if the bar is valid and completed according to segments duration
   get valid() {
     let count = 0
-
     for (let segment of this.segments) {
       count += segment.durationInverse ** -1
     }
-
-    if (count === (this.timeSignatureRatio)) {
+    if (count === (this.timeSignatureRatio * (4 / this.timeSignature.denominator))) {
       return true
     } else {
       return false
     }
+  }
+
+  // Returns ratio based on segments total duration
+  get totalDurationRatio() {
+    let durationRatio = 0
+    for (let segment of this.segments) {
+      durationRatio += (segment.durationInverse ** -1)
+    }
+    return durationRatio
   }
 }
 
@@ -44,10 +51,10 @@ export class Segment {
   constructor(
     public isRest: boolean,
     public initialDurationInverse: number,
+    public notes: Note[],
     public effects?: {
       isDotted: boolean | null
     },
-    public notes?: Note[]
   ) { }
 
   get durationInverse() {
@@ -62,7 +69,6 @@ export class Segment {
   get separationSpace() {
     let barInnerWidth = tabLayout.initialBarInnerWidth
     let separationPx = barInnerWidth / this.durationInverse
-
     return separationPx
   }
 }
@@ -72,9 +78,8 @@ export interface Note {
   string: number
   effects?: {
     slides?: {
-      slideToNote: "slideAndTie" | "slideToNote"
-      slideOut: "slideUp" | "slideDown"
-      slideIn: "slideUp" | "slideDown"
+      slideOut?: "slideUp" | "slideDown" | "slideToNote" | null
+      slideIn?: "slideUp" | "slideDown" | null
     }
   }
 }
@@ -88,38 +93,38 @@ export let exampleSong: Tab = {
   bars: [
     new Bar(110, { numerator: 4, denominator: 4 },
       [
-        new Segment(true, 1, undefined, [{ fretValue: 0, string: 5 }]),
+        new Segment(true, 1, [{ fretValue: 0, string: 5 }])
       ]),
     new Bar(110, { numerator: 4, denominator: 4 },
       [
-        new Segment(false, 8, undefined, [{ fretValue: 0, string: 5 }, { fretValue: 0, string: 0 }]),
-        new Segment(false, 8, undefined, [{ fretValue: 3, string: 5 }, { fretValue: 5, string: 4 }]),
-        new Segment(false, 8, undefined, [{ fretValue: 5, string: 5 }, { fretValue: 7, string: 4 }]),
-        new Segment(false, 8, undefined, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, undefined, [{ fretValue: 6, string: 5 }, { fretValue: 8, string: 4 }]),
-        new Segment(false, 8, undefined, [{ fretValue: 5, string: 5 }, { fretValue: 7, string: 4 }]),
-        new Segment(false, 8, undefined, [{ fretValue: 3, string: 5 }, { fretValue: 5, string: 4 }]),
-        new Segment(false, 8, undefined, [{ fretValue: 5, string: 5 }, { fretValue: 7, string: 4 }]),
+        new Segment(false, 8, [{ fretValue: 0, string: 0, effects: { slides: { slideOut: "slideUp" } } }, { fretValue: 0, string: 5 }],),
+        new Segment(false, 8, [{ fretValue: 3, string: 5 }, { fretValue: 5, string: 4, effects: { slides: { slideIn: "slideUp" } } }],),
+        new Segment(false, 8, [{ fretValue: 5, string: 5 }, { fretValue: 7, string: 4 }]),
+        new Segment(false, 8, [{ fretValue: 0, string: 5, effects: { slides: { slideOut: "slideDown" } } }]),
+        new Segment(false, 8, [{ fretValue: 6, string: 5 }, { fretValue: 8, string: 4 }]),
+        new Segment(false, 8, [{ fretValue: 5, string: 5 }, { fretValue: 7, string: 4 }]),
+        new Segment(false, 8, [{ fretValue: 3, string: 5, effects: { slides: { slideOut: "slideToNote" } } }, { fretValue: 5, string: 4, effects: { slides: { slideOut: "slideToNote" } } }]),
+        new Segment(false, 8, [{ fretValue: 5, string: 5 }, { fretValue: 7, string: 4 }]),
       ]),
     new Bar(110, { numerator: 4, denominator: 4 },
       [
-        new Segment(false, 8, undefined, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, undefined, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, undefined, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, undefined, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, undefined, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, undefined, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, undefined, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, undefined, [{ fretValue: 0, string: 5 }]),
+        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
+        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
+        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
+        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
+        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
+        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
+        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
+        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
       ]),
     new Bar(110, { numerator: 3, denominator: 4 },
       [
-        new Segment(false, 8, undefined, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, undefined, [{ fretValue: 3, string: 5 }, { fretValue: 5, string: 4 }]),
-        new Segment(false, 8, undefined, [{ fretValue: 5, string: 5 }, { fretValue: 7, string: 4 }]),
-        new Segment(true, 8, undefined),
-        new Segment(false, 8, undefined, [{ fretValue: 3, string: 5 }, { fretValue: 5, string: 4 }]),
-        new Segment(false, 8, undefined, [{ fretValue: 5, string: 5 }, { fretValue: 7, string: 4 }]),
+        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
+        new Segment(false, 8, [{ fretValue: 3, string: 5 }, { fretValue: 5, string: 4 }]),
+        new Segment(false, 8, [{ fretValue: 5, string: 5 }, { fretValue: 7, string: 4 }]),
+        new Segment(true, 8, []),
+        new Segment(false, 8, [{ fretValue: 3, string: 5 }, { fretValue: 5, string: 4 }]),
+        new Segment(false, 8, [{ fretValue: 5, string: 5 }, { fretValue: 7, string: 4 }]),
       ]),
   ]
 }

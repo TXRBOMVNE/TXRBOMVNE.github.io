@@ -1,7 +1,7 @@
 <div id="canvas-container" class="d-flex align-items-center" [ngStyle]="{'height.px':tabLayout.canvasHeight}"
   #canvasContainer>
   <div id="editing-tab" class="d-flex text-white">
-    <div class="bar d-flex" *ngFor="let bar of song.bars;let i = index" [ngStyle]="styleBar(bar,i)">
+    <div class="bar d-flex" bar *ngFor="let bar of song.bars;let i = index" [ngStyle]="styleBar(bar,i)">
       <div class="instrument-strings-container">
         <div class="instrument-string" *ngFor="let string of [].constructor(song.instrument.strings)"></div>
       </div>
@@ -12,15 +12,24 @@
         </div>
       </div>
       <div class="segments-container d-flex h-100">
-        <div class="segment" [ngStyle]="styleSegment(segment)" *ngFor="let segment of bar.segments;let index=index">
+        <div class="segment" segment [ngStyle]="styleSegment(segment)"
+          *ngFor="let segment of bar.segments;let index=index">
           <div class="notes-container h-100" *ngIf="!segment.isRest">
-            <span class="music-note" tabindex="0" [ngStyle]="styleNote(note)"
+            <span class="music-note" note tabindex="0" uncheckable [ngStyle]="styleNote(note)"
               (focus)="detectNoteSelection(segment,bar,note)" *ngFor="let note of segment.notes">
               {{note.fretValue}}
+              <hr class="slide-out rounded-pill"
+                *ngIf="note.effects && note.effects.slides && note.effects.slides.slideOut"
+                [ngStyle]="styleSlideOut(note,segment)">
+              <hr class="slide-in rounded-pill"
+                *ngIf="note.effects && note.effects.slides && note.effects.slides.slideIn"
+                [ngStyle]="styleSlideIn(note,segment)">
             </span>
           </div>
-          <div tabindex="0" class="rest" (focus)="detectNoteSelection(segment,bar)" *ngIf="segment.isRest">
-            <img [src]="assignRestImg(segment)">
+          <div segment class="rest-container" *ngIf="segment.isRest">
+            <div note tabindex="0" note class="rest" (focus)="detectNoteSelection(segment,bar)">
+              <img [src]="assignRestImg(segment)">
+            </div>
           </div>
         </div>
       </div>
