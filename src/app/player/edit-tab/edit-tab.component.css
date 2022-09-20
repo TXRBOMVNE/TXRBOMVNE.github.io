@@ -4,6 +4,7 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
   cursor: initial;
+  overflow-y: hidden;
 }
 
 #canvas-container::-webkit-scrollbar {
@@ -36,6 +37,23 @@
   height: 100%;
 }
 
+.segment:focus {
+  outline: none;
+}
+
+.segment:focus::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(191, 156, 110, 0.3);
+  outline: none;
+  transform: scaleY(2);
+  z-index: 100;
+}
+
 span,
 p {
   cursor: default;
@@ -59,15 +77,6 @@ span {
   align-items: center;
   justify-content: center;
   transform: translate(-2.5px, -5px);
-}
-
-span::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: 0%;
-  width: 200%;
-  height: 200%;
 }
 
 .slide-out {

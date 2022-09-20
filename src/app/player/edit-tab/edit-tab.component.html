@@ -12,10 +12,10 @@
         </div>
       </div>
       <div class="segments-container d-flex h-100">
-        <div class="segment" segment [ngStyle]="styleSegment(segment)"
-          *ngFor="let segment of bar.segments;let index=index">
+        <div tabindex="0" class="segment" segment (focus)="detectNoteSelection(segment,bar)"
+          [ngStyle]="styleSegment(segment)" *ngFor="let segment of bar.segments;let index=index">
           <div class="notes-container h-100" *ngIf="!segment.isRest">
-            <span class="music-note" note tabindex="0" uncheckable [ngStyle]="styleNote(note)"
+            <span class="music-note" note tabindex="0" [ngStyle]="styleNote(note)"
               (focus)="detectNoteSelection(segment,bar,note)" *ngFor="let note of segment.notes">
               {{note.fretValue}}
               <hr class="slide-out rounded-pill"
@@ -26,8 +26,8 @@
                 [ngStyle]="styleSlideIn(note,segment)">
             </span>
           </div>
-          <div segment class="rest-container" *ngIf="segment.isRest">
-            <div note tabindex="0" note class="rest" (focus)="detectNoteSelection(segment,bar)">
+          <div class="rest-container" *ngIf="segment.isRest">
+            <div note tabindex="0" class="rest" (focus)="detectNoteSelection(segment,bar)">
               <img [src]="assignRestImg(segment)">
             </div>
           </div>

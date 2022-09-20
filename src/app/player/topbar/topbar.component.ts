@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { AppStatus } from '../player.component';
+import { TabService } from '../tab/tab.service';
 
 @Component({
   selector: 'app-topbar',
@@ -8,7 +9,7 @@ import { AppStatus } from '../player.component';
 })
 export class TopbarComponent implements OnInit {
 
-  constructor() { }
+  constructor(private tabService: TabService) { }
 
   @Output() appStatusOutput = new EventEmitter<AppStatus>()
 
@@ -22,6 +23,13 @@ export class TopbarComponent implements OnInit {
 
   ngOnInit(): void {
     this.appStatusOutput.emit(this.appStatus)
+    this.tabService.isPlaying.subscribe(isPlaying => {
+      if (isPlaying) {
+        this.appStatus.isPlaying = true
+      } else {
+        this.appStatus.isPlaying = false
+      }
+    })
   }
 
   openMenu() {
@@ -31,5 +39,13 @@ export class TopbarComponent implements OnInit {
 
   updateTempo() {
     this.appStatusOutput.emit(this.appStatus)
+  }
+
+  play() {
+    this.tabService.play()
+  }
+
+  pause() {
+    this.tabService.pause()
   }
 }

@@ -3,8 +3,9 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Bar, Note, Segment } from 'src/app/models/song.model';
 import { AppStatus } from '../player.component';
-import { TabService } from '../edit-tab/edit-tab.service';
-import { first, skip, skipUntil, skipWhile, Subscription } from 'rxjs';
+import { EditTabService } from '../edit-tab/edit-tab.service';
+import { Subscription } from 'rxjs';
+import { TabService } from '../tab/tab.service';
 
 @Component({
   selector: 'app-edit-topbar',
@@ -24,7 +25,7 @@ import { first, skip, skipUntil, skipWhile, Subscription } from 'rxjs';
 })
 export class EditTopbarComponent implements OnInit, OnChanges {
 
-  constructor(private tabService: TabService) { }
+  constructor(private editTabService: EditTabService, private tabService: TabService) { }
 
   // Gets data related to the note selected in the tab component
   @Input() barPropertiesInput: { segment: Segment, bar: Bar, note?: Note } | undefined
@@ -53,7 +54,13 @@ export class EditTopbarComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.appStatusOutput.emit(this.appStatus)
-
+    this.tabService.isPlaying.subscribe(isPlaying => {
+      if (isPlaying) {
+        this.appStatus.isPlaying = true
+      } else {
+        this.appStatus.isPlaying = false
+      }
+    })
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -87,15 +94,15 @@ export class EditTopbarComponent implements OnInit, OnChanges {
       let isEveryValueNull = Object.values(newValues).every(value => value === null);
       if (!!isEveryValueNull) return
       // Changes inputs depending to note selection properties
-      this.tabService.changeDuration(newValues.initialDurationInverse, newValues.isDotted)
+      this.editTabService.changeDuration(newValues.initialDurationInverse, newValues.isDotted)
       if (newValues.isRest !== null) {
-        this.tabService.toggleRest(newValues.isRest)
+        this.editTabService.toggleRest(newValues.isRest)
       }
-      this.tabService.notePropertiesInput = newValues
+      this.editTabService.notePropertiesInput = newValues
       if (this.noteProperties.valid) {
-        this.tabService.changeTimeSignature(newValues.timeSignatureNumerator, newValues.timeSignatureDenominator)
+        this.editTabService.changeTimeSignature(newValues.timeSignatureNumerator, newValues.timeSignatureDenominator)
       }
-      this.tabService.changeSlides({ slideOut: newValues.slideOutMode, slideIn: newValues.slideInMode })
+      this.editTabService.changeSlides({ slideOut: newValues.slideOutMode, slideIn: newValues.slideInMode })
     })
   }
 
@@ -106,5 +113,15 @@ export class EditTopbarComponent implements OnInit, OnChanges {
 
   updateTempo() {
     this.appStatusOutput.emit(this.appStatus)
+  }
+
+  play() {
+    this.appStatus!.isPlaying = true
+    this.tabService.play()
+  }
+
+  pause() {
+    this.appStatus!.isPlaying = false
+    this.tabService.pause()
   }
 }

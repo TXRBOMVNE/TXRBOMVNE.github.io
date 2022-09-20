@@ -29,6 +29,14 @@ h1 {
   background-color: #707070;
 }
 
+#form input {
+  background-color: #101010 !important;
+}
+
+#form .ng-invalid.ng-touched {
+  border: 1px dashed red !important;
+}
+
 #spotify-btn {
   font-family: "Barlow Condensed", sans-serif;
   font-weight: 600;

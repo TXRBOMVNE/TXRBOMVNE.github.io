@@ -3,7 +3,7 @@
   overflow-x: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  cursor: initial;
+  overflow-y: hidden;
 }
 
 #canvas-container::-webkit-scrollbar {
@@ -36,15 +36,66 @@
   height: 100%;
 }
 
-span:not(.time-signature) {
+.segment:focus {
+  outline: none;
+}
+
+.segment:focus::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(191, 156, 110, 0.3);
+  outline: none;
+  transform: scaleY(2);
+  z-index: 100;
+}
+
+span,
+p {
+  cursor: default;
+}
+
+span {
   background-color: #202020;
   font: 500 22pt "Barlow Condensed";
-  line-height: 22px;
-  padding-inline: 2.5px;
+  border-radius: 2px;
+  line-height: 20px;
+  padding: 2.5px;
   vertical-align: middle;
   text-align: center;
   position: absolute;
   z-index: 10;
+  transition: 50ms;
+  min-width: 20px;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-2.5px, -5px);
+}
+
+.slide-out {
+  position: absolute;
+  border-width: 2px;
+  border-color: white;
+  opacity: .6;
+  margin: 0;
+}
+
+.slide-in {
+  position: absolute;
+  border-width: 2px;
+  border-color: white;
+  opacity: .6;
+  margin: 0;
+}
+
+.rest {
+  transition: 50ms;
+  margin-right: 5px;
 }
 
 .time-signature-container {

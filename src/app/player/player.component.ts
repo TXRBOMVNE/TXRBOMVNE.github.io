@@ -1,5 +1,7 @@
+import { trigger, transition, style, animate } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { Note, Segment, Bar } from '../models/song.model';
+import { PlayerService } from './player.service';
 
 export interface AppStatus {
   isPlaying: boolean
@@ -12,13 +14,24 @@ export interface AppStatus {
 @Component({
   selector: 'app-player',
   templateUrl: './player.component.html',
-  styleUrls: ['./player.component.css']
+  styleUrls: ['./player.component.css'],
+  animations: [
+    trigger('appear', [
+      transition(":enter", [
+        style({ opacity: 0 }),
+        animate("100ms ease-in-out", style({ opacity: 1 }))
+      ]),
+      transition(":leave", [
+        animate("100ms ease-in-out", style({ opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class PlayerComponent implements OnInit {
 
-  constructor() { }
+  constructor(private playerService: PlayerService) { }
 
-  editMode: boolean = true
+  editMode: boolean = false
 
   ngOnInit(): void { }
 
@@ -29,10 +42,10 @@ export class PlayerComponent implements OnInit {
     isMetronomeActive: false,
     tempoMultiplier: 100
   }
-
+  showSongInfo: boolean = false
   barProperties: { segment: Segment, bar: Bar, note?: Note } | undefined
 
-  instrument: string | undefined = "guitar"
+  instrument?: string = "guitar"
 
   updateAppStatus(appStatus: AppStatus) {
     this.appStatus = appStatus
@@ -46,4 +59,11 @@ export class PlayerComponent implements OnInit {
     this.appStatus.isMenuActive = menuStatus
   }
 
+  editTab() {
+    this.playerService.saveTabToUser()?.then(() => this.editMode = true)
+  }
+
+  saveTab() {
+    this.playerService.saveTabToUser()?.then(() => this.editMode = false)
+  }
 }

@@ -103,20 +103,6 @@ h2 {
   vertical-align: middle;
 }
 
-#end-btns {
-  min-width: 400px;
-}
-
-@media (max-width:767px) {
-  #end-btns {
-    min-width: 0;
-  }
-}
-
-#end-btns button {
-  min-width: 150px;
-}
-
 #info-container {
   background-color: #333533;
   border-radius: 50%;
@@ -136,14 +122,6 @@ h2 {
   background-color: rgba(8, 8, 8, 0.5);
   backdrop-filter: blur(2px);
   color: white;
-  transform: translateX(-400px);
-  opacity: 0;
-  transition: transform 300ms ease-in-out, opacity 150ms ease-in-out;
-}
-
-#info-container:focus #song-info {
-  transform: translateX(0);
-  opacity: 1;
 }
 
 #song-info ul {

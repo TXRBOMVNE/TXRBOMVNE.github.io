@@ -1,5 +1,6 @@
 <div id="container" class="row m-0 px-md-2 px-lg-4 pt-4 flex-nowrap justify-content-center justify-content-md-between">
-  <div class="row justify-content-evenly justify-content-md-start p-0 m-0 col-auto flex-grow-1 flex-nowrap">
+  <div preventUnfocus
+    class="row justify-content-evenly justify-content-md-start p-0 m-0 col-auto flex-grow-1 flex-nowrap">
     <div id="burger-container" (click)="openMenu()"
       class="d-flex d-md-none col-2 col-sm-auto p-0 m-0 justify-content-center align-items-center">
       <button id="burger"></button>
@@ -15,13 +16,13 @@
     </div>
     <div id="play-pause" class="p-0 col-auto text-white position-relative">
       <div id="fill-div"></div>
-      <div id="pause" (click)="appStatus.isPlaying=false" *ngIf="appStatus.isPlaying">
+      <div id="pause" (click)="pause()" *ngIf="appStatus.isPlaying">
         <svg fill="currentColor" class="bi bi-pause-circle-fill" viewBox="0 0 16 16">
           <path
             d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM6.25 5C5.56 5 5 5.56 5 6.25v3.5a1.25 1.25 0 1 0 2.5 0v-3.5C7.5 5.56 6.94 5 6.25 5zm3.5 0c-.69 0-1.25.56-1.25 1.25v3.5a1.25 1.25 0 1 0 2.5 0v-3.5C11 5.56 10.44 5 9.75 5z" />
         </svg>
       </div>
-      <div id="play" (click)="appStatus.isPlaying=true" *ngIf="!appStatus.isPlaying">
+      <div id="play" (click)="play()" *ngIf="!appStatus.isPlaying">
         <svg fill="currentColor" class="bi bi-play-circle-fill" viewBox="0 0 16 16">
           <path
             d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814l-3.5-2.5z" />
@@ -31,7 +32,7 @@
   </div>
   <div id="tools"
     class="row m-0 d-none d-md-flex col-lg col-auto p-0 flex-grow-1 flex-lg-grow-0 flex-row-reverse flex-nowrap">
-    <div class="col-4  my-auto py-3 px-lg-4 px-md-2 text-center rounded-1"
+    <div preventUnfocus class="col-4  my-auto py-3 px-lg-4 px-md-2 text-center rounded-1"
       (click)="appStatus.isMetronomeActive=!appStatus.isMetronomeActive"
       [ngClass]="appStatus.isMetronomeActive?'active-tool':''">
       <svg version="1.1" width="36" height="36" viewBox="0 0 314 314" xml:space="preserve">
@@ -56,7 +57,7 @@
      L246.427,71.829z" />
       </svg>
     </div>
-    <div class="col-4 my-auto py-3 px-lg-4 px-md-2 text-center rounded-1"
+    <div preventUnfocus class="col-4 my-auto py-3 px-lg-4 px-md-2 text-center rounded-1"
       (click)="appStatus.isCountdownActive=!appStatus.isCountdownActive">
       <p class="fs-4 m-0" [ngClass]="appStatus.isCountdownActive?'active-tool':''">123</p>
     </div>

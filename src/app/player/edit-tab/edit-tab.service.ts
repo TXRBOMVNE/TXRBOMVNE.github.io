@@ -1,11 +1,11 @@
 import { Injectable, QueryList } from '@angular/core';
-import { first } from 'rxjs';
+import { first, interval, Subscription } from 'rxjs';
 import { Bar, exampleSong, Note, Segment, Tab } from 'src/app/models/song.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TabService {
+export class EditTabService {
   constructor() { }
   song: Tab = exampleSong
   noteSelection?: { segment: Segment, bar: Bar, note?: Note }
@@ -104,7 +104,6 @@ export class TabService {
     let barHTML = this.HTMLBars?.get(barIndex).el.nativeElement
     let nextSegmentHTML
     let nextNoteHTML: any
-
     if (this.noteSelection.bar.totalDurationRatio < this.noteSelection.bar.timeSignatureRatio) {
       this.addSegment(barIndex)
       this.HTMLSegments?.changes.pipe(first()).subscribe(() => {
@@ -132,7 +131,6 @@ export class TabService {
         nextNoteHTML.focus()
         return
       }
-
     }
     barHTML = this.HTMLBars?.get(barIndex).el.nativeElement
     nextSegmentHTML = barHTML.lastElementChild.children[segmentIndex + 1]
@@ -151,7 +149,6 @@ export class TabService {
     let barHTML
     let previousSegmentHTML
     let previousNoteHTML: any
-
     // If the current segment is the last one of the song and it's empty
     if ((this.song.bars[barIndex] === this.song.bars[this.song.bars.length - 1] &&
       this.noteSelection.segment === this.noteSelection.bar.segments[this.noteSelection.bar.segments.length - 1]) &&
@@ -165,14 +162,12 @@ export class TabService {
         this.song.bars[barIndex].segments.pop()
       }
     }
-
     // If there is a previous segment
     if (this.noteSelection.bar.segments[segmentIndex - 1]) {
       barHTML = this.HTMLBars?.get(barIndex).el.nativeElement
       previousSegmentHTML = barHTML.lastElementChild.children[segmentIndex - 1]
       previousNoteHTML = previousSegmentHTML.lastElementChild.children[noteIndex!] || previousSegmentHTML.lastElementChild.children[0]
       previousNoteHTML.focus()
-
     } // If the current segment is the first one and there is a previous bar
     else if (!this.noteSelection.bar.segments[segmentIndex - 1] && barIndex !== 0) {
       barHTML = this.HTMLBars?.get(barIndex - 1).el.nativeElement
@@ -249,8 +244,6 @@ export class TabService {
       this.noteSelection = undefined
     }
   }
-
-
   // Fills segmentes with blank notes to make note selection work with blank spaces
   fillSegmentsNotesSpaces() {
     this.song.bars.forEach(bar => {
@@ -267,7 +260,6 @@ export class TabService {
       })
     })
   }
-
   // Indexes notes sorting them by the number of the instrument string
   sortNotes() {
     this.song.bars.forEach(bar => {
@@ -278,5 +270,24 @@ export class TabService {
         })
       })
     })
+  }
+
+  playInterval = interval(500)
+  sub?: Subscription
+
+  play() {
+    let index = 0
+    this.sub = this.playInterval.subscribe(() => {
+      if (!this.HTMLSegments?.get(index)) {
+        this.sub!.unsubscribe()
+        return
+      }
+      this.HTMLSegments?.get(index).el.nativeElement.focus()
+      index++
+    })
+  }
+
+  pause() {
+    this.sub?.unsubscribe()
   }
 }

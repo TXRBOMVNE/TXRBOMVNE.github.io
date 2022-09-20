@@ -1,5 +1,5 @@
-import { Directive, ElementRef, HostListener, OnInit } from "@angular/core";
-import { TabService } from "../edit-tab/edit-tab.service";
+import { Directive, ElementRef, HostListener } from "@angular/core";
+import { EditTabService } from "../edit-tab/edit-tab.service";
 
 
 @Directive({
@@ -7,25 +7,25 @@ import { TabService } from "../edit-tab/edit-tab.service";
 })
 
 export class NoteDirective {
-  constructor(private el: ElementRef<HTMLElement>, private tabService: TabService) { }
+  constructor(private el: ElementRef<HTMLElement>, private editTabService: EditTabService) { }
 
   @HostListener('keydown', ['$event'])
   manageNote(event: KeyboardEvent) {
     switch (event.code) {
       case "ArrowRight":
-        this.tabService.selectNextSegmentNote()
+        this.editTabService.selectNextSegmentNote()
         break;
       case "ArrowLeft":
-        this.tabService.selectPreviousSegmentNote()
+        this.editTabService.selectPreviousSegmentNote()
         break;
       case "ArrowUp":
-        this.tabService.selectUpperNote()
+        this.editTabService.selectUpperNote()
         break;
       case "ArrowDown":
-        this.tabService.selectLowerNote()
+        this.editTabService.selectLowerNote()
         break;
       case "Delete":
-        this.tabService.removeNote()
+        this.editTabService.removeNote()
     }
   }
 }
