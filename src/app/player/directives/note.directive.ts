@@ -12,19 +12,44 @@ export class NoteDirective {
   @HostListener('keydown', ['$event'])
   manageNote(event: KeyboardEvent) {
     switch (event.code) {
-      case "ArrowRight":
-        this.editTabService.selectNextSegmentNote()
-        break;
-      case "ArrowLeft":
-        this.editTabService.selectPreviousSegmentNote()
-        break;
-      case "ArrowUp":
+      case "KeyW":
+        event.preventDefault()
         this.editTabService.selectUpperNote()
         break;
-      case "ArrowDown":
+      case "KeyA":
+        event.preventDefault()
+        this.editTabService.selectPreviousSegmentNote()
+        break;
+      case "KeyS":
+        event.preventDefault()
         this.editTabService.selectLowerNote()
         break;
+      case "KeyD":
+        event.preventDefault()
+        this.editTabService.selectNextSegmentNote()
+        break;
+      case "ArrowUp":
+        event.preventDefault()
+        this.editTabService.selectUpperNote()
+        break;
+      case "ArrowLeft":
+        event.preventDefault()
+        this.editTabService.selectPreviousSegmentNote()
+        break;
+      case "ArrowDown":
+        event.preventDefault()
+        this.editTabService.selectLowerNote()
+        break;
+      case "ArrowRight":
+        event.preventDefault()
+        this.editTabService.selectNextSegmentNote()
+        break;
       case "Delete":
+        event.preventDefault()
+        this.editTabService.removeNote()
+        break;
+      case "Backspace":
+        event.preventDefault()
         this.editTabService.removeNote()
     }
   }

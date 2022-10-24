@@ -1,0 +1,36 @@
+#not-found-container {
+  width: 100vw;
+  min-height: 100vh;
+}
+
+
+#back-btn-container {
+  color: white;
+  font-family: "Barlow Condensed";
+  vertical-align: middle;
+  padding-bottom: 5px;
+  margin-right: 50%;
+}
+
+#back-btn-container:hover {
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+#back-btn-container:active {
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+#back-btn-container p {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+#arrow-head {
+  font-size: 1.5em;
+  margin-inline: 10px;
+  line-height: 40px;
+  max-height: 40px !important;
+  vertical-align: sub;
+}

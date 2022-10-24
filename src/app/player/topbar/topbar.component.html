@@ -5,16 +5,17 @@
       class="d-flex d-md-none col-2 col-sm-auto p-0 m-0 justify-content-center align-items-center">
       <button id="burger"></button>
     </div>
-    <div class="row m-0 p-0 col col-sm-auto flex-shrink-1 flex-nowrap overflow-hidden">
+    <div @appear *ngIf="currentSpotifyTrack"
+      class="row m-0 p-0 col col-sm-auto flex-shrink-1 flex-nowrap overflow-hidden">
       <div class="col-sm-auto col-2 p-0 text-center my-auto">
-        <img class="img-fluid" src="../../../assets/images/master-of-puppets.jpg" alt="">
+        <img class="img-fluid" [src]="currentSpotifyTrack!.album.images[1].url" alt="">
       </div>
-      <div class="col-10 col-sm-auto p-0 my-auto">
-        <h3 id="song-title" class="m-0 ms-2 fw-bold">Master Of Puppetssssssssss</h3>
-        <h4 id="artists" class="m-0 ms-2 fw-light">Metallica</h4>
+      <div id="song-info" class="col-10 col-sm-auto p-0 my-auto">
+        <h3 id="song-title" class="m-0 ms-2 fw-bold">{{currentSpotifyTrack!.name}}</h3>
+        <h4 id="artists" class="m-0 ms-2 fw-light">{{currentSpotifyTrack!.artists[0].name}}</h4>
       </div>
     </div>
-    <div id="play-pause" class="p-0 col-auto text-white position-relative">
+    <div @appear *ngIf="currentSpotifyTrack" id="play-pause" class="p-0 col-auto text-white position-relative">
       <div id="fill-div"></div>
       <div id="pause" (click)="pause()" *ngIf="appStatus.isPlaying">
         <svg fill="currentColor" class="bi bi-pause-circle-fill" viewBox="0 0 16 16">

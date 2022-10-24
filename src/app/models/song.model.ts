@@ -1,12 +1,38 @@
 import { tabLayout } from "../player/tab/tab.component"
 
+export interface SpotifyTrack {
+  album: {
+    name: string,
+    id: string,
+    images: { url: string, height: number, width: number }[],
+  },
+  artists: { name: string }[],
+  duration_ms: number,
+  explicit: boolean,
+  id: string,
+  name: string
+}
+
+export interface TabGroup {
+  tabs: Tab[],
+  uid: string,
+  authorDisplayName: string,
+  trackId: string,
+  createdAt: number
+}
+
+export type Instrument = {
+  name: "guitar" | "acoustic-guitar" | "bass" | "voice",
+  strings: number
+}
+
 export interface Tab {
-  instrument: { name: string, strings: number }
+  instrument: Instrument
   bars: Bar[],
   initialTempo: number,
   initialKey: number,
   mode: boolean,
-  tuning?: string
+  tuning?: string,
 }
 
 export class Bar {
@@ -84,105 +110,16 @@ export interface Note {
   }
 }
 
-export let exampleSong: Tab = {
+export let initialSong: Tab = {
   instrument: { name: "guitar", strings: 6 },
   initialKey: 4,
   mode: true,
-  initialTempo: 216,
+  initialTempo: 140,
   tuning: "Standard",
   bars: [
-    new Bar(216, { numerator: 4, denominator: 4 },
+    new Bar(140, { numerator: 4, denominator: 4 },
       [
-        new Segment(false, 4, [{ fretValue: 0, string: 5 }, { fretValue: 2, string: 4 }, { fretValue: 2, string: 3 }]),
-        new Segment(true, 2, [{ fretValue: 0, string: 5 }], { isDotted: true })
-      ]),
-    new Bar(216, { numerator: 4, denominator: 4 },
-      [
-        new Segment(false, 4, [{ fretValue: 10, string: 5 }, { fretValue: 12, string: 4 }, { fretValue: 12, string: 3 }]),
-        new Segment(false, 4, [{ fretValue: 9, string: 5 }, { fretValue: 11, string: 4 }, { fretValue: 11, string: 3 }]),
-        new Segment(false, 2, [{ fretValue: 8, string: 5 }, { fretValue: 10, string: 4 }, { fretValue: 10, string: 3 }]),
-      ]),
-    new Bar(216, { numerator: 4, denominator: 4 },
-      [
-        new Segment(true, 1, [])
-      ]),
-    new Bar(216, { numerator: 4, denominator: 4 },
-      [
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 12, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 11, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-      ]),
-    new Bar(216, { numerator: 4, denominator: 4 },
-      [
-        new Segment(false, 4, [{ fretValue: 10, string: 5 }, { fretValue: 12, string: 4 }, { fretValue: 12, string: 3 }]),
-        new Segment(false, 4, [{ fretValue: 9, string: 5 }, { fretValue: 11, string: 4 }, { fretValue: 11, string: 3 }]),
-        new Segment(false, 2, [{ fretValue: 8, string: 5 }, { fretValue: 10, string: 4 }, { fretValue: 10, string: 3 }]),
-      ]),
-    new Bar(216, { numerator: 4, denominator: 4 },
-      [
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 7, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 6, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-      ]),
-    new Bar(216, { numerator: 4, denominator: 4 },
-      [
-        new Segment(false, 8, [{ fretValue: 5, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 4, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 3, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 2, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 1, string: 5 }]),
-      ]),
-    new Bar(216, { numerator: 4, denominator: 4 },
-      [
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 12, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 11, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-      ]),
-    new Bar(216, { numerator: 4, denominator: 4 },
-      [
-        new Segment(false, 4, [{ fretValue: 10, string: 5 }, { fretValue: 12, string: 4 }, { fretValue: 12, string: 3 }]),
-        new Segment(false, 4, [{ fretValue: 9, string: 5 }, { fretValue: 11, string: 4 }, { fretValue: 11, string: 3 }]),
-        new Segment(false, 2, [{ fretValue: 8, string: 5 }, { fretValue: 10, string: 4 }, { fretValue: 10, string: 3 }]),
-      ]),
-    new Bar(216, { numerator: 4, denominator: 4 },
-      [
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 7, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 6, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-      ]),
-    new Bar(216, { numerator: 4, denominator: 4 },
-      [
-        new Segment(false, 8, [{ fretValue: 5, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 4, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 3, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 0, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 2, string: 5 }]),
-        new Segment(false, 8, [{ fretValue: 1, string: 5 }]),
-      ]),
+        new Segment(false, 1, [{ fretValue: 0, string: 0 }]),
+      ])
   ]
 }

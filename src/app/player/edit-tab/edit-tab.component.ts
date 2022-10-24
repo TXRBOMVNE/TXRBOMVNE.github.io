@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, OnDestroy, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { interval, Subscription } from 'rxjs';
 import { Bar, Note, Segment } from 'src/app/models/song.model';
 import { BarDirective } from '../directives/bar.directive';
@@ -13,7 +13,7 @@ import { EditTabService } from './edit-tab.service';
   templateUrl: './edit-tab.component.html',
   styleUrls: ['./edit-tab.component.css']
 })
-export class EditTabComponent implements AfterViewInit, OnInit {
+export class EditTabComponent implements AfterViewInit, OnInit, OnDestroy {
   constructor(private editTabService: EditTabService, private tabService: TabService, private playerService: PlayerService) { }
 
   @ViewChildren(BarDirective) HTMLBars?: QueryList<any>
@@ -21,9 +21,12 @@ export class EditTabComponent implements AfterViewInit, OnInit {
   @Output() noteSelectedOutput = new EventEmitter<{ segment: Segment, bar: Bar, note?: Note }>()
 
   tabLayout = tabLayout
-  song = this.playerService.song!
-  staffHeight = 42 * (this.song.instrument.strings - 1)
+  currentTab = this.playerService.currentTab.value!
+  currentTabGroup = this.playerService.currentTabGroup.value!
+  currentTabIndex = this.playerService.currentTabIndex.value!
+  staffHeight = 42 * (this.currentTab.instrument.strings - 1)
   selectedNote?: { segment: Segment, bar: Bar, note?: Note }
+  subs: Subscription[] = []
 
   playInterval = interval(500)
   sub?: Subscription
@@ -33,25 +36,43 @@ export class EditTabComponent implements AfterViewInit, OnInit {
     this.editTabService.fillSegmentsNotesSpaces()
     this.editTabService.HTMLBars = this.HTMLBars
     this.editTabService.HTMLSegments = this.HTMLSegments
-    this.HTMLBars?.changes.subscribe(newBars => {
+    const barsSub = this.HTMLBars!.changes.subscribe(newBars => {
       this.editTabService.HTMLBars = newBars
     })
-    this.HTMLSegments?.changes.subscribe(newSegments => {
+    const segmentsSub = this.HTMLSegments!.changes.subscribe(newSegments => {
       this.editTabService.HTMLSegments = newSegments
     })
     setTimeout(() => {
       this.HTMLBars?.get(0).el.nativeElement.lastElementChild.children[0].lastElementChild.children[0].focus()
     });
+    this.subs.push(barsSub, segmentsSub)
   }
 
   ngOnInit(): void {
-    this.tabService.isPlaying.subscribe(isPlaying => {
+    const editTabSub = this.editTabService.modifyTab.subscribe(() => {
+      this.currentTabGroup.tabs[this.currentTabIndex] = this.editTabService.currentTab
+      this.playerService.currentTabGroup.next(this.currentTabGroup)
+    })
+    const playSub = this.tabService.isPlaying.subscribe(isPlaying => {
       if (isPlaying) {
         this.play()
       } else {
         this.pause()
       }
     })
+    const currentTabGroupSub = this.playerService.currentTabGroup.subscribe(tabGroup => this.currentTabGroup = tabGroup!)
+    const currentTabSub = this.playerService.currentTab.subscribe(tab => {
+      this.currentTabIndex = this.playerService.currentTabIndex.value!
+      this.tabService.currentTab = tab!
+      this.editTabService.currentTab = tab!
+      this.editTabService.fillSegmentsNotesSpaces()
+      this.currentTab = tab!
+    })
+    this.subs.push(currentTabSub, playSub, editTabSub, currentTabGroupSub)
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(sub => sub.unsubscribe())
   }
 
   play() {
@@ -69,8 +90,6 @@ export class EditTabComponent implements AfterViewInit, OnInit {
   pause() {
     this.sub?.unsubscribe()
   }
-
-
 
   detectNoteSelection(segment: Segment, bar: Bar, note?: Note) {
     this.noteSelectedOutput.emit({ segment, bar, note })
@@ -110,10 +129,10 @@ export class EditTabComponent implements AfterViewInit, OnInit {
     return this.tabService.hasTimeSignatureChanged(bar, index)
   }
 
-
   addBar() {
     this.editTabService.addBar()
   }
+
   // Array for storing temporarily pressed keys values
   keyInput?: string[] = []
   // Listens for keypress and adds it to the previous array
@@ -132,12 +151,12 @@ export class EditTabComponent implements AfterViewInit, OnInit {
     }
     setTimeout(() => {
       this.keyInput = []
-    }, 500)
+    }, 200)
   }
 
   // Sets horizontal scroll to mouse wheel without holding shift
   @ViewChild("canvasContainer", { static: false }) canvasContainer?: ElementRef<HTMLElement>
-  @HostListener("document:wheel", ["$event"])
+  @HostListener("wheel", ["$event"])
   changeToHorizontalScroll(event: WheelEvent) {
     if (!this.canvasContainer) return
     if (event.deltaY > 0) this.canvasContainer.nativeElement.scrollLeft += 100;
@@ -145,10 +164,10 @@ export class EditTabComponent implements AfterViewInit, OnInit {
   }
 
   // Prevents scrolling with horizontal arrow keys
-  @HostListener("document:keydown", ["$event"])
-  preventDefault(event: KeyboardEvent) {
-    if (event.code === "ArrowRight" || event.code === "ArrowLeft") {
-      event.preventDefault()
-    }
-  }
+  // @HostListener("document:keydown", ["$event"])
+  // preventDefault(event: KeyboardEvent) {
+  //   if (event.code === "ArrowRight" || event.code === "ArrowLeft" || event.code === "KeyW") {
+  //     event.preventDefault()
+  //   }
+  // }
 }

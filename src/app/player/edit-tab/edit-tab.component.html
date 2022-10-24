@@ -1,9 +1,8 @@
-<div id="canvas-container" class="d-flex align-items-center" [ngStyle]="{'height.px':tabLayout.canvasHeight}"
-  #canvasContainer>
+<div id="canvas-container" class="d-flex align-items-center py-5" #canvasContainer>
   <div id="editing-tab" class="d-flex text-white">
-    <div class="bar d-flex" bar *ngFor="let bar of song.bars;let i = index" [ngStyle]="styleBar(bar,i)">
+    <div class="bar d-flex" bar *ngFor="let bar of currentTab.bars;let i = index" [ngStyle]="styleBar(bar,i)">
       <div class="instrument-strings-container">
-        <div class="instrument-string" *ngFor="let string of [].constructor(song.instrument.strings)"></div>
+        <div class="instrument-string" *ngFor="let string of [].constructor(currentTab.instrument.strings)"></div>
       </div>
       <div class="time-signature-container" [ngStyle]="styleTimeSignature(bar,i)">
         <div *ngIf="hasTimeSignatureChanged(bar,i)">

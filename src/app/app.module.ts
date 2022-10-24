@@ -12,11 +12,16 @@ import { PlayerModule } from './player/player.module';
 import { environment } from 'src/environments/environment';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+import { LoadingComponent } from './extras/loading-animation/loading-animation.component';
+import { UserComponent } from './user/user.component';
+import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 
 @NgModule({
   declarations: [
     AppComponent,
     AuthComponent,
+    LoadingComponent,
+    UserComponent,
   ],
   imports: [
     BrowserModule,
@@ -27,7 +32,8 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
     PlayerModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
-    AngularFireAuthModule
+    AngularFireAuthModule,
+    AngularFireStorageModule
   ],
   providers: [],
   bootstrap: [AppComponent]

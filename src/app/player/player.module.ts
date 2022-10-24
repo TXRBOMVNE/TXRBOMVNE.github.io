@@ -12,6 +12,10 @@ import { NoteDirective } from "./directives/note.directive";
 import { BarDirective } from "./directives/bar.directive";
 import { SegmentDirective } from './directives/segment.directive';
 import { PreventUnfocusDirective } from "./directives/prevent-unfocus.directive";
+import { NotFoundComponent } from './not-found/not-found.component';
+import { SearchComponent } from './sidebar/search/search.component';
+import { HttpClientModule } from "@angular/common/http";
+import { RouterModule } from "@angular/router";
 
 @NgModule({
   declarations: [
@@ -26,10 +30,14 @@ import { PreventUnfocusDirective } from "./directives/prevent-unfocus.directive"
     BarDirective,
     SegmentDirective,
     PreventUnfocusDirective,
+    NotFoundComponent,
+    SearchComponent,
   ],
   imports: [
     CommonModule,
+    RouterModule,
     FormsModule,
+    HttpClientModule,
     ReactiveFormsModule
   ]
 })

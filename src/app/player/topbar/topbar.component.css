@@ -67,6 +67,10 @@ img {
   max-height: 97px;
 }
 
+#song-info {
+  cursor: default;
+}
+
 #song-title {
   color: white;
   text-overflow: ellipsis;

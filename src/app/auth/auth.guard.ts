@@ -1,29 +1,44 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { first, Observable } from 'rxjs';
-import { AuthService, User } from './auth.service';
+import { map, Observable, take } from 'rxjs';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-
-  currentUser: User | null = this.authService.currentUser.value
-
   constructor(private router: Router, private authService: AuthService) { }
-
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    if (!this.currentUser) {
-      this.currentUser = JSON.parse(localStorage.getItem("userAuth")!)
-      this.authService.currentUser.next(this.currentUser)
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | UrlTree {
+    const req = this.authService.loginWithRefreshToken()
+    if (!req) {
+      return this.router.createUrlTree(["/auth"])
     }
-    if (this.currentUser) {
-      this.authService.currentUser.next({ ...this.currentUser, spotifyCode: route.queryParams["code"] })
-      localStorage.setItem("userAuth", JSON.stringify(this.currentUser))
+    return req.pipe(take(1), map(res => {
+      if (!res) {
+        return this.router.createUrlTree(["/auth"])
+      }
+      let expirationTime = +res.expires_in + new Date().getTime()
+      if (route.queryParamMap.get("code")) {
+        const code = route.queryParamMap.get("code")!
+        this.authService.currentUser.next({
+          ...this.authService.currentUser.value,
+          accessToken: res.access_token,
+          expirationTime,
+          refreshToken: res.refresh_token,
+          uid: res.user_id,
+          spotify: { ...this.authService.currentUser.value?.spotify, code }
+        })
+        return true
+      }
+      this.authService.currentUser.next({
+        ...this.authService.currentUser.value,
+        accessToken: res.access_token,
+        expirationTime,
+        refreshToken: res.refresh_token,
+        uid: res.user_id
+      })
       return true
-    }
-    return this.router.createUrlTree(["auth"])
+    }))
+
   }
 }

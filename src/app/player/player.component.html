@@ -1,19 +1,19 @@
 <app-sidebar [menuStatus]="appStatus.isMenuActive" (menuStatusOutput)="toggleMenu($event)"></app-sidebar>
 <div id="main-container">
-  <div id="main" class="d-flex flex-column position-relative">
+  <div id="main" *ngIf="exists" class="d-flex flex-column position-relative">
     <div>
       <app-topbar (appStatusOutput)="updateAppStatus($event)" *ngIf="!editMode"></app-topbar>
       <app-edit-topbar (appStatusOutput)="updateAppStatus($event)" [barPropertiesInput]="barProperties"
         *ngIf="editMode"></app-edit-topbar>
     </div>
     <div preventUnfocus id="tab-background" class="d-flex m-0 p-0 flex-column justify-content-between flex-grow-1">
-      <div class="d-flex flex-column justify-content-evenly">
-        <div id="instrument" class="ps-4 flex-grow-1 m-0 d-flex flex-column justify-content-center">
-          <h2 class="m-0 p-0" *ngIf="instrument === 'bass'">BASS</h2>
-          <h2 class="m-0 p-0" *ngIf="instrument === 'guitar' || instrument === 'a-guitar'">GUITAR</h2>
+      <div preventUnfocus class="d-flex flex-column justify-content-evenly">
+        <div *ngIf="currentTab" id="instrument" class="ps-4 flex-grow-1 m-0 d-flex flex-column justify-content-center">
+          <h2 class="m-0 p-0">{{currentTab.instrument.name.toUpperCase().replace("-"," ")}}</h2>
         </div>
       </div>
-      <div *ngIf="!editMode" id="actions" class="fs-4 p-0 flex-grow-1 d-flex flex-column justify-content-end">
+      <div preventUnfocus *ngIf="!editMode" id="actions"
+        class="fs-4 p-0 flex-grow-1 d-flex flex-column justify-content-end">
         <div id="tools" class="row m-0 d-md-none">
           <div id="tempo-container" class="row m-0 p-0 col-12">
             <div id="tempo-input-container" class="ms-2 py-2 my-auto rounded col">
@@ -67,14 +67,14 @@
               <h5>About this song:</h5>
               <ul class="list-unstyled fs-5 m-0">
                 <li class="list-group-item">Initial key: <span class="text-white">GM</span></li>
-                <li class="list-group-item">Avg. BPM: <span class="text-white">110</span></li>
+                <li class="list-group-item">Avg. BPM: <span class="text-white">{{currentTab?.initialTempo}} </span></li>
                 <li class="list-group-item">Tuning: <span class="text-white">Standard</span></li>
               </ul>
             </div>
           </div>
           <div id="end-btns" class="float-end">
             <div class="d-none d-md-flex justify-content-between">
-              <div id="edit-btn" (click)="editTab()"
+              <div id="edit-btn" (click)="editTabGroup()"
                 class="px-2 rounded d-flex justify-content-center align-items-center">
                 <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path fill-rule="evenodd" clip-rule="evenodd"
@@ -105,7 +105,7 @@
       </div>
       <div *ngIf="editMode" id="actions" class="fs-4 p-0 flex-grow-1 d-flex flex-column justify-content-end">
         <div class="d-flex justify-content-between align-items-center p-4">
-          <div id="info-container" (click)="showSongInfo = !showSongInfo"
+          <div preventUnfocus id="info-container" (click)="showSongInfo = !showSongInfo"
             class="d-inline-block position-relative flex-shrink-0">
             <svg height="23" viewBox="0 0 488.9 488.9" xml:space="preserve">
               <path fill="white"
@@ -123,15 +123,45 @@
           </div>
           <div id="end-btns" class="float-end">
             <div class="d-none d-md-flex justify-content-between">
-              <div id="edit-btn" (click)="editMode = false"
-                class="px-3 py-1 d-flex justify-content-center align-items-center text-white border">
+              <div id="menu-btn-container" class="position-relative mx-3">
+                <div (click)="showMenu = !showMenu" id="menu-btn">
+                  <svg width="30" height="30" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                    <path
+                      d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+                  </svg>
+                </div>
+                <div @appear *ngIf="showMenu" id="menu" class="rounded p-2">
+                  <div (click)="deleteTab()"
+                    class="text-nowrap p-2 d-flex justify-content-center align-items-center option rounded">
+                    <div id="delete-icon" class="me-2 my-1 d-flex align-items-center">
+                      <svg width="20" height="20" fill="#878787" class="bi bi-trash3" viewBox="0 0 16 16">
+                        <path
+                          d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
+                      </svg>
+                    </div>
+                    <h6 class="m-0">Delete this tab</h6>
+                  </div>
+                </div>
+              </div>
+              <div id="edit-btn" (click)="saveTabGroup()"
+                class="px-3 py-1 me-3 d-flex justify-content-center align-items-center text-white border">
                 <svg width="30" height="30" fill="white" class="bi bi-check2-circle" viewBox="0 0 16 16">
                   <path
                     d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0z" />
                   <path
                     d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l7-7z" />
                 </svg>
-                <p class="my-auto mx-2" style="font-family: 'Barlow Condensed';">SAVE</p>
+                <p class="my-auto mx-2" style="font-family: 'Barlow Condensed'">SAVE</p>
+              </div>
+              <div id="edit-btn" (click)="saveAndPostTabGroup()" style="color:#BF9C6E;border:#BF9C6E solid 1px"
+                class="px-3 py-1 d-flex justify-content-center align-items-center">
+                <svg width="30" height="30" fill="currentColor" class="bi bi-check2-circle" viewBox="0 0 16 16">
+                  <path
+                    d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0z" />
+                  <path
+                    d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l7-7z" />
+                </svg>
+                <p class="my-auto mx-2" style="font-family: 'Barlow Condensed'">SAVE AND POST</p>
               </div>
             </div>
           </div>
@@ -158,4 +188,5 @@
       <app-edit-tab (noteSelectedOutput)="updateNoteSelection($event)" *ngIf="editMode"></app-edit-tab>
     </div>
   </div>
+  <app-not-found *ngIf="!exists"></app-not-found>
 </div>

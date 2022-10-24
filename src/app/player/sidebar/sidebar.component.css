@@ -1,11 +1,13 @@
 #sidebar {
   height: 100vh;
+  max-height: 100vh;
   background-color: #333533;
   box-shadow: 3px 0 2px rgba(0, 0, 0, 0.15);
   position: fixed;
   left: 0;
   top: 0;
   bottom: 0;
+  z-index: 100;
 }
 
 @media (min-width:768px) {
@@ -14,7 +16,7 @@
   }
 }
 
-img {
+a>img {
   width: calc(40px + 1.5vw);
 }
 
@@ -23,7 +25,8 @@ img {
     width: 100px;
   }
 
-  img {
+  img,
+  #add-instrument-btn-container {
     width: 70px;
   }
 }
@@ -35,6 +38,31 @@ img {
   align-items: center;
 }
 
+#instruments-container {
+  overflow-y: overlay;
+  background-color: rgba(0, 0, 0, 0);
+  background-clip: initial;
+  -webkit-background-clip: text;
+  transition: background-color 150ms ease-in-out, padding-right 150ms ease-in-out;
+}
+
+#sidebar:hover #instruments-container.overflow {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding-right: 8px;
+}
+
+#instruments-container::-webkit-scrollbar-thumb {
+  background-color: inherit;
+}
+
+#instruments-container::-webkit-scrollbar-track {
+  background-color: #00000000
+}
+
+#icons-container,
+#instruments-container {
+  min-height: 0;
+}
 
 #search {
   cursor: pointer;
@@ -54,34 +82,114 @@ path {
   height: 2px;
 }
 
+#sidebar:hover #add-instrument-btn-container {
+  max-height: 200px;
+  padding-top: 1.5em;
+  padding-bottom: 1.5em;
+}
+
+#add-instrument-btn-container {
+  padding-top: 0;
+  padding-bottom: 0;
+  overflow: hidden;
+  max-height: 0;
+  background-color: #202020;
+  box-shadow: 0 0 5px inset rgba(0, 0, 0, 0.4);
+  transition: padding 300ms ease-in-out, max-height 300ms ease-in-out, background-color 50ms ease-in-out;
+  cursor: pointer;
+}
+
+#add-instrument-btn-container:hover {
+  background-color: #262626;
+}
+
+#add-instrument-btn-container:active {
+  background-color: #2b2b2b;
+  transition: background-color 20ms ease-in-out;
+}
+
+#add-instrument-btn-container svg {
+  width: calc(30px + 1.5vw);
+  transition: transform 150ms ease-in-out, color 150ms ease-in-out;
+}
+
+#add-instrument-btn-container:hover svg {
+  transform: scale(1.05);
+}
+
+#add-instrument-btn-container path {
+  fill: rgba(255, 255, 255, 0.8);
+  transition: fill 150ms ease-in-out;
+}
+
+#add-instrument-btn-container:hover path {
+  fill: white;
+}
+
+.instrument {
+  transition: background-color 100ms ease-in-out, box-shadow 100ms ease-in-out;
+}
 
 .active-instrument {
   background-color: rgba(32, 32, 32, 0.4);
   box-shadow: 5px 0 5px inset;
 }
 
-a {
+.instrument {
   transition: background-color 100ms
 }
 
-a:hover {
+.instrument:hover {
+  background-color: rgba(32, 32, 32, 0.4);
+  box-shadow: 3px 0 5px inset rgb(35, 35, 35);
   cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.1);
 }
 
-a:hover img {
-  animation: float 1.5s infinite;
-}
-
-a:active {
-  background-color: rgba(255, 255, 255, 0.2);
+.active-instrument:hover {
+  box-shadow: 3px 0 5px inset;
   transition: 20ms;
 }
 
-@keyframes float {
-  50% {
-    transform: scale(1.1);
-  }
+.instrument:active {
+  background-color: rgba(32, 32, 32, 0.5);
+  box-shadow: 6px 0 10px 8px inset rgb(35, 35, 35);
+  transition: 20ms ease-in;
+}
+
+.instrument.guitar {
+  order: 1;
+}
+
+.instrument.acoustic-guitar {
+  order: 2;
+}
+
+.instrument.bass {
+  order: 3;
+}
+
+.instrument.voice {
+  order: 4;
+}
+
+#profile-pic {
+  width: 100%;
+  object-position: center;
+  object-fit: cover;
+  aspect-ratio: 1;
+  transition: transform 150ms ease-in-out, box-shadow 150ms ease-in-out;
+}
+
+#profile-pic:hover {
+  transform: scale(1.1);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+#profile-pic:active {
+  transform: scale(1.05);
+  box-shadow: 1px 1px 2px;
+  transition: transform 20ms ease-in-out, box-shadow 20ms ease-in-out;
 }
 
 #modal-background {
@@ -93,4 +201,90 @@ a:active {
   background-color: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(1px);
   z-index: 1;
+}
+
+#background {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(2px);
+  z-index: 1;
+}
+
+#modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#modal-dialog {
+  background-color: #202020;
+}
+
+select {
+  background-color: #202020;
+  color: white;
+  border-color: #505050 !important;
+  border-width: 2px;
+  font-family: "Barlow Condensed";
+}
+
+#instrument-selection {
+  border-right-width: 0px;
+}
+
+button {
+  font-family: "Barlow Condensed";
+  background: none;
+  border-radius: 0;
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+
+#confirm-btn {
+  background: none;
+  border-color: #BF9C6E;
+  color: #BF9C6E;
+}
+
+button::before {
+  content: "";
+  position: absolute;
+  display: block;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 1;
+  background-color: rgb(255, 255, 255);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 150ms ease-out;
+  z-index: -1;
+}
+
+#confirm-btn::before {
+  background-color: #BF9C6E;
+  z-index: -1;
+}
+
+button:hover:before {
+  transform: scaleY(1);
+}
+
+button:hover {
+  background: none;
+  color: #202020 !important;
 }

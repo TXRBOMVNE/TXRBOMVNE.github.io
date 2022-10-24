@@ -1,0 +1,57 @@
+<div @slideIn id="search-container">
+  <div class="m-3">
+    <form [formGroup]="queryForm">
+      <input (input)="searchTracks()" class="form-control-plaintext fs-4" type="text" name="query" id="search"
+        autocomplete="off" placeholder="Search by song,artist or album" formControlName="query">
+    </form>
+  </div>
+  <div class="row m-0 h-100">
+    <div class="col-6 px-3">
+      <h5 class="m-0 p-0">Songs</h5>
+      <hr class="my-2">
+      <div id="songs-container">
+        <div @appear (click)="searchTabs(track.id, track.name)" *ngFor="let track of searchTracksResult"
+          class="song row p-0 mx-0 my-2 flex-nowrap rounded p-2">
+          <div class="col-auto p-0 song-cover-art-container">
+            <img class="song-cover-art img-fluid" [src]="track.album.images[2].url" [alt]="track.album.name">
+          </div>
+          <div class=" col my-auto pe-0 info-container">
+            <h5 class="mb-1 song-title">{{track.name}}</h5>
+            <p class="m-0 artists">{{track.artists[0].name}}<span *ngFor="let artist of track.artists.slice(1)">,
+                {{artist.name}}</span>
+            </p>
+          </div>
+        </div>
+        <div @appear *ngIf=" (!searchTracksResult || searchTracksResult.length === 0) && !noTrackMatches">
+          <h5 class="text-center text-white-50 fw-lighter my-3">Type something!</h5>
+        </div>
+        <div @appear *ngIf="noTrackMatches">
+          <h5 class="text-center text-white-50 fw-lighter my-3">Didn't find a song with that name! :(</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 px-3">
+      <h5 class="m-0 p-0">Tabs</h5>
+      <hr class="my-2">
+      <div id="tabs-container">
+        <div @appear *ngFor="let tab of searchTabsResult;let i=index" class="tab">
+          <p class="my-2 d-inline-block" (click)="loadTab(i)">
+            {{selectedTrackName}}&#160;
+            ({{searchTabsResult.indexOf(tab)}})</p>
+          <span @appear *ngIf="usernameArray" class="my-2">by&#160;
+            <span *ngIf="usernameArray[i]">{{usernameArray[i]}}</span>
+            <span class="fst-italic" *ngIf="!usernameArray[i]">[deletedUser]</span>
+          </span>
+        </div>
+        <div @appear *ngIf="noTabMatches" class="text-center fs-5">
+          <p class="text-white-50">There are no tabs related to this song!<br>
+            <span id="create-btn" (click)="createTabGroup()">Create one!</span>
+          </p>
+        </div>
+        <div @appear *ngIf="!selectedTrackName && !noTabMatches" class="text-center">
+          <p class="text-white-50 fw-lighter fs-5 my-3">Select a song to display its tabs!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

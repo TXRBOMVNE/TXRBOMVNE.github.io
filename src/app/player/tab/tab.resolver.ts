@@ -1,30 +1,31 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, DocumentData, QuerySnapshot } from '@angular/fire/compat/firestore';
-import {
-  Resolve,
-  RouterStateSnapshot,
-  ActivatedRouteSnapshot
-} from '@angular/router';
-import { first, Observable, of } from 'rxjs';
-import { AuthService } from 'src/app/auth/auth.service';
+import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router';
+import { map, Observable, take, tap } from 'rxjs';
+import { LoadingService } from 'src/app/extras/loading-animation/loading-animation.service';
 import { PlayerService } from '../player.service';
-import { TabComponent } from './tab.component';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TabResolver implements Resolve<QuerySnapshot<DocumentData> | undefined> {
-  constructor(private authService: AuthService, private playerService: PlayerService) { }
+export class TabResolver implements Resolve<Observable<boolean> | undefined> {
 
-  currentUser = this.authService.currentUser.value
+  constructor(private playerService: PlayerService, private loadingService: LoadingService, private router: Router) { }
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<QuerySnapshot<DocumentData>> | undefined | Promise<undefined> {
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | undefined {
     let trackId = route.paramMap.get("id")
-    if (!this.currentUser || !trackId) return undefined
-    return new Promise<QuerySnapshot<DocumentData>>(resolver => {
-      this.playerService.loadTab(trackId!)?.pipe(first()).subscribe((data: any) => {
-        resolver(data.data())
-      })
-    })
+    let tabId = +route.paramMap.get("tabId")!
+    let isCustom = route.queryParamMap.get("isCustom") === "true"
+    let tabReq = this.playerService.loadTab(trackId!, tabId)
+    if (isCustom) {
+      tabReq = this.playerService.loadTab(trackId!, tabId, true)
+    }
+    return tabReq?.pipe(tap((tabExists: boolean) => {
+      this.loadingService.isLoading.next(false)
+      if (!tabExists) {
+        this.router.navigate(["not-found"])
+        return false
+      }
+      return tabExists
+    }))
   }
 }

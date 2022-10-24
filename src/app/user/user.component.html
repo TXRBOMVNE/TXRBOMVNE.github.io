@@ -1,0 +1,155 @@
+<div id="container" class="row m-0 py-5">
+  <div class="col p-0">
+    <div [routerLink]="['/']" id="back-btn-container" class="fs-3 rounded-end">
+      <span id="arrow-head">&#8249;</span>
+      <p>HOME</p>
+    </div>
+  </div>
+  <div id="profile-container" class="col-lg-6 col-sm-8 col-10 rounded row mx-0 my-5 p-0">
+    <div *ngIf="currentFirebaseUser || imageSrc" id="pic-column" class="col-2 pt-2 px-3">
+      <div>
+        <label id="profile-pic-label" for="profile-pic-input">
+          <img id="profile-pic" class="rounded-circle img-fluid"
+            [src]="currentFirebaseUser ? currentFirebaseUser.photoURL :imageSrc" alt="">
+          <div id="profile-hover-container" class="d-flex justify-content-center align-items-center flex-column">
+            <div>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-pencil-square"
+                viewBox="0 0 16 16">
+                <path
+                  d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                <path fill-rule="evenodd"
+                  d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+              </svg>
+            </div>
+            <p style="font-family: 'Barlow Condensed';color: white;">EDIT</p>
+          </div>
+        </label>
+        <input hidden type="file" accept="image/*" name="profile-pic-input" id="profile-pic-input"
+          (input)="uploadNewProfilePic($event)">
+        <div @appear *ngIf="uploadPercentage || uploadPercentage === 0" id="bar-container" class="rounded-pill">
+          <div id="bar" class="rounded-pill" [ngStyle]="{'transform': 'scale('+uploadPercentage/100+')'}"></div>
+        </div>
+      </div>
+      <p id="error-message" *ngIf="fileUploadErrorMessage" class="text-danger">{{fileUploadErrorMessage}}
+      </p>
+    </div>
+    <div class="text-white col p-0 position-relative">
+      <div id="btns-container" style="font-family: 'Barlow Condensed';" class="row m-0 text-center">
+        <div (click)="showTabs=false" class="col-6 py-1" [ngClass]="!showTabs ? 'selected':''">
+          <h4 class="m-0">PROFILE</h4>
+        </div>
+        <div (click)="showTabs=true" class="col-6 py-1" [ngClass]="showTabs ? 'selected':''">
+          <h4 class="m-0">TABS</h4>
+        </div>
+      </div>
+      <div @appear id="profile" class="p-3 " *ngIf="!showTabs">
+        <div @appear *ngIf="!editMode && !changePasswordMode && profileForm.valid">
+          <div class="mb-4">
+            <h5>Email</h5>
+            <p class="text-white-50">{{profileForm.value.email}}</p>
+          </div>
+          <div class="my-4">
+            <h5>Username</h5>
+            <p class="text-white-50">{{profileForm.value.username}}</p>
+          </div>
+          <div *ngIf="!editMode && !changePasswordMode && profileForm.valid" class="my-4">
+            <button class="btn text-white border-white me-2" (click)="changePasswordMode=true">Change your
+              password</button>
+            <button class="btn text-white border-white" (click)="editMode=true">Edit profile</button>
+          </div>
+          <div (click)="logOut()" id="logout-btn" class="text-danger border border-danger d-inline-block p-2 rounded">
+            <div class="d-flex align-items-center">
+              <p class="d-inline-block mb-0 me-2">Log out</p>
+              <svg width="20" height="20" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                  d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z" />
+                <path fill-rule="evenodd"
+                  d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <form @appear *ngIf="editMode" [formGroup]="profileForm">
+          <div class="mb-3">
+            <h5 for="email">Email</h5>
+            <input type="email" class="form-control-plaintext text-white-50" name="email" id="email"
+              formControlName="email">
+          </div>
+          <div>
+            <h5 for="username">Username</h5>
+            <input type="text" class="form-control-plaintext text-white-50" name="username" id="username"
+              formControlName="username">
+          </div>
+          <div *ngIf="editMode" class="my-4">
+            <button class="btn text-white border-white me-2" (click)="editMode= false">Cancel</button>
+            <button class="btn text-white border-white" (click)="requestUpdateProfile()">Save changes</button>
+          </div>
+        </form>
+        <form @appear *ngIf="changePasswordMode" [formGroup]="passwordForm">
+          <input hidden type="email" autocomplete="email">
+          <div class="mb-3">
+            <h5 for="newPassword">New password</h5>
+            <input type="password" autocomplete="new-password" class="form-control-plaintext text-white-50"
+              name="newPassword" id="newPassword" formControlName="newPassword" placeholder="Your new password">
+          </div>
+          <div>
+            <h5 for="confirmPassword">Confirm password</h5>
+            <input type="password" autocomplete="new-password" class="form-control-plaintext text-white-50"
+              name="confirmPassword" id="confirmPassword" formControlName="confirmPassword"
+              placeholder="Confirm your new password">
+          </div>
+          <div *ngIf="changePasswordMode" class="my-4">
+            <button class="btn text-white border-white me-2" (click)="changePasswordMode=false">Cancel</button>
+            <button class="btn text-white border-white" (click)="updatePassword()" [disabled]="!passwordForm.valid">Save
+              changes</button>
+            <div class="float-end">
+              <p *ngIf="passwordForm.get('newPassword')!.errors &&
+                passwordForm.get('newPassword')!.errors!['minlength'] &&
+                 (passwordForm.get('newPassword')!.dirty && passwordForm.get('newPassword')!.invalid)"
+                class="text-warning">
+                Password is too short
+              </p>
+              <p *ngIf="passwordForm.get('confirmPassword')!.errors && passwordForm.get('confirmPassword')!.errors!['incorrectPassword']"
+                class="text-warning my-1">Passwords
+                don't match</p>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div @appear *ngIf="showTabs" id="songs-container" class="pt-3 pe-3 m-0 p-0 w-100">
+        <div class="p-0" *ngIf="userTabTracks">
+          <div @appear *ngFor="let track of userTabTracks" class="song row mx-0 mb-2 py-1 rounded">
+            <div class="col-3 col-xl-2 col-lg-3 px-3 px-xxl-4" [routerLink]="['/play',track.id,'0']"
+              [queryParams]="{isCustom:true}">
+              <img class="img-fluid" [src]="track.album.images[1].url" alt="">
+            </div>
+            <div class="col p-0 my-auto song-info-container" [routerLink]="['/play',track.id,'0']"
+              [queryParams]="{isCustom:true}">
+              <h5 class="mb-1 song-title">{{track.name}}</h5>
+              <h6 class="m-0 text-white-50 fw- artists">{{track.artists[0].name}}<span
+                  *ngFor="let artist of track.artists.slice(1)">,
+                  {{artist.name}}</span>
+              </h6>
+            </div>
+            <div class="col-1 p-0 my-auto">
+              <div (click)="deleteTab(track.id)"
+                class="delete-btn p-1 mx-2 rounded d-flex align-items-center justify-content-center">
+                <svg width="18" height="18" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                  <path
+                    d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
+                </svg>
+              </div>
+            </div>
+            <div class="col-1 py-0 px-2 arrow-head my-auto d-flex">
+              <h2 style="cursor: pointer;">&#8250;</h2>
+            </div>
+          </div>
+          <div *ngIf="userTabTracks && userTabTracks.length === 0">
+            <h6 class="text-center text-white-50 lead fs-6">Your created tabs will be displayed here</h6>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col"></div>
+</div>

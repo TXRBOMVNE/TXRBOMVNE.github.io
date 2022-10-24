@@ -1,6 +1,6 @@
 import { Injectable, QueryList } from '@angular/core';
 import { Subject } from 'rxjs';
-import { Bar, Segment, Note, exampleSong } from 'src/app/models/song.model';
+import { Bar, Note, Segment } from 'src/app/models/song.model';
 import { PlayerService } from '../player.service';
 import { tabLayout } from './tab.component';
 
@@ -12,10 +12,17 @@ export class TabService {
   constructor(private playerService: PlayerService) { }
 
   tabLayout = tabLayout
-  song = this.playerService.song!
-  staffHeight = 42 * (this.song.instrument.strings - 1)
+  currentTab = this.playerService.currentTab.value!
+  staffHeight = 42 * (this.currentTab.instrument.strings - 1)
   HTMLSegments?: QueryList<any>
   isPlaying = new Subject<boolean>()
+
+  subToTab() {
+    return this.playerService.currentTab.subscribe(tab => {
+      this.currentTab = tab!
+      this.staffHeight = 42 * (tab!.instrument.strings - 1)
+    })
+  }
 
   styleBar(bar: Bar, index: number) {
     let style
@@ -176,7 +183,8 @@ export class TabService {
   }
 
   hasTimeSignatureChanged(bar: Bar, index: number) {
-    if (index === 0 || JSON.stringify(bar.timeSignature) !== JSON.stringify(this.song.bars[index - 1].timeSignature)) {
+    if (index === 0 || (bar.timeSignature.denominator !== this.currentTab.bars[index - 1].timeSignature.denominator ||
+      bar.timeSignature.numerator !== this.currentTab.bars[index - 1].timeSignature.numerator)) {
       return true
     }
     return false
@@ -189,5 +197,4 @@ export class TabService {
   pause() {
     this.isPlaying.next(false)
   }
-
 }

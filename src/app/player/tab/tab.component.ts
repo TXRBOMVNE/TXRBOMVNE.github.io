@@ -1,6 +1,5 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { first, Subject, Subscription } from 'rxjs';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Subject, Subscription } from 'rxjs';
 import { Bar, Note, Segment, Tab } from 'src/app/models/song.model';
 import { SegmentDirective } from '../directives/segment.directive';
 import { PlayerService } from '../player.service';
@@ -22,47 +21,57 @@ export const tabLayout = {
   templateUrl: './tab.component.html',
   styleUrls: ['./tab.component.css']
 })
-export class TabComponent implements AfterViewInit, OnInit {
-  constructor(private tabService: TabService, private playerService: PlayerService, private route: ActivatedRoute) { }
+export class TabComponent implements AfterViewInit, OnInit, OnDestroy {
+  constructor(private tabService: TabService, private playerService: PlayerService) { }
 
   @ViewChildren(SegmentDirective) HTMLSegments?: QueryList<any>
 
   tabLayout = tabLayout
-  song?: Tab = this.playerService.song
-  staffHeight = 42 * (this.song!.instrument.strings - 1)
-  segmentSelection?= new Subject<{ bar: Bar, segment: Segment }>()
+  currentTab: Tab = this.playerService.currentTab.value!
+  staffHeight = 42 * (this.currentTab.instrument.strings - 1)
+  segmentSelection = new Subject<{ bar: Bar, segment: Segment }>()
   isPaused?: boolean
-
+  subs: Subscription[] = []
   private segmentsArray() {
     let array: Segment[] = []
-    this.song!.bars.forEach(bar => {
+    this.currentTab.bars.forEach(bar => {
       array = array.concat(bar.segments)
     })
     return array
   }
 
   ngOnInit(): void {
-    this.tabService.isPlaying.subscribe(isPlaying => {
+    const isPlayingSub = this.tabService.isPlaying.subscribe(isPlaying => {
       if (isPlaying) {
         this.play()
       } else {
         this.isPaused = true
       }
     })
-    this.subToPlay()
-    this.segmentSelection?.subscribe(selection => {
+    const playerSub = this.subToPlay()
+    const segmentSelectionSub = this.segmentSelection?.subscribe(selection => {
       const { segment } = selection
       this.currentNoteIndex = this.segmentsArray().indexOf(segment)
     })
+    const currentTabSub = this.playerService.currentTab.subscribe(tab => {
+      this.currentTab = tab!
+      this.staffHeight = 42 * (tab!.instrument.strings - 1)
+    })
+    this.tabService.subToTab().unsubscribe()
+    this.tabService.subToTab()
+    this.subs.push(isPlayingSub, playerSub, segmentSelectionSub, currentTabSub)
   }
 
   ngAfterViewInit(): void {
     this.tabService.HTMLSegments = this.HTMLSegments
   }
 
-  sub?: Subscription
+  ngOnDestroy(): void {
+    this.subs.forEach(sub => sub.unsubscribe())
+  }
+
   // Sets whole note duration depending on the song BPM
-  wholeNoteDurationMs = (60 / this.song!.initialTempo * 4) * 1000
+  wholeNoteDurationMs = (60 / this.currentTab.initialTempo * 4) * 1000
   currentNoteIndex = 0
   currentNoteDuration = new Subject<number>()
 
@@ -72,7 +81,7 @@ export class TabComponent implements AfterViewInit, OnInit {
   }
 
   subToPlay() {
-    this.sub = this.currentNoteDuration.subscribe(noteDuration => {
+    return this.currentNoteDuration.subscribe(noteDuration => {
       this.HTMLSegments!.get(this.currentNoteIndex).el.nativeElement.focus()
       setTimeout(() => {
         if (this.isPaused) {
@@ -134,7 +143,7 @@ export class TabComponent implements AfterViewInit, OnInit {
 
   // Sets horizontal scroll to mouse wheel without holding shift
   @ViewChild("canvasContainer", { static: false }) canvasContainer?: ElementRef<HTMLElement>
-  @HostListener("document:wheel", ["$event"])
+  @HostListener("wheel", ["$event"])
   changeToHorizontalScroll(event: WheelEvent) {
     if (!this.canvasContainer) return
     if (event.deltaY > 0) this.canvasContainer.nativeElement.scrollLeft += 100;

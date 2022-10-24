@@ -1,0 +1,76 @@
+#search-container {
+  position: fixed;
+  left: 100px;
+  height: 100vh;
+  background-color: #202020;
+  z-index: 10;
+  color: #d6d6d6;
+}
+
+@media (min-width:768px) {
+  #search-container {
+    left: max(75px, 5.2vw);
+  }
+}
+
+#search {
+  color: #d6d6d6;
+  border-bottom: #333533 solid 1px;
+  min-width: 1061px;
+}
+
+#songs-container {
+  max-height: calc(100vh - 131px);
+  overflow: auto;
+}
+
+.song-cover-art-container {
+  width: 64px;
+  height: 64px;
+}
+
+.info-container {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.song-title {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: calc(100%);
+  font-weight: 700;
+}
+
+.song:hover {
+  background-color: #333533;
+  cursor: pointer;
+}
+
+.artists {
+  color: #909090;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 400px;
+}
+
+.tab p:hover {
+  text-decoration: underline;
+  cursor: pointer;
+  color: white;
+}
+
+.tab span {
+  float: right;
+  color: #909090;
+  font-weight: light;
+}
+
+#create-btn {
+  color: white;
+}
+
+#create-btn:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}

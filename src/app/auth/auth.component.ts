@@ -1,8 +1,12 @@
-import { trigger, transition, style, animate } from '@angular/animations';
+import { animate, style, transition, trigger } from '@angular/animations';
 import { HttpParams } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { catchError, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { LoadingService } from '../extras/loading-animation/loading-animation.service';
 import { AuthService } from './auth.service';
 
 @Component({
@@ -23,7 +27,7 @@ import { AuthService } from './auth.service';
   ]
 })
 export class AuthComponent {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private loadingService: LoadingService, private fireAuth: AngularFireAuth, private router: Router) { }
   loginMode: boolean = true
   loginForm = new FormGroup({
     email: new FormControl(null, [Validators.email, Validators.required]),
@@ -33,23 +37,33 @@ export class AuthComponent {
 
   // Logs in or signs up an user
   requestAuth() {
+    this.loadingService.isLoading.next(true)
     if (this.loginMode) {
       this.authService.requestLogin(this.loginForm.value)
-        .then(res => {
-          this.authService.currentUser.next({ refreshToken: res.user?.refreshToken, uid: res.user?.uid })
-          localStorage.setItem("userAuth", JSON.stringify({ refreshToken: res.user?.refreshToken, uid: res.user?.uid }))
+        .then((res: any) => {
+          const user = res.user.auth.currentUser
+          if (!user) return
+          localStorage.setItem("auth", JSON.stringify({ refreshToken: user.refreshToken }))
+          this.loadingService.isLoading.next(false)
           this.requestSpotifyAuth()
         })
         .catch(() => {
           this.errorMessage = "Invalid Credentials"
+          this.loadingService.isLoading.next(false)
         })
     } else {
       this.authService.requestSignUp(this.loginForm.value)
-        .then(res => {
-          this.authService.currentUser.next({ refreshToken: res.user?.refreshToken, uid: res.user?.uid })
-          localStorage.setItem("userAuth", JSON.stringify({ refreshToken: res.user?.refreshToken, uid: res.user?.uid }))
-          this.authService.createUserData(this.loginForm.value.username, res.user!.uid)
-          this.requestSpotifyAuth()
+        .then((res: any) => {
+          const user = res.user.auth.currentUser
+          if (!user) return
+          localStorage.setItem("auth", JSON.stringify({ refreshToken: user.refreshToken }))
+          this.authService.setUserProfile(this.loginForm.value.username, res.user.uid).pipe(catchError(() => {
+            this.loadingService.isLoading.next(false)
+            return of(null)
+          })).subscribe(() => {
+            this.loadingService.isLoading.next(false)
+            this.requestSpotifyAuth()
+          })
         })
         .catch(error => {
           switch (error.code) {
@@ -60,6 +74,7 @@ export class AuthComponent {
               this.errorMessage = error.code
               break;
           }
+          this.loadingService.isLoading.next(false)
         })
     }
 
@@ -83,7 +98,7 @@ export class AuthComponent {
           client_id: environment.spotify.id,
           response_type: "code",
           scope: "streaming",
-          redirect_uri: "http://localhost:4200/play",
+          redirect_uri: "http://localhost:4200",
         }
       }
     )

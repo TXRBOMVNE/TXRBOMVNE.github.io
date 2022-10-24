@@ -1,11 +1,12 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Bar, Note, Segment } from 'src/app/models/song.model';
+import { Bar, Note, Segment, SpotifyTrack } from 'src/app/models/song.model';
 import { AppStatus } from '../player.component';
 import { EditTabService } from '../edit-tab/edit-tab.service';
 import { Subscription } from 'rxjs';
 import { TabService } from '../tab/tab.service';
+import { PlayerService } from '../player.service';
 
 @Component({
   selector: 'app-edit-topbar',
@@ -20,17 +21,29 @@ import { TabService } from '../tab/tab.service';
       transition(":leave", [
         animate("100ms ease-in-out", style({ opacity: 0 }))
       ])
+    ]),
+    trigger("appear", [
+      transition(":enter", [
+        style({ opacity: 0 }),
+        animate("300ms ease-in-out", style({ opacity: 1 }))
+      ]),
+      transition(":leave", [
+        animate("300ms ease-in-out", style({ opacity: 0 }))
+      ])
     ])
   ]
 })
 export class EditTopbarComponent implements OnInit, OnChanges {
 
-  constructor(private editTabService: EditTabService, private tabService: TabService) { }
+  constructor(private editTabService: EditTabService, private tabService: TabService, private playerService: PlayerService) { }
 
   // Gets data related to the note selected in the tab component
   @Input() barPropertiesInput: { segment: Segment, bar: Bar, note?: Note } | undefined
   @Output() appStatusOutput = new EventEmitter<AppStatus>()
 
+  subs: Subscription[] = []
+
+  currentSpotifyTrack?: SpotifyTrack
   appStatus: AppStatus = {
     isPlaying: false,
     isMenuActive: false,
@@ -38,7 +51,6 @@ export class EditTopbarComponent implements OnInit, OnChanges {
     isMetronomeActive: false,
     tempoMultiplier: 100
   }
-
   noteProperties = new FormGroup({
     initialDurationInverse: new FormControl(4, Validators.required),
     isDotted: new FormControl(false),
@@ -49,25 +61,29 @@ export class EditTopbarComponent implements OnInit, OnChanges {
     slideInMode: new FormControl(null)
   })
 
-  sub?: Subscription
+  selectionSub?: Subscription
   showSlideMenu: boolean = false
 
   ngOnInit(): void {
     this.appStatusOutput.emit(this.appStatus)
-    this.tabService.isPlaying.subscribe(isPlaying => {
+    const isPlayingSub = this.tabService.isPlaying.subscribe(isPlaying => {
       if (isPlaying) {
         this.appStatus.isPlaying = true
       } else {
         this.appStatus.isPlaying = false
       }
     })
+    const currentSpotifyTrackSub = this.playerService.currentSpotifyTrack.subscribe(track => {
+      this.currentSpotifyTrack = track!
+    })
+    this.subs.push(isPlayingSub, currentSpotifyTrackSub)
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!this.barPropertiesInput) return
-    if (this.sub) {
+    if (this.selectionSub) {
       // Unsubscribes from previous note subscription
-      this.sub?.unsubscribe()
+      this.selectionSub?.unsubscribe()
     }
     this.noteProperties.reset()
     let currentValue = changes["barPropertiesInput"].currentValue
@@ -89,7 +105,7 @@ export class EditTopbarComponent implements OnInit, OnChanges {
       })
     }
     // Subscribes to a note selection every time it changes
-    this.sub = this.noteProperties.valueChanges.subscribe(newValues => {
+    this.selectionSub = this.noteProperties.valueChanges.subscribe(newValues => {
       // Skips the subscription every time all of the values are "null"
       let isEveryValueNull = Object.values(newValues).every(value => value === null);
       if (!!isEveryValueNull) return

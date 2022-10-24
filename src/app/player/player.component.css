@@ -129,6 +129,43 @@ h2 {
   color: #808080;
 }
 
+#menu-btn {
+  cursor: pointer;
+}
+
+#menu-btn:hover svg {
+  fill: #b9b9b9
+}
+
+#menu-btn svg {
+  fill: rgba(255, 255, 255, 0.4);
+  transition: fill 100ms ease-in;
+}
+
+#menu {
+  position: absolute;
+  top: -150%;
+  right: 0;
+  color: #b6b6b6;
+  background-color: #262626;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.434);
+  transition: opacity 150ms ease-in;
+}
+
+.option {
+  transition: background-color 100ms ease-in;
+}
+
+.option:hover {
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.option:active {
+  transition: background-color 20ms ease-in;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
 #edit-btn {
   transition: background-color 100ms;
 }

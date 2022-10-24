@@ -1,36 +1,83 @@
-<div id="sidebar" class="d-none d-md-flex flex-column">
-  <div class="py-4" id="search">
-    <div class="my-3">
-      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
-        <path id="Icon_material-search" data-name="Icon material-search"
-          d="M35.338,31.907H33.531l-.64-.617a14.888,14.888,0,1,0-1.6,1.6l.617.64v1.807L43.342,46.75l3.408-3.408Zm-13.722,0A10.292,10.292,0,1,1,31.907,21.616,10.278,10.278,0,0,1,21.616,31.907Z"
-          transform="translate(-6.75 -6.75)" />
+<div id="sidebar" class="d-none d-md-flex flex-column justify-content-between">
+  <div id="icons-container" class="d-flex flex-column">
+    <div class="my-4" id="search" (click)="showSearchMenu=!showSearchMenu">
+      <div class="my-3">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+          <path id="Icon_material-search" data-name="Icon material-search"
+            d="M35.338,31.907H33.531l-.64-.617a14.888,14.888,0,1,0-1.6,1.6l.617.64v1.807L43.342,46.75l3.408-3.408Zm-13.722,0A10.292,10.292,0,1,1,31.907,21.616,10.278,10.278,0,0,1,21.616,31.907Z"
+            transform="translate(-6.75 -6.75)" />
+        </svg>
+      </div>
+    </div>
+    <div class="space-line"></div>
+    <div @appear2 *ngIf="currentTabGroup" id="instruments-container"
+      class="d-flex flex-column justify-content-between align-items-center" #instruments>
+      <div (click)="changeTab(tab)" class="instrument" [ngClass]="tab.instrument.name"
+        *ngFor="let tab of currentTabGroup.tabs;let i=index" [ngSwitch]="tab.instrument.name">
+        <a *ngSwitchCase="'guitar'" class="w-100 text-center">
+          <img class="my-4" src="../../../assets/images/guitar.png" alt="Electric Guitar">
+        </a>
+        <a *ngSwitchCase="'acoustic-guitar'" class="w-100 text-center">
+          <img class="my-4" src="../../../assets/images/acoustic-guitar.png" alt="Acoustic Guitar">
+        </a>
+        <a *ngSwitchCase="'bass'" class="w-100 text-center">
+          <img class="my-4" src="../../../assets/images/bass.png" alt="Bass Guitar">
+        </a>
+        <a *ngSwitchCase="'voice'" class="w-100 text-center">
+          <img class="my-4" src="../../../assets/images/mic.png" alt="Microphone">
+        </a>
+      </div>
+    </div>
+    <div *ngIf="editMode" (click)="showSelectionModal=true" id="add-instrument-btn-container">
+      <svg class="bi bi-plus-circle" viewBox="0 0 16 16">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+        <path
+          d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
       </svg>
     </div>
   </div>
-  <div class="space-line"></div>
-  <div>
-    <a class="py-4 w-100 text-center" routerLinkActive="active-instrument">
-      <img class="my-2" src="../../../assets/images/guitar.png" alt="Electric Guitar">
-    </a>
-  </div>
-  <div>
-    <a class="py-4 w-100 text-center" routerLinkActive="active-instrument">
-      <img class="my-2" src="../../../assets/images/acoustic-guitar.png" alt="Acoustic Guitar">
-    </a>
-  </div>
-  <div>
-    <a class="py-4 w-100 text-center" routerLinkActive="active-instrument">
-      <img class="my-2" src="../../../assets/images/bass.png" alt="Bass Guitar">
-    </a>
-  </div>
-  <div>
-    <a class="py-4 w-100 text-center" routerLinkActive="active-instrument">
-      <img class="my-2" src="../../../assets/images/mic.png" alt="Microphone">
-    </a>
+  <div @appear2 *ngIf="imageSrc" id="profile-pic-container" class="p-3">
+    <div routerLink="/user">
+      <img id="profile-pic" class="rounded-circle w-100" [src]="imageSrc" alt="Profile picture">
+    </div>
   </div>
 </div>
-
+<div @appear *ngIf="showSelectionModal" id="modal-container">
+  <div id="modal-dialog" class="p-5">
+    <div>
+      <h2 class="text-white">Select an instrument</h2>
+    </div>
+    <form [formGroup]="instrumentForm" action="">
+      <div class="row m-0 p-0">
+        <div class="col-8 p-0">
+          <select class="form-select shadow-none my-4 rounded-0 fs-5" name="name" id="instrument-selection"
+            formControlName="name">
+            <option value="guitar"> Guitar</option>
+            <option value="acoustic-guitar">Acoustic guitar</option>
+            <option value="bass">Bass</option>
+            <option value="voice">Voice</option>
+          </select>
+        </div>
+        <div class="col-4 p-0">
+          <select class="form-select shadow-none my-4 rounded-0 fs-5" name="strings" id="strings"
+            formControlName="strings">
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+          </select>
+        </div>
+      </div>
+      <div class="float-end">
+        <button class="btn btn-light shadow-none me-3 fs-5" (click)="showSelectionModal=false">CANCEL</button>
+        <button id="confirm-btn" type="submit" class="btn fs-5" (click)="addInstrument($event)">CONFIRM</button>
+      </div>
+    </form>
+  </div>
+</div>
+<app-search (searchMenuStatus)="closeSearchMenu()" *ngIf="showSearchMenu"></app-search>
+<div @appear *ngIf="showSearchMenu" (click)="showSearchMenu=false" id="background"></div>
 <div>
   <div id="sidebar" @enterFromSide *ngIf="isMenuActive" class="d-flex flex-column">
     <div class="py-4" id="search">
@@ -44,22 +91,22 @@
     </div>
     <div class="space-line"></div>
     <div>
-      <a class="py-4 w-100 text-center" routerLinkActive="active-instrument">
+      <a class="py-4 w-100 text-center">
         <img class="my-2" src="../../../assets/images/guitar.png" alt="Electric Guitar">
       </a>
     </div>
     <div>
-      <a class="py-4 w-100 text-center" routerLinkActive="active-instrument">
+      <a class="py-4 w-100 text-center">
         <img class="my-2" src="../../../assets/images/acoustic-guitar.png" alt="Acoustic Guitar">
       </a>
     </div>
     <div>
-      <a class="py-4 w-100 text-center" routerLinkActive="active-instrument">
+      <a class="py-4 w-100 text-center">
         <img class="my-2" src="../../../assets/images/bass.png" alt="Bass Guitar">
       </a>
     </div>
     <div>
-      <a class="py-4 w-100 text-center" routerLinkActive="active-instrument">
+      <a class="py-4 w-100 text-center">
         <img class="my-2" src="../../../assets/images/mic.png" alt="Microphone">
       </a>
     </div>
