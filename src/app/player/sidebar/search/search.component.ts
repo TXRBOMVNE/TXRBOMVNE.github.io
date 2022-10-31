@@ -5,6 +5,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { take } from 'rxjs';
 import { LoadingService } from 'src/app/extras/loading-animation/loading-animation.service';
+import { TabGroup } from 'src/app/models/song.model';
 import { PlayerService } from '../../player.service';
 import { SearchService } from './search.service';
 
@@ -51,8 +52,7 @@ export class SearchComponent implements OnInit {
   selectedTrackName?: string
   selectedTrackId?: string
 
-  searchTabsResult: QueryDocumentSnapshot<DocumentData>[] = []
-  usernameArray: string[] = []
+  searchTabsResult: TabGroup[] = []
   noTabMatches: boolean = false
 
   searchTracks() {
@@ -82,16 +82,15 @@ export class SearchComponent implements OnInit {
 
   searchTabs(trackId: string, trackName: any) {
     this.searchService.searchTabs(trackId).pipe(take(1)).subscribe(searchResult => {
-      const tabGroups = searchResult.tabGroupArray
-      this.usernameArray = searchResult.usernameArray
       this.selectedTrackName = trackName
       this.selectedTrackId = trackId
-      this.searchTabsResult = tabGroups as QueryDocumentSnapshot<DocumentData>[]
-      if (tabGroups.length === 0) {
+      this.searchTabsResult = searchResult
+      if (searchResult.length === 0) {
         this.noTabMatches = true
       } else {
         this.noTabMatches = false
       }
+      console.log(this.searchTabsResult)
     })
   }
 
@@ -107,9 +106,7 @@ export class SearchComponent implements OnInit {
     if (!this.selectedTrackId) return
     this.playerService.loadTab(this.selectedTrackId, tabIndex, isCustom)?.pipe(take(1)).subscribe(() => {
       this.loadingService.isLoading.next(false)
-      if (isCustom) {
-        this.router.navigate(["play", this.selectedTrackId, "0"], { queryParams: { isCustom: true } })
-      }
+      this.router.navigate(["play", this.selectedTrackId, tabIndex])
       this.searchMenuStatus.emit()
     })
   }

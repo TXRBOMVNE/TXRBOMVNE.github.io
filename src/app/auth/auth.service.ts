@@ -131,7 +131,7 @@ export class AuthService {
       new URLSearchParams({
         grant_type: "authorization_code",
         code: code!,
-        redirect_uri: "http://localhost:4200"
+        redirect_uri: environment.spotify.redirect_uri
       }).toString(),
       {
         headers: new HttpHeaders({

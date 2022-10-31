@@ -77,23 +77,24 @@ export class TabService {
   }
 
   assignSlide(note: Note) {
-    let src = "../../../assets/svgs/effects/to-apply/"
-    if (note.effects && note.effects.slides && (note.effects.slides.slideOut === "slideUp" || note.effects.slides.slideIn === "slideUp")) {
-      src += "slide-up.svg"
+    let src = 'https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fsvgs%2Fto-apply%2F'
+    if (note.effects && note.effects.slides && (note.effects.slides.slideOut === 'slideUp' || note.effects.slides.slideIn === 'slideUp')) {
+      src += 'slide-up.svg'
     }
-    if (note.effects && note.effects.slides && (note.effects.slides.slideOut === "slideDown" || note.effects.slides.slideIn === "slideDown")) {
-      src += "slide-down.svg"
+    if (note.effects && note.effects.slides && (note.effects.slides.slideOut === 'slideDown' || note.effects.slides.slideIn === 'slideDown')) {
+      src += 'slide-down.svg'
     }
-    if (note.effects && note.effects.slides && note.effects.slides.slideOut === "slideToNote") {
-      src += "slide-down.svg"
+    if (note.effects && note.effects.slides && note.effects.slides.slideOut === 'slideToNote') {
+      src += 'slide-down.svg'
     }
+    src += '?alt=media'
     return src
   }
 
   styleSlideOut(note: Note, segment: Segment, bar: Bar) {
     if (!note.effects || !note.effects.slides) return {}
     let style
-    if (note.effects.slides.slideOut === "slideToNote") {
+    if (note.effects.slides.slideOut === 'slideToNote') {
       let widthMultiplier: number
       let extraWidth = 0
       let extraTranslation = 0
@@ -111,15 +112,15 @@ export class TabService {
         widthMultiplier = .7
       }
       style = {
-        "width.px": 40,
-        "transform": `translateX(${(segment.separationSpace / 2) + extraTranslation}px) scaleX(${(segment.separationSpace / 40 * widthMultiplier) + extraWidth}) rotate(20deg)`,
+        'width.px': 40,
+        'transform': `translateX(${(segment.separationSpace / 2) + extraTranslation}px) scaleX(${(segment.separationSpace / 40 * widthMultiplier) + extraWidth}) rotate(20deg)`,
       }
-    } else if (note.effects.slides.slideOut === "slideDown") {
-      style = { "width.px": 30, "max-width.px": segment.separationSpace, "transform": "translateX(25px) rotate(20deg)" }
-    } else if (note.effects.slides.slideOut === "slideUp") {
-      style = { "width.px": 30, "max-width.px": segment.separationSpace, "transform": "translateX(25px) rotate(-20deg)" }
+    } else if (note.effects.slides.slideOut === 'slideDown') {
+      style = { 'width.px': 30, 'max-width.px': segment.separationSpace, 'transform': 'translateX(25px) rotate(20deg)' }
+    } else if (note.effects.slides.slideOut === 'slideUp') {
+      style = { 'width.px': 30, 'max-width.px': segment.separationSpace, 'transform': 'translateX(25px) rotate(-20deg)' }
     } else {
-      style = { "display": "none" }
+      style = { 'display': 'none' }
     }
     return style
   }
@@ -127,58 +128,58 @@ export class TabService {
   styleSlideIn(note: Note, segment: Segment) {
     if (!note.effects || !note.effects.slides) return {}
     let style
-    if (note.effects.slides.slideIn === "slideDown") {
-      style = { "width.px": 30, "max-width.px": segment.separationSpace, "transform": "translateX(-25px) rotate(20deg)" }
-    } else if (note.effects.slides.slideIn === "slideUp") {
-      style = { "width.px": 30, "max-width.px": segment.separationSpace, "transform": "translateX(-25px) rotate(-20deg)" }
+    if (note.effects.slides.slideIn === 'slideDown') {
+      style = { 'width.px': 30, 'max-width.px': segment.separationSpace, 'transform': 'translateX(-25px) rotate(20deg)' }
+    } else if (note.effects.slides.slideIn === 'slideUp') {
+      style = { 'width.px': 30, 'max-width.px': segment.separationSpace, 'transform': 'translateX(-25px) rotate(-20deg)' }
     } else {
-      style = { "display": "none" }
+      style = { 'display': 'none' }
     }
     return style
   }
 
   assignRestImg(segment: Segment) {
-    let restsFolder = "../../../assets/svgs/rests/"
+    let restsFolder = 'https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fsvgs%2Frests%2F'
     if (!segment.effects || !segment.effects?.isDotted) {
       switch (segment.initialDurationInverse) {
         case 1:
-          return restsFolder + "1st_rest.svg"
+          return restsFolder + '1st_rest.svg?alt=media'
         case 2:
-          return restsFolder + "2nd_rest.svg"
+          return restsFolder + '2nd_rest.svg?alt=media'
         case 4:
-          return restsFolder + "4th_rest.svg"
+          return restsFolder + '4th_rest.svg?alt=media'
         case 8:
-          return restsFolder + "8th_rest.svg"
+          return restsFolder + '8th_rest.svg?alt=media'
         case 16:
-          return restsFolder + "16th_rest.svg"
+          return restsFolder + '16th_rest.svg?alt=media'
         case 32:
-          return restsFolder + "32nd_rest.svg"
+          return restsFolder + '32nd_rest.svg?alt=media'
         case 64:
-          return restsFolder + "64th_rest.svg"
+          return restsFolder + '64th_rest.svg?alt=media'
         default:
-          return restsFolder + "4th_rest.svg"
+          return restsFolder + '4th_rest.svg?alt=media'
       }
     } else if (segment.effects.isDotted) {
       switch (segment.initialDurationInverse) {
         case 1:
-          return restsFolder + "dotted_1st_rest.svg"
+          return restsFolder + 'dotted_1st_rest.svg?alt=media'
         case 2:
-          return restsFolder + "dotted_2nd_rest.svg"
+          return restsFolder + 'dotted_2nd_rest.svg?alt=media'
         case 4:
-          return restsFolder + "dotted_4th_rest.svg"
+          return restsFolder + 'dotted_4th_rest.svg?alt=media'
         case 8:
-          return restsFolder + "dotted_8th_rest.svg"
+          return restsFolder + 'dotted_8th_rest.svg?alt=media'
         case 16:
-          return restsFolder + "dotted_16th_rest.svg"
+          return restsFolder + 'dotted_16th_rest.svg?alt=media'
         case 32:
-          return restsFolder + "dotted_32nd_rest.svg"
+          return restsFolder + 'dotted_32nd_rest.svg?alt=media'
         case 64:
-          return restsFolder + "dotted_64th_rest.svg"
+          return restsFolder + 'dotted_64th_rest.svg?alt=media'
         default:
-          return restsFolder + "dotted_4th_rest.svg"
+          return restsFolder + 'dotted_4th_rest.svg?alt=media'
       }
     } else {
-      return restsFolder + "4th_rest.svg"
+      return restsFolder + '4th_rest.svg?alt=media'
     }
   }
 

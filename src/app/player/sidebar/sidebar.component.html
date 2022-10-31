@@ -10,22 +10,33 @@
       </div>
     </div>
     <div class="space-line"></div>
-    <div @appear2 *ngIf="currentTabGroup" id="instruments-container"
+    <div @appear *ngIf="currentTabGroup" id="instruments-container"
       class="d-flex flex-column justify-content-between align-items-center" #instruments>
-      <div (click)="changeTab(tab)" class="instrument" [ngClass]="tab.instrument.name"
+      <div (click)="changeTab(i)" class="instrument py-4" [ngClass]="tab.instrument.name"
         *ngFor="let tab of currentTabGroup.tabs;let i=index" [ngSwitch]="tab.instrument.name">
-        <a *ngSwitchCase="'guitar'" class="w-100 text-center">
-          <img class="my-4" src="../../../assets/images/guitar.png" alt="Electric Guitar">
-        </a>
-        <a *ngSwitchCase="'acoustic-guitar'" class="w-100 text-center">
-          <img class="my-4" src="../../../assets/images/acoustic-guitar.png" alt="Acoustic Guitar">
-        </a>
-        <a *ngSwitchCase="'bass'" class="w-100 text-center">
-          <img class="my-4" src="../../../assets/images/bass.png" alt="Bass Guitar">
-        </a>
-        <a *ngSwitchCase="'voice'" class="w-100 text-center">
-          <img class="my-4" src="../../../assets/images/mic.png" alt="Microphone">
-        </a>
+        <div *ngIf="!isLoaded(i)" class="filler w-100 position-relative">
+          <div class="circle"></div>
+        </div>
+        <span *ngSwitchCase="'guitar'" class="text-center" [ngClass]="!isLoaded(i)?'w-0':'w-100'">
+          <img (load)="load(i)"
+            src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fimages%2Fguitar.png?alt=media"
+            alt="Electric Guitar">
+        </span>
+        <span *ngSwitchCase="'acoustic-guitar'" class="w-100 text-center" [ngClass]="!isLoaded(i)?'w-0':'w-100'">
+          <img (load)="load(i)"
+            src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fimages%2Facoustic-guitar.png?alt=media"
+            alt="Acoustic Guitar">
+        </span>
+        <span *ngSwitchCase="'bass'" class="w-100 text-center" [ngClass]="!isLoaded(i)?'w-0':'w-100'">
+          <img (load)="load(i)"
+            src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fimages%2Fbass.png?alt=media"
+            alt="Bass Guitar">
+        </span>
+        <span *ngSwitchCase="'voice'" class="w-100 text-center" [ngClass]="!isLoaded(i)?'w-0':'w-100'">
+          <img (load)="load(i)"
+            src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fimages%2Fmic.png?alt=media"
+            alt="Microphone">
+        </span>
       </div>
     </div>
     <div *ngIf="editMode" (click)="showSelectionModal=true" id="add-instrument-btn-container">
@@ -90,25 +101,31 @@
       </div>
     </div>
     <div class="space-line"></div>
-    <div>
-      <a class="py-4 w-100 text-center">
-        <img class="my-2" src="../../../assets/images/guitar.png" alt="Electric Guitar">
-      </a>
-    </div>
-    <div>
-      <a class="py-4 w-100 text-center">
-        <img class="my-2" src="../../../assets/images/acoustic-guitar.png" alt="Acoustic Guitar">
-      </a>
-    </div>
-    <div>
-      <a class="py-4 w-100 text-center">
-        <img class="my-2" src="../../../assets/images/bass.png" alt="Bass Guitar">
-      </a>
-    </div>
-    <div>
-      <a class="py-4 w-100 text-center">
-        <img class="my-2" src="../../../assets/images/mic.png" alt="Microphone">
-      </a>
+    <div @appear2 *ngIf="currentTabGroup" id="instruments-container"
+      class="d-flex flex-column justify-content-between align-items-center" #instruments>
+      <div (click)="changeTab(i)" class="instrument" [ngClass]="tab.instrument.name"
+        *ngFor="let tab of currentTabGroup.tabs;let i=index" [ngSwitch]="tab.instrument.name">
+        <span *ngSwitchCase="'guitar'" class="w-100 text-center">
+          <img class="my-4" loading="lazy"
+            src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fimages%2Fguitar.png?alt=media"
+            alt="Electric Guitar" #guitar>
+        </span>
+        <span *ngSwitchCase="'acoustic-guitar'" class="w-100 text-center">
+          <img class="my-4" loading="lazy"
+            src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fimages%2Facoustic-guitar.png?alt=media"
+            alt="Acoustic Guitar">
+        </span>
+        <span *ngSwitchCase="'bass'" class="w-100 text-center">
+          <img class="my-4" loading="lazy"
+            src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fimages%2Fbass.png?alt=media"
+            alt="Bass Guitar">
+        </span>
+        <span *ngSwitchCase="'voice'" class="w-100 text-center">
+          <img class="my-4" loading="lazy"
+            src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fimages%2Fmic.png?alt=media"
+            alt="Microphone">
+        </span>
+      </div>
     </div>
   </div>
   <div id="modal-background" @appear *ngIf="isMenuActive" (click)="closeMenu()"></div>

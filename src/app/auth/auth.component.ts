@@ -57,7 +57,8 @@ export class AuthComponent {
           const user = res.user.auth.currentUser
           if (!user) return
           localStorage.setItem("auth", JSON.stringify({ refreshToken: user.refreshToken }))
-          this.authService.setUserProfile(this.loginForm.value.username, res.user.uid).pipe(catchError(() => {
+          this.authService.setUserProfile(this.loginForm.value.username, res.user.uid).pipe(catchError(err => {
+            console.log(err)
             this.loadingService.isLoading.next(false)
             return of(null)
           })).subscribe(() => {
@@ -98,7 +99,7 @@ export class AuthComponent {
           client_id: environment.spotify.id,
           response_type: "code",
           scope: "streaming",
-          redirect_uri: "http://localhost:4200",
+          redirect_uri: environment.spotify.redirect_uri,
         }
       }
     )

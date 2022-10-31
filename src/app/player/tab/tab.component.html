@@ -1,6 +1,9 @@
 <div id="canvas-container" class="d-flex align-items-center py-5" #canvasContainer>
   <div *ngIf="currentTab" id="editing-tab" class="d-flex text-white my-3">
     <div class="bar d-flex" bar *ngFor="let bar of currentTab.bars;let i = index" [ngStyle]="styleBar(bar,i)">
+      <div class="bar-number-container">
+        <p class="m-0">{{i+1}}</p>
+      </div>
       <div *ngIf="currentTab.instrument" class="instrument-strings-container">
         <div class="instrument-string" *ngFor="let string of [].constructor(currentTab.instrument.strings)"></div>
       </div>

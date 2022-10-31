@@ -7,6 +7,7 @@ import { EditTabService } from '../edit-tab/edit-tab.service';
 import { Subscription } from 'rxjs';
 import { TabService } from '../tab/tab.service';
 import { PlayerService } from '../player.service';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
 
 @Component({
   selector: 'app-edit-topbar',
@@ -14,28 +15,29 @@ import { PlayerService } from '../player.service';
   styleUrls: ['./edit-topbar.component.css'],
   animations: [
     trigger('scale', [
-      transition(":enter", [
-        style({ opacity: 0 }),
-        animate("100ms ease-in-out", style({ opacity: 1 }))
+      transition(':enter', [
+        style({ 'max-height': 0 }),
+        animate('500ms ease-out', style({ 'max-height': '500px' }))
       ]),
-      transition(":leave", [
-        animate("100ms ease-in-out", style({ opacity: 0 }))
+      transition(':leave', [
+        style({ 'max-height': '500px' }),
+        animate('500ms ease-out', style({ 'max-height': 0 }))
       ])
     ]),
-    trigger("appear", [
-      transition(":enter", [
+    trigger('appear', [
+      transition(':enter', [
         style({ opacity: 0 }),
-        animate("300ms ease-in-out", style({ opacity: 1 }))
+        animate('300ms ease-in-out', style({ opacity: 1 }))
       ]),
-      transition(":leave", [
-        animate("300ms ease-in-out", style({ opacity: 0 }))
+      transition(':leave', [
+        animate('300ms ease-in-out', style({ opacity: 0 }))
       ])
     ])
   ]
 })
 export class EditTopbarComponent implements OnInit, OnChanges {
 
-  constructor(private editTabService: EditTabService, private tabService: TabService, private playerService: PlayerService) { }
+  constructor(private editTabService: EditTabService, private tabService: TabService, private playerService: PlayerService, public storage: AngularFireStorage) { }
 
   // Gets data related to the note selected in the tab component
   @Input() barPropertiesInput: { segment: Segment, bar: Bar, note?: Note } | undefined
@@ -86,7 +88,7 @@ export class EditTopbarComponent implements OnInit, OnChanges {
       this.selectionSub?.unsubscribe()
     }
     this.noteProperties.reset()
-    let currentValue = changes["barPropertiesInput"].currentValue
+    let currentValue = changes['barPropertiesInput'].currentValue
     this.noteProperties.patchValue({
       initialDurationInverse: currentValue.segment.initialDurationInverse,
       isRest: !!currentValue.segment.isRest,
@@ -106,7 +108,7 @@ export class EditTopbarComponent implements OnInit, OnChanges {
     }
     // Subscribes to a note selection every time it changes
     this.selectionSub = this.noteProperties.valueChanges.subscribe(newValues => {
-      // Skips the subscription every time all of the values are "null"
+      // Skips the subscription every time all of the values are 'null'
       let isEveryValueNull = Object.values(newValues).every(value => value === null);
       if (!!isEveryValueNull) return
       // Changes inputs depending to note selection properties

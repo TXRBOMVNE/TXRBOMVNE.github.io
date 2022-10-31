@@ -38,9 +38,9 @@
           <p class="my-2 d-inline-block" (click)="loadTab(i)">
             {{selectedTrackName}}&#160;
             ({{searchTabsResult.indexOf(tab)}})</p>
-          <span @appear *ngIf="usernameArray" class="my-2">by&#160;
-            <span *ngIf="usernameArray[i]">{{usernameArray[i]}}</span>
-            <span class="fst-italic" *ngIf="!usernameArray[i]">[deletedUser]</span>
+          <span @appear class="my-2">by&#160;
+            <span *ngIf="tab.authorDisplayName">{{tab.authorDisplayName}}</span>
+            <span *ngIf="!tab.authorDisplayName">[deletedUser]</span>
           </span>
         </div>
         <div @appear *ngIf="noTabMatches" class="text-center fs-5">

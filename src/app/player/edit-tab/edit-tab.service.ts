@@ -37,13 +37,11 @@ export class EditTabService {
       this.currentTab.bars[this.currentTab.bars.length - 1].timeSignature,
       addDefaultSegment()
     ))
-    this.modifyTab.next(null)
   }
 
   private addSegment(barIndex: number) {
     this.currentTab.bars[barIndex].segments.push(new Segment(this.notePropertiesInput.isRest, this.notePropertiesInput.initialDurationInverse, []))
     this.fillSegmentsNotesSpaces()
-    this.modifyTab.next(null)
   }
 
   updateNoteSelection(noteSelection: { segment: Segment, bar: Bar, note?: Note }) {
@@ -56,7 +54,6 @@ export class EditTabService {
     let segmentIndex = this.currentTab.bars[barIndex].segments.indexOf(this.noteSelection.segment)
     let noteIndex = this.currentTab.bars[barIndex].segments[segmentIndex].notes!.indexOf(this.noteSelection.note)
     this.currentTab.bars[barIndex].segments[segmentIndex].notes![noteIndex].fretValue = noteInput
-    this.modifyTab.next(null)
   }
 
   changeDuration(durationInput: number, isDotted?: boolean | null) {
@@ -69,14 +66,12 @@ export class EditTabService {
     if (isDotted === false || isDotted) {
       this.currentTab.bars[barIndex].segments[segmentIndex].effects = { isDotted: isDotted }
     }
-    this.modifyTab.next(null)
   }
 
   changeTimeSignature(timeSignatureNumerator: number, timeSignatureDenominator: number) {
     if (!this.noteSelection) return
     let barIndex = this.currentTab.bars.indexOf(this.noteSelection.bar)
     this.currentTab.bars[barIndex].timeSignature = { numerator: timeSignatureNumerator, denominator: timeSignatureDenominator }
-    this.modifyTab.next(null)
   }
 
   changeSlides(slidesInput: { slideOut?: "slideUp" | "slideDown" | "slideToNote", slideIn?: "slideUp" | "slideDown" }) {
@@ -88,7 +83,6 @@ export class EditTabService {
       this.currentTab.bars[barIndex].segments[segmentIndex].notes[noteIndex].effects = {}
     }
     this.currentTab.bars[barIndex].segments[segmentIndex].notes[noteIndex].effects!.slides = slidesInput
-    this.modifyTab.next(null)
   }
 
   toggleRest(isRest: boolean) {
@@ -99,7 +93,6 @@ export class EditTabService {
       let noteIndex = this.currentTab.bars[barIndex].segments[segmentIndex].notes!.indexOf(this.noteSelection.note)
     }
     this.currentTab.bars[barIndex].segments[segmentIndex].isRest = isRest
-    this.modifyTab.next(null)
   }
 
   selectNextSegmentNote() {
@@ -115,7 +108,6 @@ export class EditTabService {
     let nextNoteHTML: any
     if (this.noteSelection.bar.totalDurationRatio < this.noteSelection.bar.timeSignatureRatio) {
       this.addSegment(barIndex)
-      this.modifyTab.next(null)
       this.HTMLSegments?.changes.pipe(take(1)).subscribe(() => {
         nextSegmentHTML = barHTML.lastElementChild.children[segmentIndex + 1]
         nextNoteHTML = nextSegmentHTML.lastElementChild.children[noteIndex!] || nextSegmentHTML.lastElementChild.children[0]
@@ -127,7 +119,6 @@ export class EditTabService {
       if (this.noteSelection.bar.valid) {
         if (!this.currentTab.bars[barIndex + 1]) {
           this.addBar()
-          this.modifyTab.next(null)
           this.HTMLBars?.changes.pipe(take(1)).subscribe(() => {
             barHTML = this.HTMLBars?.get(barIndex + 1).el.nativeElement
             nextSegmentHTML = barHTML.lastElementChild.children[0]
@@ -169,10 +160,8 @@ export class EditTabService {
       // If there is only one segment, removes last bar; removes only segment otherwise
       if (this.currentTab.bars[barIndex].segments.length <= 1) {
         this.currentTab.bars.pop()
-        this.modifyTab.next(null)
       } else {
         this.currentTab.bars[barIndex].segments.pop()
-        this.modifyTab.next(null)
       }
     }
     // If there is a previous segment
@@ -256,7 +245,6 @@ export class EditTabService {
       }
       this.noteSelection = undefined
     }
-    this.modifyTab.next(null)
   }
 
   // Fills segmentes with blank notes to make note selection work with blank spaces
@@ -286,7 +274,6 @@ export class EditTabService {
         })
       })
     })
-    this.modifyTab.next(null)
   }
 
   playInterval = interval(500)

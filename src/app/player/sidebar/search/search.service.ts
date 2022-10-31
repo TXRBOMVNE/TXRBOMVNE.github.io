@@ -26,16 +26,22 @@ export class SearchService {
 
   searchTabs(trackId: string) {
     return this.firestore.collection("tracks").doc(trackId).collection("tabs").get().pipe(map(searchResult => {
-      const tabGroupArray = searchResult.docs
-      const usernameArray: string[] = []
+      const tabGroupArray: TabGroup[] = []
+      searchResult.docs.forEach(doc => tabGroupArray.push(doc.data() as TabGroup))
       tabGroupArray.forEach(tab => {
-        this.firestore.collection('users').doc(tab.data()!['uid']).get().pipe(take(1)).subscribe(userData => {
+        const uid = tab.uid
+        this.firestore.collection('users').doc(uid).get().pipe(take(1)).subscribe(userData => {
           if (!userData.data()) return
           const user: { tabs: TabGroup[], displayName: string, photoURL: string } = userData.data() as any
-          usernameArray.push(user.displayName)
+          if (tabGroupArray.findIndex(tabGroup => tabGroup.uid === uid) !== -1) {
+            tabGroupArray[tabGroupArray.findIndex(tabGroup => tabGroup.uid === uid)].authorDisplayName = user.displayName
+          }
         })
       })
-      return { tabGroupArray, usernameArray }
+      tabGroupArray.sort((a, b) => {
+        return a.createdAt - b.createdAt
+      })
+      return tabGroupArray
     }))
   }
 }

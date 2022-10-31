@@ -1,11 +1,12 @@
-import { trigger, transition, style, animate, query } from '@angular/animations';
+import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { getAuth } from 'firebase/auth';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { LoadingService } from '../extras/loading-animation/loading-animation.service';
-import { Note, Segment, Bar, Tab } from '../models/song.model';
+import { Bar, Instrument, Note, Segment, Tab } from '../models/song.model';
 import { EditTabService } from './edit-tab/edit-tab.service';
 import { PlayerService } from './player.service';
 
@@ -30,6 +31,16 @@ export interface AppStatus {
       transition(":leave", [
         animate("100ms ease-in-out", style({ opacity: 0 }))
       ])
+    ]),
+    trigger('scale', [
+      transition(":enter", [
+        style({ 'max-height': 0 }),
+        animate("100ms ease-in-out", style({ 'max-height': '200px' }))
+      ]),
+      transition(":leave", [
+        style({ 'max-height': '200px' }),
+        animate("100ms ease-in-out", style({ 'max-height': 0 }))
+      ])
     ])
   ]
 })
@@ -41,6 +52,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private loadingService: LoadingService,
     private editTabService: EditTabService,
+    private title: Title,
     private router: Router) { }
 
   editMode: boolean = false
@@ -51,6 +63,12 @@ export class PlayerComponent implements OnInit, OnDestroy {
   trackId?: string
   showMenu: boolean = false
   subs: Subscription[] = []
+  showSelectionModal: boolean = false
+
+  instrumentForm = new FormGroup({
+    name: new FormControl('guitar', Validators.required),
+    strings: new FormControl(6, Validators.required)
+  })
 
   ngOnInit(): void {
     let tab = this.route.snapshot.data["tab"]
@@ -58,7 +76,20 @@ export class PlayerComponent implements OnInit, OnDestroy {
     const changingTrackSub = this.playerService.changingTrack.subscribe(() => this.editMode ? this.saveTabGroup() : null)
     const currentUserSub = this.authService.currentUser.subscribe(user => this.currentUser = user)
     const currentTabSub = this.playerService.currentTab.subscribe(tab => this.currentTab = tab!)
-    const currentSpotifyTrackSub = this.playerService.currentSpotifyTrack.subscribe(track => this.trackId = track?.id)
+    const currentSpotifyTrackSub = this.playerService.currentSpotifyTrack.subscribe(track => {
+      if (track?.name) {
+        let artists = ''
+        track.artists.forEach((artist, i) => {
+          if (i === 0) {
+            artists += artist.name
+            return
+          }
+          artists += `, ${artist.name}`
+        })
+        this.title.setTitle(`${track?.name} ${String.fromCharCode(183)} ${artists}`)
+      }
+      this.trackId = track?.id
+    })
     const currentTabIndexSub = this.playerService.currentTabIndex.subscribe(index => this.currentTabIndex = index!)
     const editModeSub = this.playerService.editMode.subscribe(value => this.editMode = value)
     this.subs.push(currentUserSub, changingTrackSub, currentSpotifyTrackSub, currentTabSub, currentTabIndexSub, editModeSub)
@@ -101,19 +132,29 @@ export class PlayerComponent implements OnInit, OnDestroy {
   }
 
   saveTabGroup() {
+    this.editTabService.modifyTab.next(null)
     this.loadingService.isLoading.next(true)
     this.playerService.saveTabToUser(this.trackId!)?.then(() => {
       this.playerService.editMode.next(false)
       this.loadingService.isLoading.next(false)
+      this.router.navigate([], { queryParams: { isCustom: true } })
     })
   }
 
   saveAndPostTabGroup() {
+    this.editTabService.modifyTab.next(null)
     this.loadingService.isLoading.next(true)
     this.playerService.postTab(this.trackId!)?.then(() => this.saveTabGroup())
   }
 
   deleteTab() {
     this.playerService.deleteTab()
+  }
+
+  changeInstrument(event: MouseEvent) {
+    event.preventDefault()
+    this.showSelectionModal = false
+    if (!this.instrumentForm.valid) return
+    this.playerService.changeInstrument(<Instrument>this.instrumentForm.value)
   }
 }

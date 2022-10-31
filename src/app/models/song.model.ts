@@ -16,7 +16,7 @@ export interface SpotifyTrack {
 export interface TabGroup {
   tabs: Tab[],
   uid: string,
-  authorDisplayName: string,
+  authorDisplayName?: string,
   trackId: string,
   createdAt: number
 }

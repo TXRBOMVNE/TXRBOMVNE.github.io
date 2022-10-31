@@ -1,6 +1,9 @@
 <div id="canvas-container" class="d-flex align-items-center py-5" #canvasContainer>
   <div id="editing-tab" class="d-flex text-white">
     <div class="bar d-flex" bar *ngFor="let bar of currentTab.bars;let i = index" [ngStyle]="styleBar(bar,i)">
+      <div class="bar-number-container">
+        <p class="m-0">{{i+1}}</p>
+      </div>
       <div class="instrument-strings-container">
         <div class="instrument-string" *ngFor="let string of [].constructor(currentTab.instrument.strings)"></div>
       </div>
@@ -14,8 +17,8 @@
         <div tabindex="0" class="segment" segment (focus)="detectNoteSelection(segment,bar)"
           [ngStyle]="styleSegment(segment)" *ngFor="let segment of bar.segments;let index=index">
           <div class="notes-container h-100" *ngIf="!segment.isRest">
-            <span class="music-note" note tabindex="0" [ngStyle]="styleNote(note)"
-              (focus)="detectNoteSelection(segment,bar,note)" *ngFor="let note of segment.notes">
+            <span tabindex="0" class="music-note" note [ngStyle]="styleNote(note)" *ngFor="let note of segment.notes"
+              (focus)="detectNoteSelection(segment,bar,note)">
               {{note.fretValue}}
               <hr class="slide-out rounded-pill"
                 *ngIf="note.effects && note.effects.slides && note.effects.slides.slideOut"

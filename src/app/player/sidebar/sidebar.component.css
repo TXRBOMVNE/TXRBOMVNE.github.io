@@ -16,8 +16,41 @@
   }
 }
 
-a>img {
+span>img {
   width: calc(40px + 1.5vw);
+  height: auto;
+  aspect-ratio: 1;
+}
+
+.filler {
+  width: calc(40px + 1.5vw);
+  height: calc(40px + 1.5vw);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle {
+  width: calc(25px + 1.5vw) !important;
+  height: calc(25px + 1.5vw) !important;
+  border: 5px solid rgba(255, 255, 255, 0.5);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: rotate 1s infinite linear;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.w-0 {
+  max-width: 0 !important;
 }
 
 @media (max-width:767px) {
@@ -31,7 +64,7 @@ a>img {
   }
 }
 
-#sidebar div {
+#sidebar div:not(.lds-facebook, .lds-facebook div) {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -39,7 +72,9 @@ a>img {
 }
 
 #instruments-container {
-  overflow-y: overlay;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  padding-right: 0;
   background-color: rgba(0, 0, 0, 0);
   background-clip: initial;
   -webkit-background-clip: text;
@@ -49,6 +84,8 @@ a>img {
 #sidebar:hover #instruments-container.overflow {
   background-color: rgba(255, 255, 255, 0.1);
   padding-right: 8px;
+  overflow-y: overlay;
+  overflow-x: hidden;
 }
 
 #instruments-container::-webkit-scrollbar-thumb {

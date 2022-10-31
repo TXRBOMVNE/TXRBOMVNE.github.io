@@ -16,13 +16,13 @@ import { UserService } from './user.service';
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.css'],
   animations: [
-    trigger("appear", [
-      transition(":enter", [
-        style({ position: "absolute", opacity: 0 }),
-        animate("150ms 150ms ease-in-out", style({ opacity: 1 }))
+    trigger('appear', [
+      transition(':enter', [
+        style({ position: 'absolute', opacity: 0 }),
+        animate('150ms 150ms ease-in-out', style({ opacity: 1 }))
       ]),
-      transition(":leave", [
-        animate("150ms ease-in-out", style({ opacity: 0 }))
+      transition(':leave', [
+        animate('150ms ease-in-out', style({ opacity: 0 }))
       ])
     ])
   ]
@@ -64,7 +64,7 @@ export class UserComponent implements OnInit {
       this.requestTabs()
     })
     setTimeout(() => {
-      this.imageSrc = "https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/default_profile.png?alt=media&token=631da581-8c28-4504-88ae-207b61e334b4"
+      this.imageSrc = 'https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/default_profile.png?alt=media&token=631da581-8c28-4504-88ae-207b61e334b4'
     }, 2500)
   }
 
@@ -81,7 +81,7 @@ export class UserComponent implements OnInit {
           this.userTabTracks = trackArray
           if (this.userTabTracks?.length !== 0) {
             this.userTabTracks?.sort((a, b) => {
-              return ("" + a.artists[0].name).localeCompare(b.artists[0].name) || ("" + a.album.name).localeCompare(b.album.name)
+              return ('' + a.artists[0].name).localeCompare(b.artists[0].name) || ('' + a.album.name).localeCompare(b.album.name)
             })
           } else if (!trackArray) {
           }
@@ -103,22 +103,25 @@ export class UserComponent implements OnInit {
   uploadNewProfilePic(event: any) {
     if (!this.currentFirebaseUser || !event || event.target.files.length === 0) return
     let file: File = event.target.files[0]
-    if (!file.type.startsWith("image")) {
-      this.fileUploadErrorMessage = "Please upload a valid image format"
+    if (!file.type.startsWith('image')) {
+      this.fileUploadErrorMessage = 'Please upload a valid image format'
       return
     } else if (file.size > 4194304) {
-      this.fileUploadErrorMessage = "File size limit is 4 MB"
+      this.fileUploadErrorMessage = 'File size limit is 4 MB'
       return
     } else this.fileUploadErrorMessage = undefined
     let upload = this.storage.upload(this.currentFirebaseUser.uid, file)
-    upload
-      .then(res => {
-        this.storage.ref(res.metadata.fullPath).getDownloadURL().pipe(take(1))
-          .subscribe(photoURL => {
-            this.firestore.collection("users").doc(this.currentFirebaseUser?.uid).update({ photoURL })
-            updateProfile(this.currentFirebaseUser!, { photoURL }).then(() => this.fireAuth.updateCurrentUser(this.currentFirebaseUser))
+    upload.then(res => {
+      this.storage.ref(res.metadata.fullPath).getDownloadURL().pipe(take(1))
+        .subscribe(photoURL => {
+          this.firestore.collection('users').doc(this.currentFirebaseUser?.uid).update({ photoURL }).catch(err => {
+            if (err.code === 'not-found') {
+              this.firestore.collection('users').doc(this.currentFirebaseUser?.uid).set({ photoURL })
+            }
           })
-      })
+          updateProfile(this.currentFirebaseUser!, { photoURL }).then(() => this.fireAuth.updateCurrentUser(this.currentFirebaseUser))
+        })
+    })
       .catch(err => console.log(err))
     let sub = upload.percentageChanges().subscribe(percentage => {
       this.uploadPercentage = percentage
@@ -136,14 +139,14 @@ export class UserComponent implements OnInit {
   }
 
   deleteTab(trackId: string) {
-    this.firestore.collection("users").doc(this.currentFirebaseUser?.uid).collection("tabs").doc(trackId).delete().then(() => this.requestTabs())
+    this.firestore.collection('users').doc(this.currentFirebaseUser?.uid).collection('tabs').doc(trackId).delete().then(() => this.requestTabs())
   }
 
   private matchPasswordValidator(): ValidatorFn {
     return (): ValidationErrors | null => {
       if (!this.passwordForm) return null
-      const password = this.passwordForm.get("newPassword")?.value
-      const confirmPassword = this.passwordForm.get("confirmPassword")?.value
+      const password = this.passwordForm.get('newPassword')?.value
+      const confirmPassword = this.passwordForm.get('confirmPassword')?.value
       if (password === confirmPassword) {
         return null
       } else {

@@ -5,8 +5,7 @@
       class="d-flex d-md-none col-2 col-sm-auto p-0 m-0 justify-content-center align-items-center">
       <button id="burger"></button>
     </div>
-    <div @appear *ngIf="currentSpotifyTrack"
-      class="row m-0 p-0 col col-sm-auto flex-shrink-1 flex-nowrap overflow-hidden">
+    <div *ngIf="currentSpotifyTrack" class="row m-0 p-0 col col-sm-auto flex-shrink-1 flex-nowrap overflow-hidden">
       <div class="col-sm-auto col-2 p-0 text-center my-auto">
         <img class="img-fluid" [src]="currentSpotifyTrack!.album.images[1].url" alt="">
       </div>

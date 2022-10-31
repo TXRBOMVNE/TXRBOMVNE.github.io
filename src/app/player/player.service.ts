@@ -102,8 +102,7 @@ export class PlayerService {
     }))
   }
 
-  changeTab(tab: Tab) {
-    const index = this.currentTabGroup.value?.tabs.indexOf(tab)!
+  changeTab(index: number) {
     if (index === -1) {
       console.error('NO TAB WITH -1 INDEX')
       return
@@ -123,11 +122,39 @@ export class PlayerService {
       createdAt: new Date().getTime()
     })
   }
+
   addInstrument(instrument: Instrument) {
     this.currentUser = this.authService.currentUser.value
     const tabArray: Tab[] = []
     this.currentTabGroup.value?.tabs.forEach(tab => tabArray.push(JSON.parse(JSON.stringify(tab))))
     tabArray.push(JSON.parse(JSON.stringify(<Tab>{ ...initialSong, instrument, initialTempo: this.currentTab.value?.initialTempo })))
+    return this.firestore.collection('users').doc(this.currentUser!.uid).collection('tabs').doc(this.currentSpotifyTrack.value?.id).update(
+      <TabGroup>{
+        tabs: tabArray,
+        uid: this.currentUser!.uid,
+        trackId: this.currentSpotifyTrack.value?.id,
+      }
+    ).catch(() => this.loadingService.isLoading.next(false)).then(() => {
+      this.loadingService.startLoading(`Getting a new ${instrument.name.replace('-', ' ')}`)
+      const tabRequest = this.getTabGroup(this.currentSpotifyTrack.value?.id!, 0, true)
+      tabRequest.subscribe(
+        {
+          next: () => {
+            this.loadingService.isLoading.next(false)
+          }, error: err => {
+            console.log(err)
+            this.loadingService.isLoading.next(false)
+          }
+        }
+      )
+    })
+  }
+
+  changeInstrument(instrument: Instrument) {
+    this.currentUser = this.authService.currentUser.value
+    const tabArray: Tab[] = []
+    this.currentTabGroup.value?.tabs.forEach(tab => tabArray.push(JSON.parse(JSON.stringify(tab))))
+    tabArray[this.currentTabIndex.value!].instrument = instrument
     return this.firestore.collection('users').doc(this.currentUser!.uid).collection('tabs').doc(this.currentSpotifyTrack.value?.id).update(
       <TabGroup>{
         tabs: tabArray,
@@ -183,7 +210,6 @@ export class PlayerService {
   }
 
   removeFillerNotes() {
-    console.log(this.currentTabGroup.value)
     let newTabGroup: TabGroup = this.currentTabGroup.value!
     newTabGroup.tabs.forEach(tab => {
       tab.bars.forEach(bar => {
@@ -221,6 +247,11 @@ export class PlayerService {
       bar.segments.forEach(segment => {
         const newSegment = new Segment(segment.isRest, segment.initialDurationInverse, segment.notes, segment.effects)
         segments.push(newSegment)
+        segment.notes.forEach((note, i) => {
+          if (note.string >= newTab.instrument.strings) {
+            segment.notes.splice(i, 1)
+          }
+        })
       })
       let newBar = new Bar(bar.tempo, bar.timeSignature, segments)
       newTab.bars.push(newBar)

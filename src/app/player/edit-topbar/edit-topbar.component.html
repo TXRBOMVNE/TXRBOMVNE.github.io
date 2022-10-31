@@ -45,43 +45,57 @@
           <div class="mx-0 position-relative rounded d-flex align-items-center">
             <input type="radio" name="initialDurationInverse" [value]="1" formControlName="initialDurationInverse">
             <label for="initialDurationInverse" class="rounded-1 p-2 px-1 h-100 d-flex align-items-center">
-              <img src="../../../assets/svgs/notes/1st_note.svg" alt="Whole note">
+              <img
+                src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fsvgs%2Fnotes%2F1st_note.svg?alt=media"
+                alt="Whole note">
             </label>
           </div>
           <div class="mx-1 position-relative rounded">
             <input type="radio" name="initialDurationInverse" [value]="2" formControlName="initialDurationInverse">
             <label for="initialDurationInverse" class="rounded-1 p-2 h-100 d-flex align-items-center">
-              <img height="35px" src="../../../assets/svgs/notes/2nd_note.svg" alt="Half note">
+              <img height="35px"
+                src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fsvgs%2Fnotes%2F2nd_note.svg?alt=media"
+                alt="Half note">
             </label>
           </div>
           <div class="mx-1 position-relative rounded">
             <input type="radio" name="initialDurationInverse" [value]="4" formControlName="initialDurationInverse">
             <label for="initialDurationInverse" class="rounded-1 p-2 h-100 d-flex align-items-center">
-              <img height="35px" src="../../../assets/svgs/notes/4th_note.svg" alt="Quarter note">
+              <img height="35px"
+                src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fsvgs%2Fnotes%2F4th_note.svg?alt=media"
+                alt="Quarter note">
             </label>
           </div>
           <div class="mx-1 position-relative rounded">
             <input type="radio" name="initialDurationInverse" [value]="8" formControlName="initialDurationInverse">
             <label for="initialDurationInverse" class="rounded-1 p-2 h-100 d-flex align-items-center">
-              <img height="35px" src="../../../assets/svgs/notes/8th_note.svg" alt="Eighth note">
+              <img height="35px"
+                src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fsvgs%2Fnotes%2F8th_note.svg?alt=media"
+                alt="Eighth note">
             </label>
           </div>
           <div class="mx-1 position-relative rounded">
             <input type="radio" name="initialDurationInverse" [value]="16" formControlName="initialDurationInverse">
             <label for="initialDurationInverse" class="rounded-1 p-2 h-100 d-flex align-items-center">
-              <img height="35px" src="../../../assets/svgs/notes/16th_note.svg" alt="Sixteenth note">
+              <img height="35px"
+                src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fsvgs%2Fnotes%2F16th_note.svg?alt=media"
+                alt="Sixteenth note">
             </label>
           </div>
           <div class="mx-1 position-relative rounded">
             <input type="radio" name="initialDurationInverse" [value]="32" formControlName="initialDurationInverse">
             <label for="initialDurationInverse" class="rounded-1 p-2 h-100 d-flex align-items-center">
-              <img height="35px" src="../../../assets/svgs/notes/32nd_note.svg" alt="Thirty-second note">
+              <img height="35px"
+                src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fsvgs%2Fnotes%2F32nd_note.svg?alt=media"
+                alt="Thirty-second note">
             </label>
           </div>
           <div class="mx-1 position-relative rounded">
             <input type="radio" name="initialDurationInverse" [value]="64" formControlName="initialDurationInverse">
             <label for="initialDurationInverse" class="rounded-1 p-2 h-100 d-flex align-items-center">
-              <img height="35px" src="../../../assets/svgs/notes/64th_note.svg" alt="Whole note">
+              <img height="35px"
+                src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fsvgs%2Fnotes%2F64th_note.svg?alt=media"
+                alt="Whole note">
             </label>
           </div>
         </div>
@@ -90,7 +104,9 @@
           <div id="note-dot" class="mx-1 my-auto position-relative rounded d-flex align-items-center">
             <input type="checkbox" name="isDotted" formControlName="isDotted">
             <label for="effects" class="rounded-1 p-2 px-1 h-100 d-flex align-items-center">
-              <img src="../../../assets/svgs/effects/dot.svg" alt="Note dot">
+              <img
+                src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fsvgs%2Feffects%2Fdot.svg?alt=media"
+                alt="Note dot">
             </label>
           </div>
           <div id="additional-options" class="d-flex flex-column justify-content-evenly">
@@ -106,29 +122,35 @@
                   class="btn">Slide</button>
                 <button (click)="showSlideMenu = !showSlideMenu" [disabled]="noteProperties.controls['isRest'].value"
                   class="btn fw-normal position-relative">
-                  <div style="height: 19px;width: 9px;"></div><span
-                    style="position: absolute; top: 50%;left: 50%;transform: translate(-50%,-75%);">&#8964;</span>
+                  <div style="height: 19px;width: 9px;"></div>
+                  <span style="position: absolute; top: 50%;left: 50%;transform: translate(-50%,-75%);">&#8964;</span>
                 </button>
               </div>
-              <div id="slide-menu" @scale class="d-flex justify-content-end flex-wrap rounded p-2"
+              <div id="slide-menu" @scale class="d-flex justify-content-end flex-wrap rounded p-2 overflow-hidden"
                 *ngIf="showSlideMenu">
                 <div>
                   <div class="position-relative rounded d-flex align-items-center">
                     <input type="radio" uncheck name="slideOutMode" value="slideToNote" formControlName="slideOutMode">
                     <label for="slideOutMode" class="rounded-1 px-2 h-100 d-flex align-items-center">
-                      <img class="slide-figure" src="../../../assets/svgs/effects/slide-to-note.svg" alt="Whole note">
+                      <img class="slide-figure"
+                        src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fsvgs%2Feffects%2Fslide-to-note.svg?alt=media"
+                        alt="Whole note">
                     </label>
                   </div>
                   <div class="mt-3 position-relative rounded d-flex align-items-center">
                     <input type="radio" uncheck name="slideOutMode" value="slideUp" formControlName="slideOutMode">
                     <label for="slideOutMode" class="rounded-1 px-2 h-100 d-flex align-items-center">
-                      <img class="slide-figure" src="../../../assets/svgs/effects/slide-out-up.svg" alt="Whole note">
+                      <img class="slide-figure"
+                        src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fsvgs%2Feffects%2Fslide-out-up.svg?alt=media"
+                        alt="Whole note">
                     </label>
                   </div>
                   <div class="mt-3 position-relative rounded d-flex align-items-center">
                     <input type="radio" uncheck name="slideOutMode" value="slideDown" formControlName="slideOutMode">
                     <label for="slideOutMode" class="rounded-1 px-2 h-100 d-flex align-items-center">
-                      <img class="slide-figure" src="../../../assets/svgs/effects/slide-out-down.svg" alt="Whole note">
+                      <img class="slide-figure"
+                        src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fsvgs%2Feffects%2Fslide-out-down.svg?alt=media"
+                        alt="Whole note">
                     </label>
                   </div>
                   <hr class="my-3 text-white-50">
@@ -137,13 +159,17 @@
                   <div class="position-relative rounded d-flex align-items-center">
                     <input type="radio" uncheck name="slideInMode" value="slideDown" formControlName="slideInMode">
                     <label for="slideInMode" class="rounded-1 px-2 h-100 d-flex align-items-center">
-                      <img class="slide-figure" src="../../../assets/svgs/effects/slide-in-down.svg" alt="Whole note">
+                      <img class="slide-figure"
+                        src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fsvgs%2Feffects%2Fslide-in-down.svg?alt=media"
+                        alt="Whole note">
                     </label>
                   </div>
                   <div class="mt-3 position-relative rounded d-flex align-items-center">
                     <input type="radio" uncheck name="slideInMode" value="slideUp" formControlName="slideInMode">
                     <label for="slideInMode" class="rounded-1 px-2 h-100 d-flex align-items-center">
-                      <img class="slide-figure" src="../../../assets/svgs/effects/slide-in-up.svg" alt="Whole note">
+                      <img class="slide-figure"
+                        src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fsvgs%2Feffects%2Fslide-in-up.svg?alt=media"
+                        alt="Whole note">
                     </label>
                   </div>
                 </div>

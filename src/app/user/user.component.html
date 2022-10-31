@@ -82,7 +82,8 @@
           </div>
           <div *ngIf="editMode" class="my-4">
             <button class="btn text-white border-white me-2" (click)="editMode= false">Cancel</button>
-            <button class="btn text-white border-white" (click)="requestUpdateProfile()">Save changes</button>
+            <button class="btn text-white border-white" [disabled]="profileForm.untouched"
+              (click)="requestUpdateProfile()">Save changes</button>
           </div>
         </form>
         <form @appear *ngIf="changePasswordMode" [formGroup]="passwordForm">

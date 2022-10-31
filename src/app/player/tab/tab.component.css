@@ -10,6 +10,13 @@
   display: none;
 }
 
+.bar-number-container {
+  position: absolute;
+  top: -25px;
+  left: 2px;
+  color: #464646;
+}
+
 .bar {
   border-inline: #707070 1px solid;
   position: relative;

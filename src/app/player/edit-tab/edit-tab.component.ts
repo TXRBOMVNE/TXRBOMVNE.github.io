@@ -33,7 +33,6 @@ export class EditTabComponent implements AfterViewInit, OnInit, OnDestroy {
   index = 0
 
   ngAfterViewInit(): void {
-    this.editTabService.fillSegmentsNotesSpaces()
     this.editTabService.HTMLBars = this.HTMLBars
     this.editTabService.HTMLSegments = this.HTMLSegments
     const barsSub = this.HTMLBars!.changes.subscribe(newBars => {
@@ -43,7 +42,7 @@ export class EditTabComponent implements AfterViewInit, OnInit, OnDestroy {
       this.editTabService.HTMLSegments = newSegments
     })
     setTimeout(() => {
-      this.HTMLBars?.get(0).el.nativeElement.lastElementChild.children[0].lastElementChild.children[0].focus()
+      this.HTMLSegments?.get(0).el.nativeElement.lastElementChild.lastElementChild.focus()
     });
     this.subs.push(barsSub, segmentsSub)
   }
@@ -62,6 +61,7 @@ export class EditTabComponent implements AfterViewInit, OnInit, OnDestroy {
     })
     const currentTabGroupSub = this.playerService.currentTabGroup.subscribe(tabGroup => this.currentTabGroup = tabGroup!)
     const currentTabSub = this.playerService.currentTab.subscribe(tab => {
+      if (!tab) return
       this.currentTabIndex = this.playerService.currentTabIndex.value!
       this.tabService.currentTab = tab!
       this.editTabService.currentTab = tab!
@@ -162,12 +162,4 @@ export class EditTabComponent implements AfterViewInit, OnInit, OnDestroy {
     if (event.deltaY > 0) this.canvasContainer.nativeElement.scrollLeft += 100;
     else this.canvasContainer.nativeElement.scrollLeft -= 100;
   }
-
-  // Prevents scrolling with horizontal arrow keys
-  // @HostListener("document:keydown", ["$event"])
-  // preventDefault(event: KeyboardEvent) {
-  //   if (event.code === "ArrowRight" || event.code === "ArrowLeft" || event.code === "KeyW") {
-  //     event.preventDefault()
-  //   }
-  // }
 }
