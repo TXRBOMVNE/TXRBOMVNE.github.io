@@ -1,21 +1,25 @@
-<div id="container" class="row m-0 px-md-2 px-lg-4 pt-4 flex-nowrap justify-content-center justify-content-md-between">
-  <div preventUnfocus
-    class="row justify-content-evenly justify-content-md-start p-0 m-0 col-auto flex-grow-1 flex-nowrap">
+<div id="container" class="row m-0 px-lg-4 pt-4 flex-nowrap justify-content-between">
+  <div preventUnfocus class="row justify-content-start p-0 m-0 col-auto flex-nowrap">
     <div id="burger-container" (click)="openMenu()"
-      class="d-flex d-md-none col-2 col-sm-auto p-0 m-0 justify-content-center align-items-center">
-      <button id="burger"></button>
+      class="d-flex d-lg-none col-auto mx-3 p-0 justify-content-center align-items-center">
+      <div id="burger"></div>
     </div>
-    <div *ngIf="currentSpotifyTrack" class="row m-0 p-0 col col-sm-auto flex-shrink-1 flex-nowrap overflow-hidden">
-      <div class="col-sm-auto col-2 p-0 text-center my-auto">
-        <img class="img-fluid" [src]="currentSpotifyTrack!.album.images[1].url" alt="">
+    <div class="row m-0 p-0 col col-sm-auto flex-shrink-1 flex-nowrap overflow-hidden">
+      <div class="col-auto p-0 text-center my-auto">
+        <img *ngIf="currentSpotifyTrack && currentSpotifyTrack!.album.images[1].url" (load)="isImgLoaded=true"
+          loading="lazy" class="img-fluid" [src]="currentSpotifyTrack!.album.images[1].url"
+          [alt]="currentSpotifyTrack.album.name">
+        <div *ngIf="!isImgLoaded" id="cover-placeholder" class="rounded"></div>
       </div>
-      <div id="song-info" class="col-10 col-sm-auto p-0 my-auto">
-        <h3 id="song-title" class="m-0 ms-2 fw-bold">{{currentSpotifyTrack!.name}}</h3>
-        <h4 id="artists" class="m-0 ms-2 fw-light">{{currentSpotifyTrack!.artists[0].name}}</h4>
+      <div id="song-info" class="col-auto p-0 ps-2 my-auto">
+        <h3 *ngIf="currentSpotifyTrack" id="song-title" class="m-0 fw-bold">{{currentSpotifyTrack!.name}}</h3>
+        <h4 *ngIf="currentSpotifyTrack" id="artists" class="m-0 fw-light">{{currentSpotifyTrack!.artists[0].name}}</h4>
+        <div *ngIf="!currentSpotifyTrack" id="title-placeholder" class="rounded"></div>
+        <div *ngIf="!currentSpotifyTrack" id="artist-placeholder" class="rounded mt-2"></div>
       </div>
     </div>
-    <div @appear *ngIf="currentSpotifyTrack" id="play-pause" class="p-0 col-auto text-white position-relative">
-      <div id="fill-div"></div>
+    <div @appear *ngIf="currentSpotifyTrack" id="play-pause"
+      class="p-0 col-auto text-white px-4 d-flex align-items-center justify-content-center" #togglePlay>
       <div id="pause" (click)="pause()" *ngIf="appStatus.isPlaying">
         <svg fill="currentColor" class="bi bi-pause-circle-fill" viewBox="0 0 16 16">
           <path
@@ -30,9 +34,9 @@
       </div>
     </div>
   </div>
-  <div id="tools"
-    class="row m-0 d-none d-md-flex col-lg col-auto p-0 flex-grow-1 flex-lg-grow-0 flex-row-reverse flex-nowrap">
-    <div preventUnfocus class="col-4  my-auto py-3 px-lg-4 px-md-2 text-center rounded-1"
+  <div id="tools" class="row m-0 col-auto p-0 flex-grow-0 flex-row-reverse flex-nowrap">
+    <div preventUnfocus
+      class="col-4 my-auto px-lg-4 py-3 mx-2 mx-lg-0 text-center rounded-1 d-flex justify-content-center"
       (click)="appStatus.isMetronomeActive=!appStatus.isMetronomeActive"
       [ngClass]="appStatus.isMetronomeActive?'active-tool':''">
       <svg version="1.1" width="36" height="36" viewBox="0 0 314 314" xml:space="preserve">
@@ -57,19 +61,34 @@
      L246.427,71.829z" />
       </svg>
     </div>
-    <div preventUnfocus class="col-4 my-auto py-3 px-lg-4 px-md-2 text-center rounded-1"
+    <div preventUnfocus class="col-4 my-auto px-lg-4 py-3 mx-2 mx-lg-0 text-center rounded-1"
       (click)="appStatus.isCountdownActive=!appStatus.isCountdownActive">
-      <p class="fs-4 m-0" [ngClass]="appStatus.isCountdownActive?'active-tool':''">123</p>
+      <p class="m-0" [ngClass]="appStatus.isCountdownActive?'active-tool':''">123</p>
     </div>
-    <div id="tempo-container" tabindex="0"
-      class="col-4 my-auto mx-0 py-3 px-lg-4 px-md-2 text-center rounded-1 position-relative">
-      <div id="fill-div2"></div>
-      <p id="tempo" class="fs-4 m-0" style="color: #BF9C6E;">{{appStatus.tempoMultiplier}}%</p>
-      <div id="tempo-input-container" class="p-3 my-auto rounded">
-        <input class="mx-2" [(ngModel)]="appStatus.tempoMultiplier" (input)="updateTempo()" type="range" step="5"
-          [defaultValue]="appStatus.tempoMultiplier" min="50" max="200">
-        <p class="d-inline-block float-start text-white fw-light">50%</p>
-        <p class="d-inline-block float-end text-white fw-light">200% </p>
+    <div id="tempo-container" tabindex="0" data-bs-toggle="modal" data-bs-target="#tempoModal"
+      class="col-4 my-auto mx-0 px-lg-4 py-3 mx-2 mx-lg-0 text-center rounded-1 d-flex justify-content-center align-items-center">
+      <p id="tempo" class="m-0 text-center" style="color: #BF9C6E;">{{appStatus.tempoMultiplier}}%</p>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="tempoModal" tabindex="-1" aria-labelledby="tempoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 justify-content-center">
+        <h1 class="modal-title text-center" id="tempoModalLabel">TEMPO</h1>
+      </div>
+      <div class="modal-body border-0 pt-0 mx-2">
+        <input [(ngModel)]="appStatus.tempoMultiplier" (input)="updateTempo()" type="range" step="5"
+          [defaultValue]="appStatus.tempoMultiplier" min="25" max="200" #input>
+        <div class="d-flex justify-content-between mt-2" style="font-family: 'Barlow Condensed';">
+          <p class="d-inline-block float-start text-white fw-light opacity-50">{{input.min}}%</p>
+          <p id="tempo" class="mb-0" style="color: #BF9C6E">
+            {{appStatus.tempoMultiplier}}%</p>
+          <p class="d-inline-block float-end text-white fw-light opacity-50">{{input.max}}%</p>
+        </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" id="confirm-btn" class="btn" data-bs-dismiss="modal">DONE</button>
       </div>
     </div>
   </div>

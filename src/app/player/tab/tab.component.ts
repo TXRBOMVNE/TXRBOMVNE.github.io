@@ -1,11 +1,11 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, ɵNG_DIR_DEF } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { Bar, Note, Segment, Tab } from 'src/app/models/song.model';
 import { SegmentDirective } from '../directives/segment.directive';
 import { PlayerService } from '../player.service';
 import { TabService } from './tab.service';
 
-const initialBarWidth = 360
+const initialBarWidth = 340
 
 export const tabLayout = {
   leftBarPadding: initialBarWidth / 10,
@@ -13,8 +13,9 @@ export const tabLayout = {
   initialBarWidth: initialBarWidth,
   initialBarInnerWidth: initialBarWidth * (9 / 10),
   barExtraWidth: initialBarWidth * (11 / 10),
-  canvasHeight: 340,
 }
+
+
 
 @Component({
   selector: 'app-tab',
@@ -24,15 +25,21 @@ export const tabLayout = {
 export class TabComponent implements AfterViewInit, OnInit, OnDestroy {
   constructor(private tabService: TabService, private playerService: PlayerService) { }
 
-  @ViewChildren(SegmentDirective) HTMLSegments?: QueryList<any>
+  @ViewChildren(SegmentDirective) HTMLSegments?: QueryList<{ el: ElementRef<HTMLDivElement> }>
+  @ViewChild('line') line!: ElementRef<HTMLDivElement>
+  @ViewChild('tab') tab?: ElementRef<HTMLDivElement>
 
   tabLayout = tabLayout
   currentTab: Tab = this.playerService.currentTab.value!
-  staffHeight = 42 * (this.currentTab.instrument.strings - 1)
-  segmentSelection = new Subject<{ bar: Bar, segment: Segment }>()
-  isPaused?: boolean
+  stringSeparationPx = (.073 * window.innerHeight) >= 42 ? 39.7 : ((.07304 * window.innerHeight) - 2.3)
+  staffHeight = (this.stringSeparationPx + 2.3) * (this.currentTab.instrument.strings - 1)
+  segmentSelection = new Subject<Segment>()
+  isPaused: boolean = true
   subs: Subscription[] = []
-  private segmentsArray() {
+  totalDistanceMoved: number = 0
+  segmentStartTime?: number
+
+  private get segmentsArray() {
     let array: Segment[] = []
     this.currentTab.bars.forEach(bar => {
       array = array.concat(bar.segments)
@@ -48,65 +55,89 @@ export class TabComponent implements AfterViewInit, OnInit, OnDestroy {
         this.isPaused = true
       }
     })
-    const playerSub = this.subToPlay()
-    const segmentSelectionSub = this.segmentSelection?.subscribe(selection => {
-      const { segment } = selection
-      this.currentNoteIndex = this.segmentsArray().indexOf(segment)
+    this.segmentSelectionSub = this.segmentSelection?.subscribe(segment => {
+      this.currentSegmentIndex = this.segmentsArray.indexOf(segment)!
+      let totalDurationMs: number
+      if (this.currentSegmentIndex === 0) {
+        totalDurationMs = 0
+      } else {
+        totalDurationMs = this.wholeNoteDurationMs / this.segmentsArray[this.currentSegmentIndex - 1].durationInverse
+      }
+      const segmentPosition = this.HTMLSegments?.get(this.currentSegmentIndex)?.el.nativeElement.getBoundingClientRect()
+      const parentPosition = this.tab?.nativeElement.getBoundingClientRect()
+      const relativePosition = segmentPosition!.x - parentPosition!.x
+      if (this.isPaused) {
+        const newPosition = relativePosition + 'px'
+        this.line.nativeElement.style.transform = `translate3d(${newPosition},-50%,0)`
+        this.totalDistanceMoved = relativePosition
+        this.segmentStartTime = undefined
+        return
+      }
+      const startTime = this.segmentStartTime || performance.now()
+      const totalDistanceToMove = relativePosition - this.totalDistanceMoved
+      const animate = () => {
+        if (this.isPaused) return
+        const currentTime = performance.now()
+        const elapsedTime = currentTime - startTime
+        const elapsedTimeRatio = elapsedTime / totalDurationMs
+        const currentDistanceToMove = (elapsedTimeRatio * totalDistanceToMove) + this.totalDistanceMoved
+        if (elapsedTimeRatio >= 1) {
+          this.segmentStartTime = startTime + totalDurationMs
+          this.totalDistanceMoved += totalDistanceToMove
+          this.segmentSelection.next(this.segmentsArray[this.currentSegmentIndex + 1])
+          return
+        }
+        this.line.nativeElement.style.transform = `translate3d(${currentDistanceToMove}px,-50%,0)`
+        requestAnimationFrame(animate)
+      }
+      requestAnimationFrame(animate)
     })
     const currentTabSub = this.playerService.currentTab.subscribe(tab => {
       this.currentTab = tab!
-      this.staffHeight = 42 * (tab!.instrument.strings - 1)
+      this.wholeNoteDurationMs = (60 / this.currentTab.initialTempo * 4) * 1000
     })
     this.tabService.subToTab().unsubscribe()
     this.tabService.subToTab()
-    this.subs.push(isPlayingSub, playerSub, segmentSelectionSub, currentTabSub)
+    this.subs.push(isPlayingSub, this.segmentSelectionSub, currentTabSub)
   }
 
   ngAfterViewInit(): void {
     this.tabService.HTMLSegments = this.HTMLSegments
+    const initialX = this.HTMLSegments!.get(0)!.el.nativeElement.getBoundingClientRect().left - this.tab!.nativeElement.getBoundingClientRect().left
+    this.line.nativeElement.style.transform = `translate3d(${initialX}px,-50%,0)`
+    this.totalDistanceMoved = initialX
   }
 
   ngOnDestroy(): void {
     this.subs.forEach(sub => sub.unsubscribe())
   }
 
+  @HostListener('window:resize', ['$event'])
+  updateStringSeparationPx() {
+    this.staffHeight = (this.stringSeparationPx + 2.3) * (this.currentTab.instrument.strings - 1)
+    this.tabService.staffHeight = (this.stringSeparationPx + 2.3) * (this.currentTab.instrument.strings - 1)
+    this.tabService.stringSeparationPx = (.073 * window.innerHeight) >= 42 ? 39.7 : ((.073 * window.innerHeight) - 2.3)
+    this.stringSeparationPx = (.073 * window.innerHeight) >= 42 ? 39.7 : ((.073 * window.innerHeight) - 2.3)
+  }
+
   // Sets whole note duration depending on the song BPM
   wholeNoteDurationMs = (60 / this.currentTab.initialTempo * 4) * 1000
-  currentNoteIndex = 0
-  currentNoteDuration = new Subject<number>()
+  currentSegmentIndex = 0
+  segmentSelectionSub?: Subscription
 
   play() {
     this.isPaused = false
-    this.currentNoteDuration.next(this.wholeNoteDurationMs / this.segmentsArray()[this.currentNoteIndex].durationInverse)
-  }
-
-  subToPlay() {
-    return this.currentNoteDuration.subscribe(noteDuration => {
-      this.HTMLSegments!.get(this.currentNoteIndex).el.nativeElement.focus()
-      setTimeout(() => {
-        if (this.isPaused) {
-          return
-        }
-        this.currentNoteIndex++
-        // Returns if there isn't a next note and resets index
-        if (!this.HTMLSegments?.get(this.currentNoteIndex) || !this.segmentsArray()[this.currentNoteIndex]) {
-          this.tabService.pause()
-          this.currentNoteIndex = 0
-          return
-        }
-        // Emits next note duration
-        this.currentNoteDuration.next(this.wholeNoteDurationMs / this.segmentsArray()[this.currentNoteIndex].durationInverse)
-      }, noteDuration);
-    })
+    if (!this.segmentsArray[this.currentSegmentIndex + 1]) return this.pause()
+    this.segmentSelection.next(this.segmentsArray[this.currentSegmentIndex + 1])
   }
 
   pause() {
-    this.tabService.pause()
-    this.isPaused = true
+    this.tabService.pause();
   }
 
-  updateSelection(selection: { bar: Bar, segment: Segment }) {
-    this.segmentSelection?.next(selection)
+  updateSelection(segment: Segment) {
+    this.pause()
+    this.segmentSelection?.next(segment)
   }
 
   styleBar(bar: Bar, index: number) {
@@ -149,7 +180,4 @@ export class TabComponent implements AfterViewInit, OnInit, OnDestroy {
     if (event.deltaY > 0) this.canvasContainer.nativeElement.scrollLeft += 100;
     else this.canvasContainer.nativeElement.scrollLeft -= 100;
   }
-
 }
-
-

@@ -183,7 +183,7 @@
     <div id="tempo-container" tabindex="0"
       class="col my-auto mx-0 py-3 px-lg-4 px-md-2 text-center rounded-1 position-relative">
       <div id="fill-div2"></div>
-      <p id="tempo" class="fs-4 m-0" style="color: #BF9C6E;">{{appStatus!.tempoMultiplier}}%</p>
+      <p id="tempo" class="m-0" style="color: #BF9C6E;">{{appStatus!.tempoMultiplier}}%</p>
       <div id="tempo-input-container" class="p-3 my-auto rounded">
         <input class="mx-2" [(ngModel)]="appStatus!.tempoMultiplier" (input)="updateTempo()" type="range" step="5"
           [defaultValue]="appStatus!.tempoMultiplier" min="50" max="200">

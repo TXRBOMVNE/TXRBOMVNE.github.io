@@ -1,4 +1,5 @@
-#sidebar {
+#sidebar,
+#mobile-sidebar {
   height: 100vh;
   max-height: 100vh;
   background-color: #333533;
@@ -8,6 +9,10 @@
   top: 0;
   bottom: 0;
   z-index: 100;
+}
+
+#mobile-sidebar {
+  width: 70px;
 }
 
 @media (min-width:768px) {
@@ -20,6 +25,15 @@ span>img {
   width: calc(40px + 1.5vw);
   height: auto;
   aspect-ratio: 1;
+}
+
+#placeholder {
+  background-color: rgb(255, 253, 253);
+  animation: color infinite 1.5s linear;
+  width: 100% !important;
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 50%;
 }
 
 .filler {
@@ -53,18 +67,23 @@ span>img {
   max-width: 0 !important;
 }
 
-@media (max-width:767px) {
+@media (max-width:991px) {
   #sidebar {
     width: 100px;
   }
 
-  img,
+  #placeholder,
   #add-instrument-btn-container {
     width: 70px;
   }
+
+  span img {
+    width: 70%;
+  }
 }
 
-#sidebar div:not(.lds-facebook, .lds-facebook div) {
+#sidebar div:not(.lds-facebook, .lds-facebook div),
+#mobile-sidebar div:not(.lds-facebook, .lds-facebook div) {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -86,6 +105,24 @@ span>img {
   padding-right: 8px;
   overflow-y: overlay;
   overflow-x: hidden;
+}
+
+@media (pointer:none),
+(pointer:coarse) {
+
+  #mobile-sidebar #instruments-container.overflow {
+    background-color: rgba(255, 255, 255, 0.1);
+    overflow-y: overlay;
+    overflow-x: hidden;
+  }
+
+  #mobile-sidebar #instruments-container.overflow::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0);
+  }
+
+  #mobile-sidebar #instruments-container.overflow::-webkit-scrollbar-thumb {
+    background-color: #4e4e4e;
+  }
 }
 
 #instruments-container::-webkit-scrollbar-thumb {

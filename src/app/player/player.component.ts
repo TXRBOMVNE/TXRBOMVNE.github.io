@@ -9,6 +9,8 @@ import { LoadingService } from '../extras/loading-animation/loading-animation.se
 import { Bar, Instrument, Note, Segment, Tab } from '../models/song.model';
 import { EditTabService } from './edit-tab/edit-tab.service';
 import { PlayerService } from './player.service';
+// import { Spotify } from 'Spotify'
+
 
 export interface AppStatus {
   isPlaying: boolean

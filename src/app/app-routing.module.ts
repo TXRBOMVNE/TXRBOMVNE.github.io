@@ -8,7 +8,7 @@ import { TabResolver } from "./player/tab/tab.resolver";
 import { UserComponent } from "./user/user.component";
 
 const appRoutes: Routes = [
-  { path: "", pathMatch: "full", redirectTo: "play/3lyHyxVE8JHvNz75wBmExR/0" },
+  { path: "", pathMatch: "full", redirectTo: "play/3lyHyxVE8JHvNz75wBmExR/2" },
   { path: "auth", component: AuthComponent },
   { path: "user", component: UserComponent, canActivate: [AuthGuard] },
   {

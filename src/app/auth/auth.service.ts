@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { getAuth, signOut, updateProfile } from 'firebase/auth';
 import { BehaviorSubject, catchError, map, of, take, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { LoadingService } from '../extras/loading-animation/loading-animation.service';
 
 export interface User {
   refreshToken?: string,
@@ -30,7 +31,13 @@ export interface User {
 })
 export class AuthService {
 
-  constructor(private fireAuth: AngularFireAuth, private firestore: AngularFirestore, private http: HttpClient, private storage: AngularFireStorage, private router: Router) { }
+  constructor(
+    private fireAuth: AngularFireAuth,
+    private firestore: AngularFirestore,
+    private http: HttpClient,
+    private storage: AngularFireStorage,
+    private router: Router,
+    private loadingService: LoadingService) { }
 
   currentUser = new BehaviorSubject<User | null>(null)
 
@@ -61,7 +68,11 @@ export class AuthService {
         refresh_token: refreshToken
       }
     ).pipe(catchError(err => {
+      if (err.error.error.status === 401) {
+        this.router.navigate(['/not-found'], { queryParams: { status: 503 } })
+      }
       console.log(err)
+      this.loadingService.isLoading.next(false)
       return of(null)
     }))
   }
@@ -85,7 +96,7 @@ export class AuthService {
     this.currentUser.next({ ...this.currentUser.value, spotify })
     if (!spotify?.access_token) return this.getAccessTokenWithCode()
     if (spotify.access_token) {
-      if (new Date().getTime() > spotify.expirationTime!) {
+      if (!spotify.expirationTime || new Date().getTime() > (spotify.expirationTime - 300000)) {
         return this.getAccessTokenWithRefreshToken()
       }
       return of(spotify.access_token)

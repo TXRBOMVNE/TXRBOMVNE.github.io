@@ -1,4 +1,4 @@
-import { Injectable, QueryList } from '@angular/core';
+import { HostListener, Injectable, QueryList } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Bar, Note, Segment } from 'src/app/models/song.model';
 import { PlayerService } from '../player.service';
@@ -13,34 +13,35 @@ export class TabService {
 
   tabLayout = tabLayout
   currentTab = this.playerService.currentTab.value!
-  staffHeight = 42 * (this.currentTab.instrument.strings - 1)
+  stringSeparationPx = (.073 * window.innerHeight) >= 42 ? 39.7 : ((.073 * window.innerHeight) - 2.3)
+  staffHeight = (this.stringSeparationPx + 2.3) * (this.currentTab.instrument.strings - 1)
   HTMLSegments?: QueryList<any>
   isPlaying = new Subject<boolean>()
 
   subToTab() {
     return this.playerService.currentTab.subscribe(tab => {
       this.currentTab = tab!
-      this.staffHeight = 42 * (tab!.instrument.strings - 1)
+      this.staffHeight = (this.stringSeparationPx + 2.3) * (this.currentTab.instrument.strings - 1)
     })
   }
 
   styleBar(bar: Bar, index: number) {
-    let style
+    let style: any = {}
+    style['height.px'] = this.staffHeight
     if (!bar.valid && bar.totalDurationRatio > bar.timeSignatureRatio) {
-      style = { 'border': 'red 1px solid', 'transform': 'translateY(-1px)' }
+      style['border'] = 'red 1px solid'
+      style['transform'] = 'translateY(-1px)'
       return style
     } else if (!bar.valid && bar.totalDurationRatio < bar.timeSignatureRatio) {
-      style = { 'border': 'yellow 1px solid', 'transform': 'translateY(-1px)' }
+      style['border'] = 'yellow 1px solid'
+      style['transform'] = 'translateY(-1px)'
       return style
     }
     if (this.hasTimeSignatureChanged(bar, index)) {
-      style = {
-        'width.px': tabLayout.barExtraWidth * bar.timeSignatureRatio,
-        'height.px': this.staffHeight
-      }
+      style['width.px'] = tabLayout.barExtraWidth * bar.timeSignatureRatio
       return style
     }
-    style = { 'width.px': tabLayout.initialBarWidth * bar.timeSignatureRatio, 'height.px': this.staffHeight }
+    style['width.px'] = tabLayout.initialBarWidth * bar.timeSignatureRatio
     return style
   }
 
@@ -69,10 +70,10 @@ export class TabService {
   styleNote(note: Note) {
     let style
     if (!note.fretValue && note.fretValue !== 0) {
-      style = { 'top.px': (41.7 * note.string) - 11, 'background-color': 'transparent' }
+      style = { 'top.px': ((this.stringSeparationPx + 2) * note.string) - 11, 'background-color': 'transparent' }
       return style
     }
-    style = { 'top.px': (41.7 * note.string) - 11 }
+    style = { 'top.px': ((this.stringSeparationPx + 2) * note.string) - 11 }
     return style
   }
 

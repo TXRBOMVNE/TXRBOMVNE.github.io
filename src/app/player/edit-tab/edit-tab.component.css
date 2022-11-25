@@ -7,6 +7,12 @@
   overflow-y: hidden;
 }
 
+@media (max-height:620px) {
+  #canvas-container {
+    padding: 1.25em 0 !important;
+  }
+}
+
 #canvas-container::-webkit-scrollbar {
   display: none;
 }
@@ -14,7 +20,10 @@
 .bar-number-container {
   position: absolute;
   top: -25px;
+  left: 2px;
   color: #464646;
+  font-family: 'Barlow Condensed';
+  font-size: .75em;
 }
 
 .bar {

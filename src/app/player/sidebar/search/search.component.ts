@@ -38,12 +38,18 @@ export class SearchComponent implements OnInit {
 
   constructor(private searchService: SearchService, private playerService: PlayerService, private loadingService: LoadingService, private router: Router) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.searchService.getAccessToken().pipe(take(1)).subscribe(token => {
+      if (token) {
+        this.queryForm.controls['query'].enable()
+      }
+    })
+  }
 
   @Output() searchMenuStatus = new EventEmitter<never>()
 
   queryForm = new FormGroup({
-    query: new FormControl(null, Validators.required)
+    query: new FormControl({ value: null, disabled: true }, Validators.required)
   })
   searchTracksResult: any[] = []
   noTrackMatches: boolean = false

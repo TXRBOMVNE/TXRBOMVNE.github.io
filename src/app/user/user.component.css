@@ -178,7 +178,6 @@ p {
 }
 
 #error-message {
-  font-size: .8em;
   margin-top: 10px;
 }
 
@@ -190,19 +189,14 @@ p {
   margin-right: 50%;
 }
 
-#back-btn-container:hover {
-  cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-#back-btn-container:active {
-  cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.15);
-}
-
 #back-btn-container p {
   display: inline-block;
   vertical-align: middle;
+}
+
+#back-btn-container:hover>p {
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 #arrow-head {

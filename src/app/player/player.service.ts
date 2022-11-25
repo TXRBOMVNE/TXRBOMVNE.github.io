@@ -39,18 +39,25 @@ export class PlayerService {
     })
   }
 
-  postTab(trackId: string) {
+  async postTab(trackId: string) {
     this.currentUser = this.authService.currentUser.value
     if (!this.currentUser || !this.currentTab.value) return
     this.removeFillerNotes()
     const tabArray: Tab[] = []
     this.currentTabGroup.value?.tabs.forEach(tab => tabArray.push(JSON.parse(JSON.stringify(tab))))
-    return this.firestore.collection('tracks').doc(trackId).collection('tabs').add(<TabGroup>{
+    const tabGroupToPost: TabGroup = {
       tabs: tabArray,
-      uid: this.currentUser.uid,
+      uid: this.currentUser.uid!,
       trackId,
       createdAt: new Date().getTime()
-    })
+    }
+    const ref = this.firestore.collection('tracks').doc(trackId).collection('tabs').ref
+    const tabQueryDoc = await ref.where('uid', '==', this.currentUser.uid).get()
+    let req = this.firestore.collection('tracks').doc(trackId).collection('tabs')
+    if (!tabQueryDoc.empty) {
+      return req.doc(tabQueryDoc.docs[0].id).set(tabGroupToPost)
+    }
+    return req.add(tabGroupToPost)
   }
 
   loadTab(trackId: string, tabGroupIndex: number, isCustom?: boolean) {
@@ -123,31 +130,34 @@ export class PlayerService {
     })
   }
 
-  addInstrument(instrument: Instrument) {
+  async addInstrument(instrument: Instrument) {
     this.currentUser = this.authService.currentUser.value
     const tabArray: Tab[] = []
     this.currentTabGroup.value?.tabs.forEach(tab => tabArray.push(JSON.parse(JSON.stringify(tab))))
     tabArray.push(JSON.parse(JSON.stringify(<Tab>{ ...initialSong, instrument, initialTempo: this.currentTab.value?.initialTempo })))
-    return this.firestore.collection('users').doc(this.currentUser!.uid).collection('tabs').doc(this.currentSpotifyTrack.value?.id).update(
-      <TabGroup>{
-        tabs: tabArray,
-        uid: this.currentUser!.uid,
-        trackId: this.currentSpotifyTrack.value?.id,
-      }
-    ).catch(() => this.loadingService.isLoading.next(false)).then(() => {
-      this.loadingService.startLoading(`Getting a new ${instrument.name.replace('-', ' ')}`)
-      const tabRequest = this.getTabGroup(this.currentSpotifyTrack.value?.id!, 0, true)
-      tabRequest.subscribe(
-        {
-          next: () => {
-            this.loadingService.isLoading.next(false)
-          }, error: err => {
-            console.log(err)
-            this.loadingService.isLoading.next(false)
-          }
+    try {
+      await this.firestore.collection('users').doc(this.currentUser!.uid).collection('tabs').doc(this.currentSpotifyTrack.value?.id).update(
+        <TabGroup>{
+          tabs: tabArray,
+          uid: this.currentUser!.uid,
+          trackId: this.currentSpotifyTrack.value?.id,
         }
-      )
-    })
+      );
+    } catch {
+      this.loadingService.isLoading.next(false);
+    }
+    this.loadingService.startLoading(`Getting a new ${instrument.name.replace('-', ' ')}`);
+    const tabRequest = this.getTabGroup((this.currentSpotifyTrack.value?.id)!, 0, true);
+    tabRequest.subscribe(
+      {
+        next: () => {
+          this.loadingService.isLoading.next(false);
+        }, error: err_1 => {
+          console.log(err_1);
+          this.loadingService.isLoading.next(false);
+        }
+      }
+    );
   }
 
   changeInstrument(instrument: Instrument) {
@@ -232,7 +242,14 @@ export class PlayerService {
         })
       }).pipe(take(1), catchError(err => {
         console.log(err)
-        this.router.navigateByUrl('not-found?noTrack=true')
+        switch (err.error.error.status as number) {
+          case 401:
+            this.router.navigateByUrl('not-found?status=401')
+            break;
+          case 404:
+            this.router.navigateByUrl('not-found?status=404')
+        }
+        this.loadingService.isLoading.next(false)
         return of(undefined)
       })).subscribe((trackRes: any) => {
         this.currentSpotifyTrack.next(trackRes)

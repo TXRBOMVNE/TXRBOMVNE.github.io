@@ -3,28 +3,27 @@
   left: 100px;
   height: 100vh;
   background-color: #202020;
-  z-index: 100;
+  z-index: 10;
   color: #d6d6d6;
+  width: min(1200px, 100vw - 200px);
 }
 
-@media (min-width:768px) {
+@media (min-width:992px) {
   #search-container {
-    left: max(75px, 5.2vw);
+    left: max(75px, 5.2vw) !important;
   }
 }
 
 #search {
   color: #d6d6d6;
   border-bottom: #333533 solid 1px;
-  min-width: 1061px;
 }
 
 #songs-container {
-  max-height: calc(100vh - 131px);
   overflow: auto;
 }
 
-.song-cover-art-container {
+.img {
   width: 64px;
   height: 64px;
 }
@@ -73,4 +72,50 @@
 #create-btn:hover {
   text-decoration: underline;
   cursor: pointer;
+}
+
+.fw-lighter {
+  font-size: .8em;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #00000000;
+}
+
+@media (max-width:991px) {
+  img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .song-title {
+    font-size: .9em;
+  }
+
+  .artists {
+    font-size: .8em;
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+}
+
+@media (max-width:767px) {
+  img {
+    width: 45px;
+    height: 45px;
+  }
+
+  .song-title {
+    font-size: .8em;
+  }
+
+  .artists {
+    font-size: .75em;
+  }
+
+  ::-webkit-scrollbar {
+    width: 3px;
+  }
 }

@@ -1,6 +1,6 @@
 <app-sidebar [menuStatus]="appStatus.isMenuActive" (menuStatusOutput)="toggleMenu($event)"></app-sidebar>
 <div id="main-container">
-  <div id="main" *ngIf="exists" class="d-flex flex-column position-relative">
+  <div id="main" *ngIf="exists" class="d-flex justify-content-between flex-column position-relative">
     <div>
       <app-topbar (appStatusOutput)="updateAppStatus($event)" *ngIf="!editMode"></app-topbar>
       <app-edit-topbar (appStatusOutput)="updateAppStatus($event)" [barPropertiesInput]="barProperties"
@@ -9,63 +9,24 @@
     <div preventUnfocus id="tab-background" class="d-flex m-0 p-0 flex-column justify-content-between flex-grow-1">
       <div preventUnfocus class="d-flex flex-column justify-content-evenly">
         <div *ngIf="currentTab" id="instrument" class="ps-4 flex-grow-1 m-0 d-flex flex-column justify-content-center">
-          <h2 id="instrument-name" class="m-0 p-0">{{currentTab.instrument.name.toUpperCase().replace("-"," ")}}</h2>
+          <h2 id="instrument-name" class="m-0 p-0 display-2 text-nowrap">
+            {{currentTab.instrument.name.toUpperCase().replace("-"," ")}}
+          </h2>
         </div>
       </div>
       <div preventUnfocus *ngIf="!editMode" id="actions"
-        class="fs-4 p-0 flex-grow-1 d-flex flex-column justify-content-end">
-        <div id="tools" class="row m-0 d-md-none">
-          <div id="tempo-container" class="row m-0 p-0 col-12">
-            <div id="tempo-input-container" class="ms-2 py-2 my-auto rounded col">
-              <input class="w-100" [(ngModel)]="appStatus.tempoMultiplier" type="range" step="5"
-                [defaultValue]="appStatus.tempoMultiplier" min="50" max="200">
-            </div>
-            <p id="tempo" class="fs-2 m-0 col-auto px-3 py-2 text-center" style="color: #BF9C6E;width: 80px;">
-              {{appStatus.tempoMultiplier}}%
-            </p>
-          </div>
-          <div id="countdown" class="col py-2 text-center"
-            (click)="appStatus.isCountdownActive=!appStatus.isCountdownActive"
-            [ngClass]="appStatus.isCountdownActive?'active-tool':''">
-            <p class="fs-1 m-0">123</p>
-          </div>
-          <div class="p-0 shadow-none" style="width:8px;background-color: #202020;cursor: initial;"></div>
-          <div class="col py-2 fs-2 text-center" (click)="appStatus.isMetronomeActive=!appStatus.isMetronomeActive"
-            [ngClass]="appStatus.isMetronomeActive?'active-tool':''">
-            <svg version="1.1" width="36" height="36" viewBox="0 0 314 314" xml:space="preserve">
-              <path d="M281.853,46.631c-0.39-2.035-1.66-3.794-3.47-4.802l-11.257-6.271l5.297-9.511c1.881-3.378,0.668-7.641-2.709-9.521
-         c-3.38-1.881-7.641-0.667-9.521,2.709l-5.297,9.511l-11.257-6.269c-1.81-1.008-3.975-1.162-5.908-0.422
-         c-1.936,0.74-3.442,2.3-4.117,4.259l-13.806,40.109c-1.103,3.207,0.25,6.743,3.213,8.394l4.741,2.642l-23.115,41.501L184.592,17.11
-         C182.703,7.516,173.563,0,163.783,0h-56.052c-9.778,0-18.918,7.516-20.809,17.11L46.102,224.425
-         c-0.002,0.012-0.004,0.023-0.006,0.035l-13.729,69.725c-0.998,5.067,0.205,10.132,3.3,13.895C38.76,311.842,43.496,314,48.66,314
-         h174.195c5.163,0,9.898-2.158,12.993-5.92c3.095-3.763,4.298-8.827,3.301-13.896l-13.732-69.741
-         c-0.001-0.002-0.001-0.004-0.001-0.004l-16.584-84.225l31.16-55.944l4.742,2.642c1.072,0.598,2.243,0.885,3.402,0.885
-         c2.046,0,4.056-0.896,5.425-2.571l26.836-32.853C281.708,50.769,282.241,48.665,281.853,46.631z M100.659,19.816
-         c0.6-3.044,3.971-5.816,7.072-5.816h56.052c3.103,0,6.473,2.771,7.072,5.815l23.249,118.069L164,191.933
-         c-6.17-2.645-13.121-4.627-21.242-5.363v-14.92h10.96c3.866,0,7-3.134,7-7s-3.134-7-7-7h-10.96v-41.211h10.96c3.866,0,7-3.134,7-7
-         c0-3.866-3.134-7-7-7h-10.96v-41.21h10.96c3.866,0,7-3.134,7-7s-3.134-7-7-7h-10.96V34.938c0-3.866-3.134-7-7-7
-         c-3.866,0-7,3.134-7,7v12.291h-10.96c-3.866,0-7,3.134-7,7s3.134,7,7,7h10.96v41.21h-10.96c-3.866,0-7,3.134-7,7
-         c0,3.866,3.134,7,7,7h10.96v41.211h-10.96c-3.866,0-7,3.134-7,7s3.134,7,7,7h10.96v14.92c-19.447,1.763-32.189,10.688-43.564,18.666
-         c-7.894,5.536-14.975,10.493-23.52,12.573L100.659,19.816z M225.036,299.188c-0.432,0.523-1.206,0.813-2.181,0.813H48.66
-         c-0.976,0-1.75-0.289-2.181-0.814c-0.432-0.524-0.565-1.34-0.377-2.297l12.675-64.372c14.147-1.593,24.455-8.807,34.455-15.82
-         c12.059-8.457,23.448-16.444,42.525-16.444c19.077,0,30.466,7.987,42.524,16.444c10.001,7.014,20.308,14.228,34.456,15.82
-         l12.675,64.371C225.602,297.846,225.468,298.662,225.036,299.188z M209.842,217.809c-8.545-2.08-15.627-7.037-23.521-12.574
-         c-3.175-2.227-6.456-4.527-9.959-6.726l21.928-39.367L209.842,217.809z M246.427,71.829l-11.474-6.392l9.177-26.662l20.136,11.216
-         L246.427,71.829z" />
-            </svg>
-          </div>
-        </div>
-        <div class="d-flex justify-content-between align-items-center p-4">
+        class=" p-0 flex-grow-1 d-flex flex-column justify-content-end">
+        <div class="d-flex justify-content-between align-items-center px-lg-4 py-lg-4 py-2 px-3">
           <div id="info-container" (click)="showSongInfo = !showSongInfo"
-            class="d-inline-block position-relative flex-shrink-0">
-            <svg height="23" viewBox="0 0 488.9 488.9" xml:space="preserve">
+            class="d-flex justify-content-center align-items-center position-relative flex-shrink-0">
+            <svg viewBox="0 0 488.9 488.9" xml:space="preserve">
               <path fill="white"
                 d="M239.15,0c31.9,0,57.7,25.8,57.7,57.7s-25.8,57.7-57.7,57.7s-57.7-25.8-57.7-57.7S207.25,0,239.15,0z M291.65,151.6h-1.5
                     h-92.8h-3.4c-19,0-34.3,15.4-34.3,34.3l0,0c0,19,15.4,34.3,34.3,34.3h3.4v200h-37.7v68.7h169.6v-68.7h-37.5V151.6H291.65z" />
             </svg>
             <div id="song-info" @appear *ngIf="showSongInfo" class="p-3 rounded">
               <h5>About this song:</h5>
-              <ul class="list-unstyled fs-5 m-0">
+              <ul class="list-unstyled m-0">
                 <li class="list-group-item">Initial key: <span class="text-white">GM</span></li>
                 <li class="list-group-item">Avg. BPM: <span class="text-white">{{currentTab?.initialTempo}} </span></li>
                 <li class="list-group-item">Tuning: <span class="text-white">Standard</span></li>
@@ -73,7 +34,7 @@
             </div>
           </div>
           <div id="end-btns" class="float-end">
-            <div class="d-none d-md-flex justify-content-between">
+            <div class="d-flex justify-content-between">
               <div id="edit-btn" data-bs-toggle="modal" data-bs-target="#editModal"
                 class="px-2 rounded d-flex justify-content-center align-items-center">
                 <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -86,27 +47,12 @@
               <button id="rate-btn" class="px-3 py-1">RATE THIS TAB</button>
             </div>
           </div>
-          <div id="mobile-end-btns" class="d-flex justify-content-evenly d-md-none float-end">
-            <div id="comment-icon" class="p-2 rounded">
-              <svg width="31" height="30" viewBox="0 0 31 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M1.00003 4V17C0.600029 20.2 3.1667 21.3333 4.50003 21.5H7.50003V30L16 21.5H27C29.4 21.5 30.6667 19.0042 31 17.7562V4C30.6 1.2 27.8334 0.166667 26.5 0H5.00003C2.20003 0.8 1.1667 3 1.00003 4Z"
-                  fill="#707070" />
-              </svg>
-            </div>
-            <div id="rate-icon" class="p-2 rounded">
-              <svg width="37" height="35" viewBox="0 0 37 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 14.5H3.5L13 21.5L9.5 32L18.5 25.5L27.5 32L24.5 21.5L33.5 14.5H22L18.5 4L15 14.5Z"
-                  stroke="#BF9C6E" stroke-width="2" />
-              </svg>
-            </div>
-          </div>
         </div>
       </div>
-      <div *ngIf="editMode" id="actions" class="fs-4 p-0 flex-grow-1 d-flex flex-column justify-content-end">
+      <div *ngIf="editMode" id="actions" class=" p-0 flex-grow-1 d-flex flex-column justify-content-end">
         <div class="d-flex justify-content-between align-items-center p-4">
           <div preventUnfocus id="info-container" (click)="showSongInfo = !showSongInfo"
-            class="d-inline-block position-relative flex-shrink-0">
+            class="d-flex justify-content-center align-items-center position-relative flex-shrink-0">
             <svg height="23" viewBox="0 0 488.9 488.9" xml:space="preserve">
               <path fill="white"
                 d="M239.15,0c31.9,0,57.7,25.8,57.7,57.7s-25.8,57.7-57.7,57.7s-57.7-25.8-57.7-57.7S207.25,0,239.15,0z M291.65,151.6h-1.5
@@ -114,7 +60,7 @@
             </svg>
             <div id="song-info" @appear *ngIf="showSongInfo" class="p-3 rounded">
               <h5>About this song:</h5>
-              <ul class="list-unstyled fs-5 m-0">
+              <ul class="list-unstyled m-0">
                 <li class="list-group-item">Initial key: <span class="text-white">GM</span></li>
                 <li class="list-group-item">Avg. BPM: <span class="text-white">110</span></li>
                 <li class="list-group-item">Tuning: <span class="text-white">Standard</span></li>
@@ -207,7 +153,7 @@
     <form [formGroup]="instrumentForm" action="">
       <div class="row m-0 p-0">
         <div class="col-8 p-0">
-          <select class="form-select shadow-none my-4 rounded-0 fs-5" name="name" id="instrument-selection"
+          <select class="form-select shadow-none my-4 rounded-0" name="name" id="instrument-selection"
             formControlName="name">
             <option value="guitar"> Guitar</option>
             <option value="acoustic-guitar">Acoustic guitar</option>
@@ -216,8 +162,7 @@
           </select>
         </div>
         <div class="col-4 p-0">
-          <select class="form-select shadow-none my-4 rounded-0 fs-5" name="strings" id="strings"
-            formControlName="strings">
+          <select class="form-select shadow-none my-4 rounded-0" name="strings" id="strings" formControlName="strings">
             <option value="4">4</option>
             <option value="5">5</option>
             <option value="6">6</option>
@@ -227,22 +172,21 @@
         </div>
       </div>
       <div class="float-end">
-        <button class="btn btn-light shadow-none me-3 fs-5" (click)="showSelectionModal=false">CANCEL</button>
-        <button id="confirm-btn" type="submit" class="btn fs-5" (click)="changeInstrument($event)">CONFIRM</button>
+        <button class="btn btn-light shadow-none me-3" (click)="showSelectionModal=false">CANCEL</button>
+        <button id="confirm-btn" type="submit" class="btn" (click)="changeInstrument($event)">CONFIRM</button>
       </div>
     </form>
   </div>
 </div>
-
 <div class="modal fade text-white" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content rounded-0 p-2">
-      <div class="modal-body fs-5 pb-0">
+      <div class="modal-body  pb-0">
         Saving this tab will replace your previous tab of this song. <br> <strong>Are you sure to continue?</strong>
       </div>
       <div class="modal-footer border-0">
-        <button class="btn btn-light shadow-none me-3 fs-5" data-bs-dismiss="modal">CANCEL</button>
-        <button id="confirm-btn" type="button" class="btn fs-5" (click)="editTabGroup()"
+        <button class="btn btn-light shadow-none me-3" data-bs-dismiss="modal">CANCEL</button>
+        <button id="confirm-btn" type="button" class="btn" (click)="editTabGroup()"
           data-bs-dismiss="modal">CONFIRM</button>
       </div>
     </div>

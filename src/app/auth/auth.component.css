@@ -12,8 +12,13 @@
   height: 100%;
 }
 
-#modal {
+#modal,
+#mobile-modal {
   background-color: #202020;
+}
+
+p {
+  font-size: 85%;
 }
 
 h1 {
@@ -29,15 +34,21 @@ h1 {
   background-color: #707070;
 }
 
-#form input {
-  background-color: #101010 !important;
+#form-container {
+  max-height: 90vh;
+  overflow: overlay;
 }
 
-#form .ng-invalid.ng-touched {
+form input {
+  background-color: #101010 !important;
+  font-size: 0.8em;
+}
+
+form .ng-invalid.ng-touched {
   border: 1px dashed red !important;
 }
 
-#spotify-btn {
+.spotify-btn {
   font-family: "Barlow Condensed", sans-serif;
   font-weight: 600;
   display: flex;
@@ -68,8 +79,63 @@ h1 {
   color: rgb(102, 102, 102);
 }
 
-#p3 {
+.p3 {
   color: #808080;
   font-weight: 300;
   font-style: italic;
+  margin-bottom: 0;
+}
+
+#mobile-question {
+  display: none;
+}
+
+@media (max-height:620px) {
+  #modal {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 1em !important;
+    max-height: 90vh;
+  }
+
+  .space-line {
+    display: none;
+  }
+
+  #mobile-question {
+    display: block;
+  }
+
+  #desktop-question {
+    display: none;
+  }
+
+  #form-container {
+    max-height: 90vh;
+    overflow: overlay;
+    padding: 0 !important;
+  }
+
+  #p1 {
+    margin: 0 !important;
+  }
+
+  form {
+    margin-top: .5em !important;
+  }
+
+  button {
+    padding-top: .15em !important;
+    padding-bottom: .15em !important;
+  }
+
+  input {
+    margin: 0 0 0.75em 0 !important;
+  }
+}
+
+.clickable:hover {
+  cursor: pointer;
+  text-decoration: underline;
 }

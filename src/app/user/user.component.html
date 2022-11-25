@@ -1,6 +1,6 @@
 <div id="container" class="row m-0 py-5">
   <div class="col p-0">
-    <div [routerLink]="['/']" id="back-btn-container" class="fs-3 rounded-end">
+    <div [routerLink]="['/']" id="back-btn-container" class="rounded-end text-nowrap">
       <span id="arrow-head">&#8249;</span>
       <p>HOME</p>
     </div>
@@ -146,7 +146,7 @@
             </div>
           </div>
           <div *ngIf="userTabTracks && userTabTracks.length === 0">
-            <h6 class="text-center text-white-50 lead fs-6">Your created tabs will be displayed here</h6>
+            <h6 class="text-center text-white-50">Your created tabs will be displayed here</h6>
           </div>
         </div>
       </div>

@@ -40,7 +40,7 @@ import { PlayerService } from '../player.service';
   ]
 })
 
-export class SidebarComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked, AfterViewInit {
+export class SidebarComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
 
   constructor(
     private fireAuth: AngularFireAuth,
@@ -63,6 +63,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy, AfterView
   currentTabGroup?: TabGroup
   HTMLIconCollection: HTMLDivElement[] = []
   loaded: number[] = []
+  profilePictureLoaded = false
   tabIndex?: number
 
   ngOnInit() {
@@ -81,7 +82,9 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy, AfterView
       if (this.HTMLIconCollection.length === 0) return
       this.getCollection()
       this.HTMLIconCollection.forEach(div => div.classList.remove('active-instrument'))
-      this.HTMLIconCollection[this.playerService.currentTabIndex.value!].classList.add('active-instrument')
+      try {
+        this.HTMLIconCollection[this.playerService.currentTabIndex.value!].classList.add('active-instrument')
+      } catch (err) { }
     })
     const currentUserSub = this.fireAuth.user.subscribe(user => {
       if (!user) {
@@ -103,10 +106,6 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy, AfterView
         this.imageSrc = 'https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/default_profile.png?alt=media&token=631da581-8c28-4504-88ae-207b61e334b4'
       }
     }, 2500)
-  }
-
-  ngAfterViewChecked(): void {
-    this.detectOverflow()
   }
 
   ngOnChanges(changes: SimpleChanges) {

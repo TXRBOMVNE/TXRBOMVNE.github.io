@@ -16,12 +16,12 @@ import { AuthService } from './auth.service';
   animations: [
     trigger('appear', [
       transition(":enter", [
-        style({ transform: "scaleY(0)", "transform-origin": "top", opacity: 0 }),
-        animate("300ms ease-in-out", style({ transform: "scaleY(1)", opacity: 1 }))
+        style({ 'max-height': 0, overflow: 'hidden' }),
+        animate("200ms ease-out", style({ 'max-height': '100px' }))
       ]),
       transition(":leave", [
-        style({ "transform-origin": "top" }),
-        animate("300ms ease-in-out", style({ transform: "scaleY(0)", opacity: 0 }))
+        style({ 'max-height': '100px', overflow: 'hidden' }),
+        animate("200ms ease-in", style({ 'max-height': 0 }))
       ])
     ])
   ]
@@ -98,7 +98,7 @@ export class AuthComponent {
         fromObject: {
           client_id: environment.spotify.id,
           response_type: "code",
-          scope: "streaming",
+          scope: environment.spotify.scopes.join(' '),
           redirect_uri: environment.spotify.redirect_uri,
         }
       }

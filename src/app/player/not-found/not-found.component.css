@@ -3,23 +3,18 @@
   min-height: 100vh;
 }
 
-
 #back-btn-container {
   color: white;
   font-family: "Barlow Condensed";
   vertical-align: middle;
   padding-bottom: 5px;
   margin-right: 50%;
+  cursor: pointer;
 }
 
-#back-btn-container:hover {
+#back-btn-container:hover>p {
   cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-#back-btn-container:active {
-  cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.15);
+  text-decoration: underline;
 }
 
 #back-btn-container p {
@@ -33,4 +28,17 @@
   line-height: 40px;
   max-height: 40px !important;
   vertical-align: sub;
+}
+
+img,
+#placeholder {
+  width: max(calc(40px + 1.5vw), 50px) !important;
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+#placeholder {
+  background-color: rgb(60, 60, 60);
+  animation: color infinite 1.5s linear;
 }

@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { map, take } from 'rxjs';
+import { map, switchMap, take } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { TabGroup } from 'src/app/models/song.model';
 
@@ -14,8 +14,14 @@ export class SearchService {
 
   currentUser = this.authService.currentUser.value
 
-  searchTracks(query: string) {
+  getAccessToken() {
     this.currentUser = this.authService.currentUser.value
+    const req = this.authService.getAccessToken()
+    req.pipe(take(1)).subscribe(token => this.currentUser!.accessToken = token)
+    return req
+  }
+
+  searchTracks(query: string) {
     return this.http.get(`https://api.spotify.com/v1/search?q=${query}&type=track`, {
       headers: new HttpHeaders({
         Authorization: `Bearer ${this.currentUser?.spotify?.access_token}`,

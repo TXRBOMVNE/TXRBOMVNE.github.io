@@ -1,4 +1,4 @@
-<div id="sidebar" class="d-none d-md-flex flex-column justify-content-between">
+<div *ngIf="!isMenuActive" id="sidebar" class="d-none d-lg-flex flex-column justify-content-between">
   <div id="icons-container" class="d-flex flex-column">
     <div class="my-4" id="search" (click)="showSearchMenu=!showSearchMenu">
       <div class="my-3">
@@ -47,10 +47,12 @@
       </svg>
     </div>
   </div>
-  <div @appear2 *ngIf="imageSrc" id="profile-pic-container" class="p-3">
-    <div routerLink="/user">
-      <img id="profile-pic" class="rounded-circle w-100" [src]="imageSrc" alt="Profile picture">
+  <div @appear2 id="profile-pic-container" class="p-3 d-block">
+    <div *ngIf="imageSrc" routerLink="/user">
+      <img id="profile-pic" loading="lazy" (load)="profilePictureLoaded=true" class="rounded-circle w-100"
+        [src]="imageSrc" alt="Profile picture">
     </div>
+    <div id="placeholder" class="w-100" *ngIf="!profilePictureLoaded || !imageSrc"></div>
   </div>
 </div>
 <div @appear *ngIf="showSelectionModal" id="modal-container">
@@ -61,7 +63,7 @@
     <form [formGroup]="instrumentForm" action="">
       <div class="row m-0 p-0">
         <div class="col-8 p-0">
-          <select class="form-select shadow-none my-4 rounded-0 fs-5" name="name" id="instrument-selection"
+          <select class="form-select shadow-none my-4 rounded-0" name="name" id="instrument-selection"
             formControlName="name">
             <option value="guitar"> Guitar</option>
             <option value="acoustic-guitar">Acoustic guitar</option>
@@ -70,8 +72,7 @@
           </select>
         </div>
         <div class="col-4 p-0">
-          <select class="form-select shadow-none my-4 rounded-0 fs-5" name="strings" id="strings"
-            formControlName="strings">
+          <select class="form-select shadow-none my-4 rounded-0" name="strings" id="strings" formControlName="strings">
             <option value="4">4</option>
             <option value="5">5</option>
             <option value="6">6</option>
@@ -81,8 +82,8 @@
         </div>
       </div>
       <div class="float-end">
-        <button class="btn btn-light shadow-none me-3 fs-5" (click)="showSelectionModal=false">CANCEL</button>
-        <button id="confirm-btn" type="submit" class="btn fs-5" (click)="addInstrument($event)">CONFIRM</button>
+        <button class="btn btn-light shadow-none me-3" (click)="showSelectionModal=false">CANCEL</button>
+        <button id="confirm-btn" type="submit" class="btn" (click)="addInstrument($event)">CONFIRM</button>
       </div>
     </form>
   </div>
@@ -90,42 +91,61 @@
 <app-search (searchMenuStatus)="closeSearchMenu()" *ngIf="showSearchMenu"></app-search>
 <div @appear *ngIf="showSearchMenu" (click)="showSearchMenu=false" id="background"></div>
 <div>
-  <div id="sidebar" @enterFromSide *ngIf="isMenuActive" class="d-flex flex-column">
-    <div class="py-4" id="search">
-      <div class="my-3">
-        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
-          <path id="Icon_material-search" data-name="Icon material-search"
-            d="M35.338,31.907H33.531l-.64-.617a14.888,14.888,0,1,0-1.6,1.6l.617.64v1.807L43.342,46.75l3.408-3.408Zm-13.722,0A10.292,10.292,0,1,1,31.907,21.616,10.278,10.278,0,0,1,21.616,31.907Z"
-            transform="translate(-6.75 -6.75)" />
+  <div id="mobile-sidebar" @enterFromSide *ngIf="isMenuActive" class="d-flex justify-content-between flex-column">
+    <div id="icons-container" class="d-flex flex-column">
+      <div class="my-4" id="search" (click)="showSearchMenu=!showSearchMenu">
+        <div class="my-3">
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+            <path id="Icon_material-search" data-name="Icon material-search"
+              d="M35.338,31.907H33.531l-.64-.617a14.888,14.888,0,1,0-1.6,1.6l.617.64v1.807L43.342,46.75l3.408-3.408Zm-13.722,0A10.292,10.292,0,1,1,31.907,21.616,10.278,10.278,0,0,1,21.616,31.907Z"
+              transform="translate(-6.75 -6.75)" />
+          </svg>
+        </div>
+      </div>
+      <div class="space-line"></div>
+      <div @appear *ngIf="currentTabGroup" id="instruments-container"
+        class="d-flex flex-column justify-content-between align-items-center overflow">
+        <div (click)="changeTab(i)" class="instrument py-4" [ngClass]="tab.instrument.name"
+          *ngFor="let tab of currentTabGroup.tabs;let i=index" [ngSwitch]="tab.instrument.name">
+          <div *ngIf="!isLoaded(i)" class="filler w-100 position-relative">
+            <div class="circle"></div>
+          </div>
+          <span *ngSwitchCase="'guitar'" class="text-center" [ngClass]="!isLoaded(i)?'w-0':'w-100'">
+            <img (load)="load(i)"
+              src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fimages%2Fguitar.png?alt=media"
+              alt="Electric Guitar">
+          </span>
+          <span *ngSwitchCase="'acoustic-guitar'" class="w-100 text-center" [ngClass]="!isLoaded(i)?'w-0':'w-100'">
+            <img (load)="load(i)"
+              src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fimages%2Facoustic-guitar.png?alt=media"
+              alt="Acoustic Guitar">
+          </span>
+          <span *ngSwitchCase="'bass'" class="w-100 text-center" [ngClass]="!isLoaded(i)?'w-0':'w-100'">
+            <img (load)="load(i)"
+              src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fimages%2Fbass.png?alt=media"
+              alt="Bass Guitar">
+          </span>
+          <span *ngSwitchCase="'voice'" class="w-100 text-center" [ngClass]="!isLoaded(i)?'w-0':'w-100'">
+            <img (load)="load(i)"
+              src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fimages%2Fmic.png?alt=media"
+              alt="Microphone">
+          </span>
+        </div>
+      </div>
+      <div *ngIf="editMode" (click)="showSelectionModal=true" id="add-instrument-btn-container">
+        <svg class="bi bi-plus-circle" viewBox="0 0 16 16">
+          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+          <path
+            d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
         </svg>
       </div>
     </div>
-    <div class="space-line"></div>
-    <div @appear2 *ngIf="currentTabGroup" id="instruments-container"
-      class="d-flex flex-column justify-content-between align-items-center" #instruments>
-      <div (click)="changeTab(i)" class="instrument" [ngClass]="tab.instrument.name"
-        *ngFor="let tab of currentTabGroup.tabs;let i=index" [ngSwitch]="tab.instrument.name">
-        <span *ngSwitchCase="'guitar'" class="w-100 text-center">
-          <img class="my-4" loading="lazy"
-            src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fimages%2Fguitar.png?alt=media"
-            alt="Electric Guitar" #guitar>
-        </span>
-        <span *ngSwitchCase="'acoustic-guitar'" class="w-100 text-center">
-          <img class="my-4" loading="lazy"
-            src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fimages%2Facoustic-guitar.png?alt=media"
-            alt="Acoustic Guitar">
-        </span>
-        <span *ngSwitchCase="'bass'" class="w-100 text-center">
-          <img class="my-4" loading="lazy"
-            src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fimages%2Fbass.png?alt=media"
-            alt="Bass Guitar">
-        </span>
-        <span *ngSwitchCase="'voice'" class="w-100 text-center">
-          <img class="my-4" loading="lazy"
-            src="https://firebasestorage.googleapis.com/v0/b/tab-player.appspot.com/o/assets%2Fimages%2Fmic.png?alt=media"
-            alt="Microphone">
-        </span>
+    <div @appear2 id="profile-pic-container" class="p-3">
+      <div *ngIf="imageSrc" routerLink="/user">
+        <img id="profile-pic" loading="lazy" (load)="profilePictureLoaded=true" class="rounded-circle w-100"
+          [src]="imageSrc" alt="Profile picture">
       </div>
+      <div id="placeholder" *ngIf="!profilePictureLoaded || !imageSrc">XD</div>
     </div>
   </div>
   <div id="modal-background" @appear *ngIf="isMenuActive" (click)="closeMenu()"></div>

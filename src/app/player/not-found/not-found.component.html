@@ -1,11 +1,17 @@
-<div id="not-found-container" class="h-100 w-100 row m-0">
-  <div class="col pt-5 px-0">
-    <div [routerLink]="['/']" id="back-btn-container" class="fs-3 rounded-end">
+<div id="not-found-container" class="h-100 w-100 row m-0 flex-nowrap">
+  <div class="col pt-5 px-0 d-flex justify-content-between align-items-start flex-column">
+    <div [routerLink]="['/']" id="back-btn-container" class="rounded-end text-nowrap">
       <span id="arrow-head">&#8249;</span>
       <p class="my-auto">BACK</p>
     </div>
+    <div class="p-3">
+      <div *ngIf="imageSrc">
+        <img (load)="loaded = true" loading="lazy" [src]="imageSrc" alt="Your profile" #img>
+      </div>
+      <div class="w-100" *ngIf="!loaded" id="placeholder"></div>
+    </div>
   </div>
-  <h2 class="text-white text-center my-auto col-6">
+  <h2 class="text-white text-center my-auto col-8 col-md-6">
     {{errorMessage}}
   </h2>
   <div class="col p-0"></div>
