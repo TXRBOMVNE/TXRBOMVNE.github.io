@@ -60,10 +60,10 @@ export class TabService {
   styleSegment(segment: Segment) {
     let style
     if (!segment.isRest && segment.notes?.every(value => !value.fretValue && value.fretValue !== 0)) {
-      style = { 'width.px': segment.separationSpace, 'background-color': 'rgba(255, 255, 255, 0.05)' }
+      style = { 'width.px': segment.separationSpacePx, 'background-color': 'rgba(255, 255, 255, 0.05)' }
       return style
     }
-    style = { 'width.px': segment.separationSpace }
+    style = { 'width.px': segment.separationSpacePx }
     return style
   }
 
@@ -114,12 +114,12 @@ export class TabService {
       }
       style = {
         'width.px': 40,
-        'transform': `translateX(${(segment.separationSpace / 2) + extraTranslation}px) scaleX(${(segment.separationSpace / 40 * widthMultiplier) + extraWidth}) rotate(20deg)`,
+        'transform': `translateX(${(segment.separationSpacePx / 2) + extraTranslation}px) scaleX(${(segment.separationSpacePx / 40 * widthMultiplier) + extraWidth}) rotate(20deg)`,
       }
     } else if (note.effects.slides.slideOut === 'slideDown') {
-      style = { 'width.px': 30, 'max-width.px': segment.separationSpace, 'transform': 'translateX(25px) rotate(20deg)' }
+      style = { 'width.px': 30, 'max-width.px': segment.separationSpacePx, 'transform': 'translateX(25px) rotate(20deg)' }
     } else if (note.effects.slides.slideOut === 'slideUp') {
-      style = { 'width.px': 30, 'max-width.px': segment.separationSpace, 'transform': 'translateX(25px) rotate(-20deg)' }
+      style = { 'width.px': 30, 'max-width.px': segment.separationSpacePx, 'transform': 'translateX(25px) rotate(-20deg)' }
     } else {
       style = { 'display': 'none' }
     }
@@ -130,9 +130,9 @@ export class TabService {
     if (!note.effects || !note.effects.slides) return {}
     let style
     if (note.effects.slides.slideIn === 'slideDown') {
-      style = { 'width.px': 30, 'max-width.px': segment.separationSpace, 'transform': 'translateX(-25px) rotate(20deg)' }
+      style = { 'width.px': 30, 'max-width.px': segment.separationSpacePx, 'transform': 'translateX(-25px) rotate(20deg)' }
     } else if (note.effects.slides.slideIn === 'slideUp') {
-      style = { 'width.px': 30, 'max-width.px': segment.separationSpace, 'transform': 'translateX(-25px) rotate(-20deg)' }
+      style = { 'width.px': 30, 'max-width.px': segment.separationSpacePx, 'transform': 'translateX(-25px) rotate(-20deg)' }
     } else {
       style = { 'display': 'none' }
     }

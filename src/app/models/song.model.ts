@@ -92,7 +92,7 @@ export class Segment {
     return actualDurationInverse
   }
 
-  get separationSpace() {
+  get separationSpacePx() {
     let barInnerWidth = tabLayout.initialBarInnerWidth
     let separationPx = barInnerWidth / this.durationInverse
     return separationPx

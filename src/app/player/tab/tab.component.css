@@ -174,3 +174,14 @@ span {
   z-index: 100;
   will-change: transform;
 }
+
+#frame {
+  position: absolute;
+  top: 50%;
+  transform: translate3d(0, -50%, 0);
+  height: 200%;
+  width: 1px;
+  background-color: rgba(191, 156, 110, 0.3);
+  z-index: 100;
+  will-change: transform;
+}

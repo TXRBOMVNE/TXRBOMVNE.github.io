@@ -15,8 +15,6 @@ export const tabLayout = {
   barExtraWidth: initialBarWidth * (11 / 10),
 }
 
-
-
 @Component({
   selector: 'app-tab',
   templateUrl: './tab.component.html',
@@ -27,6 +25,7 @@ export class TabComponent implements AfterViewInit, OnInit, OnDestroy {
 
   @ViewChildren(SegmentDirective) HTMLSegments?: QueryList<{ el: ElementRef<HTMLDivElement> }>
   @ViewChild('line') line!: ElementRef<HTMLDivElement>
+  @ViewChild('frame') frame!: ElementRef<HTMLDivElement>
   @ViewChild('tab') tab?: ElementRef<HTMLDivElement>
 
   tabLayout = tabLayout
@@ -38,6 +37,7 @@ export class TabComponent implements AfterViewInit, OnInit, OnDestroy {
   subs: Subscription[] = []
   totalDistanceMoved: number = 0
   segmentStartTime?: number
+  lineMode = false
 
   private get segmentsArray() {
     let array: Segment[] = []
@@ -55,56 +55,100 @@ export class TabComponent implements AfterViewInit, OnInit, OnDestroy {
         this.isPaused = true
       }
     })
-    this.segmentSelectionSub = this.segmentSelection?.subscribe(segment => {
-      this.currentSegmentIndex = this.segmentsArray.indexOf(segment)!
-      let totalDurationMs: number
-      if (this.currentSegmentIndex === 0) {
-        totalDurationMs = 0
-      } else {
-        totalDurationMs = this.wholeNoteDurationMs / this.segmentsArray[this.currentSegmentIndex - 1].durationInverse
-      }
-      const segmentPosition = this.HTMLSegments?.get(this.currentSegmentIndex)?.el.nativeElement.getBoundingClientRect()
-      const parentPosition = this.tab?.nativeElement.getBoundingClientRect()
-      const relativePosition = segmentPosition!.x - parentPosition!.x
-      if (this.isPaused) {
-        const newPosition = relativePosition + 'px'
-        this.line.nativeElement.style.transform = `translate3d(${newPosition},-50%,0)`
-        this.totalDistanceMoved = relativePosition
-        this.segmentStartTime = undefined
-        return
-      }
-      const startTime = this.segmentStartTime || performance.now()
-      const totalDistanceToMove = relativePosition - this.totalDistanceMoved
-      const animate = () => {
-        if (this.isPaused) return
-        const currentTime = performance.now()
-        const elapsedTime = currentTime - startTime
-        const elapsedTimeRatio = elapsedTime / totalDurationMs
-        const currentDistanceToMove = (elapsedTimeRatio * totalDistanceToMove) + this.totalDistanceMoved
-        if (elapsedTimeRatio >= 1) {
-          this.segmentStartTime = startTime + totalDurationMs
-          this.totalDistanceMoved += totalDistanceToMove
-          this.segmentSelection.next(this.segmentsArray[this.currentSegmentIndex + 1])
+    if (this.lineMode) {
+      this.segmentSelectionSub = this.segmentSelection?.subscribe(segment => {
+        this.currentSegmentIndex = this.segmentsArray.indexOf(segment)!
+        let totalDurationMs: number
+        if (this.currentSegmentIndex === 0) {
+          totalDurationMs = 0
+        } else {
+          totalDurationMs = this.wholeNoteDurationMs / this.segmentsArray[this.currentSegmentIndex - 1].durationInverse
+        }
+        const segmentPosition = this.HTMLSegments?.get(this.currentSegmentIndex)?.el.nativeElement.getBoundingClientRect()
+        const parentPosition = this.tab?.nativeElement.getBoundingClientRect()
+        const relativePosition = segmentPosition!.x - parentPosition!.x
+        if (this.isPaused) {
+          const newPosition = relativePosition + 'px'
+          this.line.nativeElement.style.transform = `translate3d(${newPosition},-50%,0)`
+          this.totalDistanceMoved = relativePosition
+          this.segmentStartTime = undefined
           return
         }
-        this.line.nativeElement.style.transform = `translate3d(${currentDistanceToMove}px,-50%,0)`
+        const startTime = this.segmentStartTime || performance.now()
+        const totalDistanceToMove = relativePosition - this.totalDistanceMoved
+        const animate = () => {
+          if (this.isPaused) return
+          const currentTime = performance.now()
+          const elapsedTime = currentTime - startTime
+          const elapsedTimeRatio = elapsedTime / totalDurationMs
+          const currentDistanceToMove = (elapsedTimeRatio * totalDistanceToMove) + this.totalDistanceMoved
+          if (elapsedTimeRatio >= 1) {
+            this.segmentStartTime = startTime + totalDurationMs
+            this.totalDistanceMoved += totalDistanceToMove
+            this.segmentSelection.next(this.segmentsArray[this.currentSegmentIndex + 1])
+            return
+          }
+          this.line.nativeElement.style.transform = `translate3d(${currentDistanceToMove}px,-50%,0)`
+          requestAnimationFrame(animate)
+        }
         requestAnimationFrame(animate)
-      }
-      requestAnimationFrame(animate)
-    })
+      })
+    } else {
+      this.segmentSelectionSub = this.segmentSelection?.subscribe(segment => {
+        this.currentSegmentIndex = this.segmentsArray.indexOf(segment)!
+        let totalDurationMs: number
+        if (this.currentSegmentIndex === 0) {
+          totalDurationMs = 0
+        } else {
+          totalDurationMs = this.wholeNoteDurationMs / this.segmentsArray[this.currentSegmentIndex].durationInverse
+        }
+        const segmentPosition = this.HTMLSegments?.get(this.currentSegmentIndex)?.el.nativeElement.getBoundingClientRect()
+        const parentPosition = this.tab?.nativeElement.getBoundingClientRect()
+        const relativePosition = (segmentPosition!.x - parentPosition!.x) + (this.segmentsArray[this.currentSegmentIndex].separationSpacePx / 2)
+        if (this.isPaused) {
+          this.frame.nativeElement.style.transform = `translate3d(${relativePosition}px,-50%,0) scale3d(${this.segmentsArray[this.currentSegmentIndex].separationSpacePx},1,1)`
+          this.totalDistanceMoved = relativePosition
+          this.segmentStartTime = undefined
+          return
+        }
+        const startTime = this.segmentStartTime || performance.now()
+        const totalDistanceToMove = relativePosition - this.totalDistanceMoved
+        const animate = () => {
+          if (this.isPaused) return
+          const currentTime = performance.now()
+          const elapsedTime = currentTime - startTime
+          if (elapsedTime >= totalDurationMs) {
+            this.segmentStartTime = startTime + totalDurationMs
+            this.totalDistanceMoved += totalDistanceToMove
+            this.segmentSelection.next(this.segmentsArray[this.currentSegmentIndex + 1])
+            return
+          }
+          this.frame.nativeElement.style.transform = `translate3d(${relativePosition}px,-50%,0) scale3d(${this.segmentsArray[this.currentSegmentIndex].separationSpacePx},1,1)`
+          requestAnimationFrame(animate)
+        }
+        requestAnimationFrame(animate)
+      })
+    }
     const currentTabSub = this.playerService.currentTab.subscribe(tab => {
       this.currentTab = tab!
       this.wholeNoteDurationMs = (60 / this.currentTab.initialTempo * 4) * 1000
     })
     this.tabService.subToTab().unsubscribe()
     this.tabService.subToTab()
-    this.subs.push(isPlayingSub, this.segmentSelectionSub, currentTabSub)
+    this.subs.push(isPlayingSub, this.segmentSelectionSub!, currentTabSub)
   }
 
   ngAfterViewInit(): void {
     this.tabService.HTMLSegments = this.HTMLSegments
-    const initialX = this.HTMLSegments!.get(0)!.el.nativeElement.getBoundingClientRect().left - this.tab!.nativeElement.getBoundingClientRect().left
-    this.line.nativeElement.style.transform = `translate3d(${initialX}px,-50%,0)`
+    let initialX = this.HTMLSegments!.get(0)!.el.nativeElement.getBoundingClientRect().left - this.tab!.nativeElement.getBoundingClientRect().left
+    if (this.lineMode) {
+      this.line.nativeElement.style.transform = `translate3d(${initialX}px,-50%,0)`
+    } else {
+      const segmentPosition = this.HTMLSegments?.get(this.currentSegmentIndex)?.el.nativeElement.getBoundingClientRect()
+      const parentPosition = this.tab?.nativeElement.getBoundingClientRect()
+      initialX = (segmentPosition!.x - parentPosition!.x) + (this.segmentsArray[0].separationSpacePx / 2)
+      this.frame.nativeElement.style.transform = `translate3d(${initialX}px,-50%,0) scale3d(${this.segmentsArray[0].separationSpacePx},1,1)`
+    }
     this.totalDistanceMoved = initialX
   }
 
@@ -128,7 +172,11 @@ export class TabComponent implements AfterViewInit, OnInit, OnDestroy {
   play() {
     this.isPaused = false
     if (!this.segmentsArray[this.currentSegmentIndex + 1]) return this.pause()
-    this.segmentSelection.next(this.segmentsArray[this.currentSegmentIndex + 1])
+    if (this.lineMode) {
+      this.segmentSelection.next(this.segmentsArray[this.currentSegmentIndex + 1])
+    } else {
+      this.segmentSelection.next(this.segmentsArray[this.currentSegmentIndex])
+    }
   }
 
   pause() {
